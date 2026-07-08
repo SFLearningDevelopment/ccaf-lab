@@ -160,6 +160,8 @@
     content:counter(rm,decimal-leading-zero);font-family:var(--mono);font-size:13px;
     color:var(--accent);flex:0 0 auto;width:24px;
   }
+  .roadmap li.rm-start{counter-increment:none}
+  .roadmap li.rm-start::before{content:"\2192";font-size:14px}
   .roadmap a{text-decoration:none;font-weight:500;color:var(--ink)}
   .roadmap a:hover{color:var(--accent-deep)}
   .roadmap .rm-domain{
@@ -191,6 +193,58 @@
     color:var(--ink-soft);border-left:3px solid var(--accent);
     padding:4px 0 4px 18px;margin:18px 0;
   }
+
+  /* ---------- Orientation ---------- */
+  .orient-intro{
+    font-size:18px;line-height:1.6;color:var(--ink-soft);margin:0 0 8px;
+  }
+  .orient-intro strong{color:var(--ink);font-weight:600}
+
+  .build-card{
+    background:var(--paper-raised);border:1px solid var(--line-strong);
+    border-radius:var(--radius);padding:22px 24px;margin:24px 0;
+  }
+  .build-card h3{margin:0 0 12px;font-size:16px}
+  .build-card .reads{
+    display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;
+    font-family:var(--mono);font-size:12.5px;
+  }
+  .build-card .chip{
+    background:var(--accent-wash);border:1px solid #bcd6cb;color:var(--accent-deep);
+    border-radius:20px;padding:4px 12px;
+  }
+
+  /* Flow diagram */
+  .flow-wrap{margin:28px 0 8px}
+  .flow-wrap figcaption{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-soft);margin-top:12px;text-align:center;
+  }
+  .flow-svg{width:100%;height:auto;display:block;
+    background:var(--paper-raised);border:1px solid var(--line-strong);border-radius:var(--radius);
+  }
+  .flow-svg .box{fill:var(--paper);stroke:var(--line-strong);stroke-width:1.2}
+  .flow-svg .box-accent{fill:var(--accent-wash);stroke:#bcd6cb;stroke-width:1.2}
+  .flow-svg .box-amber{fill:var(--amber-wash);stroke:#e0c78f;stroke-width:1.2}
+  .flow-svg .lbl{font-family:var(--sans);font-size:13px;font-weight:600;fill:var(--ink)}
+  .flow-svg .sub{font-family:var(--mono);font-size:10px;fill:var(--ink-soft)}
+  .flow-svg .stg{font-family:var(--mono);font-size:9.5px;fill:var(--accent);letter-spacing:.05em}
+  .flow-svg .flowline{stroke:var(--line-strong);stroke-width:1.4;fill:none}
+  .flow-svg .flowline-accent{stroke:var(--accent);stroke-width:1.6;fill:none}
+  .flow-svg .loopline{stroke:var(--accent);stroke-width:1.4;fill:none;stroke-dasharray:4 3}
+  .flow-svg .arrowhead{fill:var(--line-strong)}
+  .flow-svg .arrowhead-accent{fill:var(--accent)}
+  .flow-svg .zonelbl{font-family:var(--mono);font-size:10px;fill:var(--ink-soft);letter-spacing:.06em}
+
+  /* Glossary */
+  .glossary{margin:24px 0 8px}
+  .glossary dl{margin:0;border-top:1px solid var(--line)}
+  .glossary dt{
+    font-family:var(--mono);font-size:14px;font-weight:500;color:var(--accent-deep);
+    margin-top:16px;
+  }
+  .glossary dd{margin:4px 0 0;font-size:15px;line-height:1.55;color:var(--ink-soft)}
+  .glossary dd .also{font-family:var(--mono);font-size:12px;color:var(--ink-soft);opacity:.8}
 
   @media (max-width:600px){
     body{font-size:16px}
@@ -233,6 +287,7 @@
     <h2>The build, in seven stages</h2>
     <p class="sub">One project &mdash; a code-review agent that reads pull requests, flags issues, and knows when to hand off to a human. Work top to bottom; each stage builds on the last.</p>
     <ol>
+      <li class="rm-start"><div class="rm-body"><a href="#orient">Orientation &mdash; what you&rsquo;re building</a><small>the system, the flow diagram, the terms</small></div><span class="rm-domain">start here</span></li>
       <li><div class="rm-body"><a href="#s1">Stand up the agent loop</a><small>tool calling, errors, sessions, subagents</small></div><span class="rm-domain">Agentic Arch · 27%</span></li>
       <li><div class="rm-body"><a href="#s2">Configure Claude Code around the repo</a><small>CLAUDE.md, path rules, skills, MCP</small></div><span class="rm-domain">Claude Code · 20%</span></li>
       <li><div class="rm-body"><a href="#s3">Design &amp; test the MCP tools</a><small>differentiated descriptions, error categories</small></div><span class="rm-domain">Tool &amp; MCP · 18%</span></li>
@@ -260,6 +315,199 @@
       The <em>shape</em> of each pattern is stable; exact identifiers drift.
     </div>
   </div>
+
+  <hr class="rule">
+
+  <!-- ============ ORIENTATION ============ -->
+  <section class="stage" id="orient">
+    <div class="stage-head">
+      <span class="stage-num">Orientation</span>
+      <h2>What you&rsquo;re building, before you build it</h2>
+    </div>
+
+    <p class="orient-intro">
+      By the end of this lab you&rsquo;ll have <strong>one working program</strong>: an agent that
+      takes a pull request, reviews the changed code, produces categorized findings, and
+      decides &mdash; per finding &mdash; whether to post a comment itself or hand it to a human.
+      Every stage adds one capability to that same program. You are not building seven
+      disconnected exercises; you are building one system in seven passes.
+    </p>
+
+    <div class="build-card">
+      <h3>The one thing you&rsquo;re building</h3>
+      <p style="margin:0">
+        A <strong>code-review agent</strong>. It reads a diff, reasons about it over several
+        model turns, calls tools to fetch what it needs, extracts each problem as structured
+        data, filters its own false positives, keeps its context small on big reviews, and
+        escalates the calls it isn&rsquo;t confident about.
+      </p>
+      <div class="reads">
+        <span class="chip">input &rarr; a PR / diff</span>
+        <span class="chip">output &rarr; categorized findings</span>
+        <span class="chip">decision &rarr; post or escalate</span>
+      </div>
+    </div>
+
+    <h3>How the seven stages connect</h3>
+    <p>
+      Read the diagram as a pipeline with a loop in the middle. The <strong>agent loop</strong>
+      (Stage 1) is the engine; <strong>configuration</strong> (Stage 2) and <strong>tools</strong>
+      (Stage 3) feed it; the loop&rsquo;s output flows through <strong>extraction</strong> (Stage 4)
+      and <strong>self-review</strong> (Stage 5); <strong>context management</strong> (Stage 6)
+      wraps the loop to keep it healthy on long jobs; and <strong>escalation</strong> (Stage 7)
+      is the final gate that decides where each finding goes.
+    </p>
+
+    <figure class="flow-wrap">
+      <svg class="flow-svg" viewBox="0 0 820 470" xmlns="http://www.w3.org/2000/svg" role="img"
+           aria-label="Flow diagram of the code-review agent: a pull request feeds an agent loop configured by Claude Code and equipped with MCP tools; the loop's output passes through structured extraction and a self-review filter; context management wraps the loop; a confidence gate routes each finding to auto-post, a human queue, or drop.">
+        <defs>
+          <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 Z" class="arrowhead"/>
+          </marker>
+          <marker id="aha" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 Z" class="arrowhead-accent"/>
+          </marker>
+        </defs>
+
+        <!-- INPUT -->
+        <rect class="box" x="24" y="200" width="118" height="62" rx="8"/>
+        <text class="lbl" x="83" y="227" text-anchor="middle">Pull request</text>
+        <text class="sub" x="83" y="244" text-anchor="middle">a diff to review</text>
+        <!-- input → loop -->
+        <path class="flowline-accent" d="M142,238 C176,238 178,244 206,244" marker-end="url(#aha)"/>
+
+        <!-- context-management zone (wraps the loop) -->
+        <rect x="176" y="120" width="330" height="230" rx="12" fill="none"
+              stroke="var(--accent)" stroke-width="1" stroke-dasharray="5 4" opacity="0.55"/>
+        <text class="zonelbl" x="184" y="138">STAGE 6 · context management wraps the loop</text>
+
+        <!-- AGENT LOOP (engine) -->
+        <rect class="box-accent" x="210" y="196" width="150" height="96" rx="10"/>
+        <text class="stg" x="285" y="216" text-anchor="middle">STAGE 1</text>
+        <text class="lbl" x="285" y="236" text-anchor="middle">Agent loop</text>
+        <text class="sub" x="285" y="254" text-anchor="middle">model &rarr; tool &rarr; result</text>
+        <text class="sub" x="285" y="268" text-anchor="middle">sessions · subagents</text>
+        <!-- self-loop arrow -->
+        <path class="loopline" d="M225,196 C210,168 360,168 345,196" marker-end="url(#aha)"/>
+        <text class="stg" x="285" y="176" text-anchor="middle">repeat until done</text>
+
+        <!-- CONFIG feeds loop (top) -->
+        <rect class="box" x="200" y="60" width="170" height="46" rx="8"/>
+        <text class="stg" x="285" y="78" text-anchor="middle">STAGE 2</text>
+        <text class="lbl" x="285" y="95" text-anchor="middle">Claude Code config</text>
+        <path class="flowline" d="M285,106 L285,194" marker-end="url(#ah)"/>
+
+        <!-- TOOLS feed loop (left-in) -->
+        <rect class="box" x="176" y="308" width="150" height="42" rx="8"/>
+        <text class="stg" x="251" y="325" text-anchor="middle">STAGE 3</text>
+        <text class="lbl" x="251" y="341" text-anchor="middle">MCP tools</text>
+        <path class="flowline" d="M285,308 L285,294" marker-end="url(#ah)"/>
+
+        <!-- loop output → extraction -->
+        <path class="flowline-accent" d="M360,244 L400,244" marker-end="url(#aha)"/>
+
+        <!-- EXTRACTION -->
+        <rect class="box" x="404" y="196" width="150" height="96" rx="10"/>
+        <text class="stg" x="479" y="216" text-anchor="middle">STAGE 4</text>
+        <text class="lbl" x="479" y="236" text-anchor="middle">Extract findings</text>
+        <text class="sub" x="479" y="254" text-anchor="middle">JSON schema</text>
+        <text class="sub" x="479" y="268" text-anchor="middle">validate &middot; batch</text>
+
+        <!-- extraction → self review -->
+        <path class="flowline-accent" d="M554,244 L590,244" marker-end="url(#aha)"/>
+
+        <!-- SELF REVIEW -->
+        <rect class="box" x="594" y="196" width="150" height="96" rx="10"/>
+        <text class="stg" x="669" y="216" text-anchor="middle">STAGE 5</text>
+        <text class="lbl" x="669" y="236" text-anchor="middle">Self-review</text>
+        <text class="sub" x="669" y="254" text-anchor="middle">cut false positives</text>
+        <text class="sub" x="669" y="268" text-anchor="middle">few-shot · criteria</text>
+
+        <!-- self review → confidence gate -->
+        <path class="flowline-accent" d="M669,292 L669,332" marker-end="url(#aha)"/>
+
+        <!-- CONFIDENCE GATE -->
+        <rect class="box-amber" x="560" y="336" width="218" height="52" rx="10"/>
+        <text class="stg" x="669" y="356" text-anchor="middle">STAGE 7</text>
+        <text class="lbl" x="669" y="373" text-anchor="middle">Confidence gate &mdash; where does it go?</text>
+
+        <!-- three outcomes -->
+        <rect class="box-accent" x="516" y="416" width="120" height="40" rx="8"/>
+        <text class="lbl" x="576" y="440" text-anchor="middle" style="font-size:12px">Auto-post</text>
+        <rect class="box-amber" x="646" y="416" width="120" height="40" rx="8"/>
+        <text class="lbl" x="706" y="435" text-anchor="middle" style="font-size:12px">Human queue</text>
+        <text class="sub" x="706" y="449" text-anchor="middle">human-in-the-loop</text>
+        <rect class="box" x="776" y="416" width="34" height="40" rx="8"/>
+        <text class="sub" x="793" y="440" text-anchor="middle">drop</text>
+
+        <path class="flowline-accent" d="M640,388 L590,414" marker-end="url(#aha)"/>
+        <path class="flowline" d="M690,388 L706,414" marker-end="url(#ah)"/>
+        <path class="flowline" d="M740,380 L790,414" marker-end="url(#ah)"/>
+      </svg>
+      <figcaption>The pull request enters the loop; each finding exits through the confidence gate.</figcaption>
+    </figure>
+
+    <div class="note">
+      Don&rsquo;t worry if a box uses a word you don&rsquo;t know yet &mdash; the glossary below defines
+      every term in the diagram, and each stage explains its own box in full when you reach it.
+    </div>
+
+    <h3>The terms this lab uses</h3>
+    <p>These come up across multiple stages. Skim them now; you don&rsquo;t need to memorize them &mdash; they&rsquo;ll make sense as you build.</p>
+
+    <div class="glossary">
+      <dl>
+        <dt>Agent loop</dt>
+        <dd>The cycle the SDK runs for you: send the model a prompt, let it call a tool, run that tool, feed the result back, repeat &mdash; until the model produces a final answer instead of another tool call. The thing you&rsquo;d otherwise hand-write with the raw Messages API.</dd>
+
+        <dt>Claude Agent SDK</dt>
+        <dd>The library that runs the agent loop, built-in tools, and context management for you, callable from Python or TypeScript. <span class="also">The renamed successor to the &ldquo;Claude Code SDK&rdquo; &mdash; old names <code>claude-code-sdk</code> / <code>ClaudeCodeOptions</code> are stale.</span></dd>
+
+        <dt>Tool</dt>
+        <dd>A capability the agent can invoke &mdash; read a file, run a search, fetch a diff. Built-in tools (Read, Grep, Glob, Bash&hellip;) ship with the SDK; you also define your own.</dd>
+
+        <dt>Subagent</dt>
+        <dd>A specialized agent the main agent spawns for a focused subtask. It runs in its <em>own</em> context and returns only its final message to the parent &mdash; used for specialization and to keep the parent&rsquo;s context clean.</dd>
+
+        <dt>Session</dt>
+        <dd>One continuous run of the agent with memory of what happened. Each new call starts fresh unless you <em>resume</em> a prior session by its ID &mdash; that&rsquo;s how the agent &ldquo;remembers&rdquo; an earlier review.</dd>
+
+        <dt>Context (window)</dt>
+        <dd>Everything the model can &ldquo;see&rdquo; at once &mdash; the conversation, files read, tool results so far. It&rsquo;s finite, so a long review can fill it and degrade quality; managing it is Stage 6&rsquo;s whole job.</dd>
+
+        <dt>CLAUDE.md</dt>
+        <dd>A project-context file the agent reads automatically. Layered by scope (user &rarr; project &rarr; subdirectory), with the more specific file winning.</dd>
+
+        <dt>Skill</dt>
+        <dd>A reusable capability packaged as a folder with a <code>SKILL.md</code> and YAML frontmatter (e.g. <code>allowed-tools</code>, <code>context: fork</code>). Here, a <code>pr-review</code> skill.</dd>
+
+        <dt>MCP <span class="also">(Model Context Protocol)</span></dt>
+        <dd>The open protocol that connects an agent to external systems &mdash; GitHub, a browser, a database &mdash; through servers that expose tools. How your agent reaches beyond the local files.</dd>
+
+        <dt>Structured output</dt>
+        <dd>Model output constrained to a JSON Schema you define, so it comes back in a fixed shape you can process. Guarantees the <em>format</em>, not the correctness &mdash; which is why validation still matters.</dd>
+
+        <dt>Message Batches API</dt>
+        <dd>An asynchronous endpoint for bulk requests &mdash; up to 100k per batch, results within 24 hours, at half the token cost. For processing a queue of PRs, not interactive review.</dd>
+
+        <dt>Escalation / human-in-the-loop</dt>
+        <dd>Handing a decision to a person instead of resolving it autonomously &mdash; on a defined trigger (policy gap, explicit request, can&rsquo;t progress) or when confidence is too low to act alone.</dd>
+
+        <dt>Finding</dt>
+        <dd>One issue the review produces &mdash; a file, an optional line, a severity, and a description. The unit of data that flows through extraction, review, and the confidence gate.</dd>
+      </dl>
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Before Stage 1</span>
+      <ul>
+        <li>You can state, in one sentence, what the finished agent does end to end.</li>
+        <li>You can trace a single finding through the diagram: loop &rarr; extract &rarr; review &rarr; gate.</li>
+        <li>The terms in the glossary look familiar &mdash; you&rsquo;ll cement them by building.</li>
+      </ul>
+    </div>
+  </section>
 
   <hr class="rule">
 
