@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<!-- build: 2026071301 -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCA-F Capstone Lab · A Claude Code Development Workflow</title>
+<style>
+  :root{
+    --ink:#1c1a17;
+    --ink-soft:#4a4640;
+    --paper:#f6f3ec;
+    --paper-raised:#fffdf8;
+    --line:#ddd6c8;
+    --line-strong:#c7bfab;
+    --accent:#2f6f5e;      /* deep teal-green: the "pass" signal */
+    --accent-deep:#204b40;
+    --accent-wash:#e5efe9;
+    --amber:#a56a1e;       /* escalation / caution */
+    --amber-wash:#f5ebd9;
+    --code-bg:#20241f;
+    --code-ink:#e7e4d8;
+    --code-key:#9ecb8f;
+    --code-str:#e0b877;
+    --code-dim:#8a877c;
+    --domain:#7a5cc4;      /* domain tag */
+    --domain-wash:#ece7f7;
+    --radius:10px;
+    --maxw:820px;
+    --mono:'DM Mono','SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;
+    --serif:'Newsreader',Georgia,'Times New Roman',serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--sans);font-size:17px;line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent-deep);text-underline-offset:2px}
+
+  /* ---------- Header ---------- */
+  header.masthead{
+    background:linear-gradient(180deg,var(--paper-raised),var(--paper));
+    border-bottom:1px solid var(--line-strong);
+    padding:56px 24px 40px;
+  }
+  .masthead-inner{max-width:var(--maxw);margin:0 auto}
+  .eyebrow{
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 18px;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  h1.title{
+    font-family:var(--serif);font-weight:600;font-size:clamp(34px,6vw,52px);
+    line-height:1.05;letter-spacing:-.01em;margin:0 0 20px;color:var(--ink);
+  }
+  h1.title em{font-style:italic;color:var(--accent-deep)}
+  .standfirst{
+    font-family:var(--serif);font-size:20px;line-height:1.5;color:var(--ink-soft);
+    max-width:64ch;margin:0 0 26px;
+  }
+  .prep-banner{
+    display:flex;gap:14px;align-items:flex-start;
+    background:var(--accent-wash);border:1px solid #bcd6cb;
+    border-radius:var(--radius);padding:16px 18px;font-size:15px;line-height:1.55;
+    color:var(--accent-deep);
+  }
+  .prep-banner strong{font-weight:600}
+  .prep-banner .icn{flex:0 0 auto;font-family:var(--mono);font-weight:500}
+
+  /* ---------- Layout ---------- */
+  main{max-width:var(--maxw);margin:0 auto;padding:8px 24px 96px}
+  section.stage{padding-top:52px;scroll-margin-top:20px}
+
+  .stage-head{margin-bottom:8px}
+  .stage-num{
+    font-family:var(--mono);font-size:13px;color:var(--accent);
+    letter-spacing:.08em;display:block;margin-bottom:6px;
+  }
+  h2{
+    font-family:var(--serif);font-weight:600;font-size:clamp(24px,4vw,32px);
+    line-height:1.15;letter-spacing:-.01em;margin:0 0 10px;
+  }
+  .domain-tag{
+    display:inline-block;font-family:var(--mono);font-size:11.5px;
+    letter-spacing:.04em;background:var(--domain-wash);color:var(--domain);
+    border-radius:20px;padding:3px 11px;margin-bottom:14px;
+  }
+  h3{font-family:var(--sans);font-weight:600;font-size:18px;margin:28px 0 8px}
+  p{margin:0 0 15px}
+  ul,ol{margin:0 0 15px;padding-left:22px}
+  li{margin-bottom:7px}
+  code{
+    font-family:var(--mono);font-size:.87em;background:#eae5da;
+    padding:1px 6px;border-radius:5px;color:var(--accent-deep);
+  }
+  .lede{font-size:18px;color:var(--ink-soft)}
+
+  /* ---------- Code blocks ---------- */
+  .code{
+    background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);
+    padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
+    line-height:1.6;margin:16px 0;border:1px solid #2c322a;
+  }
+  .code .k{color:var(--code-key)}
+  .code .s{color:var(--code-str)}
+  .code .c{color:var(--code-dim);font-style:italic}
+  .code .cmd{color:#e7e4d8}
+  .code-label{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent);margin:20px 0 -6px;display:block;
+  }
+
+  /* ---------- Callouts ---------- */
+  .note,.verify,.checkpoint{
+    border-radius:var(--radius);padding:15px 18px;margin:18px 0;font-size:15px;line-height:1.55;
+  }
+  .note{background:var(--paper-raised);border:1px solid var(--line-strong)}
+  .verify{background:var(--amber-wash);border:1px solid #e0c78f;color:#6b4a15}
+  .verify .lbl,.checkpoint .lbl{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    display:block;margin-bottom:5px;font-weight:500;
+  }
+  .verify .lbl{color:var(--amber)}
+  .checkpoint{background:var(--accent-wash);border:1px solid #bcd6cb;color:var(--accent-deep)}
+  .checkpoint .lbl{color:var(--accent)}
+  .checkpoint ul{margin:6px 0 0;padding-left:20px}
+  .checkpoint li{margin-bottom:4px}
+
+  /* ---------- Exam-lens ---------- */
+  .exam-lens{
+    border-left:3px solid var(--domain);background:var(--domain-wash);
+    padding:13px 16px 13px 18px;margin:18px 0;border-radius:0 var(--radius) var(--radius) 0;
+    font-size:14.5px;line-height:1.55;color:#3d2f5e;
+  }
+  .exam-lens .lbl{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--domain);display:block;margin-bottom:5px;font-weight:500;
+  }
+
+  /* ---------- Map / TOC ---------- */
+  .roadmap{
+    background:var(--paper-raised);border:1px solid var(--line-strong);
+    border-radius:var(--radius);padding:24px;margin:36px 0 8px;
+  }
+  .roadmap h2{font-size:20px;margin:0 0 4px}
+  .roadmap .sub{font-size:14px;color:var(--ink-soft);margin:0 0 18px}
+  .roadmap ol{list-style:none;padding:0;margin:0;counter-reset:rm}
+  .roadmap li{
+    counter-increment:rm;display:flex;gap:14px;align-items:baseline;
+    padding:11px 0;border-top:1px solid var(--line);margin:0;
+  }
+  .roadmap li:first-child{border-top:none}
+  .roadmap li::before{
+    content:counter(rm,decimal-leading-zero);font-family:var(--mono);font-size:13px;
+    color:var(--accent);flex:0 0 auto;width:24px;
+  }
+  .roadmap li.rm-start{counter-increment:none}
+  .roadmap li.rm-start::before{content:"\2192";font-size:14px}
+  .roadmap a{text-decoration:none;font-weight:500;color:var(--ink)}
+  .roadmap a:hover{color:var(--accent-deep)}
+  .roadmap .rm-domain{
+    font-family:var(--mono);font-size:11px;color:var(--domain);
+    margin-left:auto;flex:0 0 auto;white-space:nowrap;padding-left:12px;
+  }
+  .roadmap .rm-body{display:flex;flex-direction:column}
+  .roadmap .rm-body small{color:var(--ink-soft);font-weight:400;font-size:13.5px}
+
+  hr.rule{border:none;border-top:1px solid var(--line);margin:0}
+
+  /* ---------- Prereqs box ---------- */
+  .prereqs{
+    background:var(--paper-raised);border:1px dashed var(--line-strong);
+    border-radius:var(--radius);padding:20px 22px;margin:28px 0;
+  }
+  .prereqs h3{margin-top:0}
+  .prereqs code{background:#eae5da}
+
+  /* ---------- Footer ---------- */
+  footer{
+    max-width:var(--maxw);margin:0 auto;padding:40px 24px 80px;
+    border-top:1px solid var(--line-strong);color:var(--ink-soft);font-size:14px;
+  }
+  footer .disclaimer{font-size:13px;line-height:1.6;margin-top:14px}
+
+  .scenario{
+    font-family:var(--serif);font-style:italic;font-size:18px;line-height:1.55;
+    color:var(--ink-soft);border-left:3px solid var(--accent);
+    padding:4px 0 4px 18px;margin:18px 0;
+  }
+
+  /* ---------- Orientation ---------- */
+  .orient-intro{
+    font-size:18px;line-height:1.6;color:var(--ink-soft);margin:0 0 8px;
+  }
+  .orient-intro strong{color:var(--ink);font-weight:600}
+
+  .build-card{
+    background:var(--paper-raised);border:1px solid var(--line-strong);
+    border-radius:var(--radius);padding:22px 24px;margin:24px 0;
+  }
+  .build-card h3{margin:0 0 12px;font-size:16px}
+  .build-card .reads{
+    display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;
+    font-family:var(--mono);font-size:12.5px;
+  }
+  .build-card .chip{
+    background:var(--accent-wash);border:1px solid #bcd6cb;color:var(--accent-deep);
+    border-radius:20px;padding:4px 12px;
+  }
+
+  /* Flow diagram */
+  .flow-wrap{margin:28px 0 8px}
+  .flow-wrap figcaption{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-soft);margin-top:12px;text-align:center;
+  }
+  .flow-svg{width:100%;height:auto;display:block;
+    background:var(--paper-raised);border:1px solid var(--line-strong);border-radius:var(--radius);
+  }
+  .flow-svg .box{fill:var(--paper);stroke:var(--line-strong);stroke-width:1.2}
+  .flow-svg .box-accent{fill:var(--accent-wash);stroke:#bcd6cb;stroke-width:1.2}
+  .flow-svg .box-amber{fill:var(--amber-wash);stroke:#e0c78f;stroke-width:1.2}
+  .flow-svg .lbl{font-family:var(--sans);font-size:13px;font-weight:600;fill:var(--ink)}
+  .flow-svg .sub{font-family:var(--mono);font-size:10px;fill:var(--ink-soft)}
+  .flow-svg .stg{font-family:var(--mono);font-size:9.5px;fill:var(--accent);letter-spacing:.05em}
+  .flow-svg .flowline{stroke:var(--line-strong);stroke-width:1.4;fill:none}
+  .flow-svg .flowline-accent{stroke:var(--accent);stroke-width:1.6;fill:none}
+  .flow-svg .loopline{stroke:var(--accent);stroke-width:1.4;fill:none;stroke-dasharray:4 3}
+  .flow-svg .arrowhead{fill:var(--line-strong)}
+  .flow-svg .arrowhead-accent{fill:var(--accent)}
+  .flow-svg .zonelbl{font-family:var(--mono);font-size:10px;fill:var(--ink-soft);letter-spacing:.06em}
+
+  /* Glossary */
+  .glossary{margin:24px 0 8px}
+  .glossary dl{margin:0;border-top:1px solid var(--line)}
+  .glossary dt{
+    font-family:var(--mono);font-size:14px;font-weight:500;color:var(--accent-deep);
+    margin-top:16px;
+  }
+  .glossary dd{margin:4px 0 0;font-size:15px;line-height:1.55;color:var(--ink-soft)}
+  .glossary dd .also{font-family:var(--mono);font-size:12px;color:var(--ink-soft);opacity:.8}
+
+  @media (max-width:600px){
+    body{font-size:16px}
+    header.masthead{padding:40px 20px 32px}
+    main{padding:8px 20px 72px}
+    .roadmap li{flex-wrap:wrap}
+    .roadmap .rm-domain{margin-left:34px;padding-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="eyebrow"><span class="dot"></span> SF Knowledge Hub · Exam Prep Lab</p>
+    <h1 class="title">Set up Claude Code<br>on a <em>real repo</em>.</h1>
+    <p class="standfirst">
+      A single hands-on capstone: take a codebase you know and build a complete team
+      development workflow on it with Claude Code &mdash; a project <code>CLAUDE.md</code> and its
+      configuration hierarchy, custom slash commands for the four things your team does daily
+      (generate, refactor, debug, document), and the judgment for <strong>when to plan versus
+      execute directly</strong>, all while keeping a long session&rsquo;s context under control.
+    </p>
+    <div class="prep-banner">
+      <span class="icn">&#9873;</span>
+      <span>
+        <strong>This is a recommended preparatory step, not a certification course.</strong>
+        Finishing this lab does not grant a certificate and is not the CCA-F exam.
+        The exam is booked separately through Anthropic and requires completing
+        Anthropic&rsquo;s four official Skilljar courses first. Treat this as the
+        &ldquo;build something real&rdquo; practice the exam rewards.
+      </span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div class="roadmap">
+    <h2>The build, in seven stages</h2>
+    <p class="sub">One project &mdash; a fully-configured Claude Code workflow on a repo you actually work in. Work top to bottom; each stage builds on the last.</p>
+    <ol>
+      <li class="rm-start"><div class="rm-body"><a href="#orient">Orientation &mdash; what you&rsquo;re building</a><small>the setup, the flow diagram, the terms</small></div><span class="rm-domain">start here</span></li>
+      <li><div class="rm-body"><a href="#s1">Pick the repo &amp; write CLAUDE.md</a><small>project memory, what belongs, what doesn&rsquo;t</small></div><span class="rm-domain">Claude Code · 20%</span></li>
+      <li><div class="rm-body"><a href="#s2">Layer the configuration hierarchy</a><small>user vs project vs path-scoped rules</small></div><span class="rm-domain">Claude Code · 20%</span></li>
+      <li><div class="rm-body"><a href="#s3">Build the four team slash commands</a><small>generate, refactor, debug, document</small></div><span class="rm-domain">Claude Code · 20%</span></li>
+      <li><div class="rm-body"><a href="#s4">Plan mode vs. direct execution</a><small>when to plan, when to just do it</small></div><span class="rm-domain">Claude Code · 20%</span></li>
+      <li><div class="rm-body"><a href="#s5">Manage context on a long session</a><small>/context, /compact, subagents, scratchpad</small></div><span class="rm-domain">Context &amp; Reliability · 15%</span></li>
+      <li><div class="rm-body"><a href="#s6">Add guardrails that always hold</a><small>hooks &amp; settings vs. CLAUDE.md guidance</small></div><span class="rm-domain">Context &amp; Reliability · 15%</span></li>
+      <li><div class="rm-body"><a href="#s7">Ship it to the team</a><small>commit, verify shared config, onboard</small></div><span class="rm-domain">workflow in practice</span></li>
+    </ol>
+  </div>
+
+  <div class="prereqs">
+    <h3>Before you start</h3>
+    <p>You should be comfortable in a terminal and working in a real codebase &mdash; this lab assumes the developer experience the exam itself assumes. It does not stop to explain git or what a build command is.</p>
+    <ul>
+      <li><strong>Claude Code installed</strong> and authenticated (<code>claude auth status</code> should show you logged in). The native installer is the current recommended path.</li>
+      <li><strong>A real repo you know well</strong> &mdash; ideally one with a build, a test suite, and a few modules. You&rsquo;ll configure Claude Code <em>on this repo</em>, so pick something you can commit config to.</li>
+      <li>A few minutes in the CLI to try the <strong>Shift+Tab</strong> permission-mode cycle and the built-in commands (<code>/help</code>, <code>/context</code>, <code>/compact</code>) before Stage 4.</li>
+    </ul>
+    <div class="verify">
+      <span class="lbl">Verify before you build</span>
+      Claude Code moves fast &mdash; command locations (<code>.claude/commands/</code> vs. the newer
+      <code>.claude/skills/</code>), frontmatter keys, the permission-mode cycle, and key bindings
+      all carry real shelf-life. Wherever you see a <em>Verify</em> note, check it against the
+      current docs at <code>code.claude.com/docs</code>. The <em>shape</em> of each pattern is
+      stable; exact identifiers and shortcuts drift between versions.
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- ============ ORIENTATION ============ -->
+  <section class="stage" id="orient">
+    <div class="stage-head">
+      <span class="stage-num">Orientation</span>
+      <h2>What you&rsquo;re building, before you build it</h2>
+    </div>
+
+    <p class="orient-intro">
+      By the end of this lab you&rsquo;ll have <strong>one thing set up</strong>: a real repository with
+      a complete, committed Claude Code workflow on it &mdash; project context that every teammate
+      inherits, four slash commands that turn your team&rsquo;s daily tasks into six keystrokes, a
+      clear rule for when to plan and when to execute, and guardrails that hold even when someone
+      misconfigures their session. Every stage configures one more piece of that same setup. You
+      are not doing seven disconnected exercises; you are outfitting one repo in seven passes.
+    </p>
+
+    <div class="build-card">
+      <h3>The one thing you&rsquo;re building</h3>
+      <p style="margin:0">
+        A <strong>team-ready Claude Code workflow</strong> on a repo you know. It carries your
+        conventions in a layered <code>CLAUDE.md</code> hierarchy, exposes
+        <code>/generate</code>, <code>/refactor</code>, <code>/debug</code>, and
+        <code>/document</code> as shared commands, encodes when to use plan mode versus direct
+        execution, and stays reliable across long sessions and multiple teammates.
+      </p>
+      <div class="reads">
+        <span class="chip">input &rarr; a repo + your conventions</span>
+        <span class="chip">output &rarr; a committed .claude/ setup</span>
+        <span class="chip">payoff &rarr; the whole team inherits it</span>
+      </div>
+    </div>
+
+    <h3>How the seven stages connect</h3>
+    <p>
+      Read the diagram as a configured workspace. At the center is a <strong>Claude Code
+      session</strong> working on your repo. The <strong>CLAUDE.md hierarchy</strong> (Stages 1&ndash;2)
+      feeds it context; the <strong>four slash commands</strong> (Stage 3) are the actions your team
+      invokes; the <strong>plan-vs-execute decision</strong> (Stage 4) governs how each task runs;
+      <strong>context management</strong> (Stage 5) keeps long sessions healthy; <strong>guardrails</strong>
+      (Stage 6) enforce what must always hold; and <strong>shipping</strong> (Stage 7) commits the
+      whole setup so the team inherits it.
+    </p>
+
+    <figure class="flow-wrap">
+      <svg class="flow-svg" viewBox="0 0 820 500" xmlns="http://www.w3.org/2000/svg" role="img"
+           aria-label="Diagram of a configured Claude Code workflow: a CLAUDE.md hierarchy and four slash commands feed a Claude Code session working on a repo; a plan-versus-execute decision governs each task; context management wraps the session; guardrails enforce hard rules; the whole setup is committed and shared with the team.">
+        <defs>
+          <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 Z" class="arrowhead"/>
+          </marker>
+          <marker id="aha" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 Z" class="arrowhead-accent"/>
+          </marker>
+        </defs>
+
+        <!-- CLAUDE.md hierarchy (top-left, feeds session) -->
+        <rect class="box" x="24" y="150" width="170" height="70" rx="8"/>
+        <text class="stg" x="109" y="170" text-anchor="middle">STAGE 1&ndash;2</text>
+        <text class="lbl" x="109" y="189" text-anchor="middle">CLAUDE.md hierarchy</text>
+        <text class="sub" x="109" y="206" text-anchor="middle">user · project · rules</text>
+        <path class="flowline" d="M194,190 C240,190 244,232 288,232" marker-end="url(#ah)"/>
+
+        <!-- slash commands (bottom-left, feeds session) -->
+        <rect class="box" x="24" y="290" width="170" height="70" rx="8"/>
+        <text class="stg" x="109" y="310" text-anchor="middle">STAGE 3</text>
+        <text class="lbl" x="109" y="329" text-anchor="middle">Four slash commands</text>
+        <text class="sub" x="109" y="346" text-anchor="middle">/generate /refactor …</text>
+        <path class="flowline" d="M194,322 C240,322 244,268 288,268" marker-end="url(#ah)"/>
+
+        <!-- context zone wraps the session -->
+        <rect x="270" y="176" width="250" height="150" rx="12" fill="none"
+              stroke="var(--accent)" stroke-width="1" stroke-dasharray="5 4" opacity="0.55"/>
+        <text class="zonelbl" x="278" y="168">STAGE 5 · context management wraps the session</text>
+
+        <!-- Claude Code session (center) -->
+        <rect class="box-accent" x="292" y="212" width="200" height="80" rx="10"/>
+        <text class="lbl" x="392" y="238" text-anchor="middle">Claude Code session</text>
+        <text class="sub" x="392" y="256" text-anchor="middle">working on your repo</text>
+        <text class="sub" x="392" y="272" text-anchor="middle">generate · refactor · debug · doc</text>
+
+        <!-- session → decision -->
+        <path class="flowline-accent" d="M492,252 L532,252" marker-end="url(#aha)"/>
+
+        <!-- plan vs execute decision -->
+        <rect class="box-amber" x="536" y="220" width="160" height="64" rx="10"/>
+        <text class="stg" x="616" y="240" text-anchor="middle">STAGE 4</text>
+        <text class="lbl" x="616" y="258" text-anchor="middle">Plan or execute?</text>
+        <text class="sub" x="616" y="274" text-anchor="middle">risk &amp; scope decide</text>
+
+        <!-- decision outcomes -->
+        <path class="flowline-accent" d="M696,240 C724,240 726,206 752,206" marker-end="url(#aha)"/>
+        <path class="flowline" d="M696,266 C724,266 726,300 752,300" marker-end="url(#ah)"/>
+        <text class="stg" x="785" y="200" text-anchor="middle" style="fill:var(--accent)">plan first</text>
+        <text class="sub" x="785" y="212" text-anchor="middle">risky · wide</text>
+        <text class="stg" x="785" y="298" text-anchor="middle" style="fill:var(--ink-soft)">execute</text>
+        <text class="sub" x="785" y="310" text-anchor="middle">small · safe</text>
+
+        <!-- guardrails under session -->
+        <rect class="box-amber" x="292" y="342" width="200" height="44" rx="8"/>
+        <text class="stg" x="392" y="360" text-anchor="middle">STAGE 6</text>
+        <text class="lbl" x="392" y="377" text-anchor="middle" style="font-size:12px">Guardrails: hooks &amp; settings</text>
+        <path class="flowline" d="M392,342 L392,294" marker-end="url(#ah)" opacity="0.6"/>
+
+        <!-- ship to team (bottom) -->
+        <rect class="box-accent" x="300" y="424" width="230" height="52" rx="10"/>
+        <text class="stg" x="415" y="444" text-anchor="middle">STAGE 7</text>
+        <text class="lbl" x="415" y="462" text-anchor="middle">Commit &amp; share with the team</text>
+        <path class="flowline" d="M415,424 C415,408 415,398 415,388" marker-end="url(#ah)" opacity="0.5"/>
+        <text class="sub" x="620" y="452" text-anchor="middle" style="fill:var(--ink-soft)">everyone inherits the setup</text>
+      </svg>
+      <figcaption>Context and commands feed one session; each task is planned or executed, and the whole setup ships to the team.</figcaption>
+    </figure>
+
+    <div class="note">
+      Don&rsquo;t worry if a box uses a word you don&rsquo;t know yet &mdash; the glossary below defines
+      every term in the diagram, and each stage explains its own box in full when you reach it.
+    </div>
+
+    <h3>The terms this lab uses</h3>
+    <p>These come up across multiple stages. Skim them now; you don&rsquo;t need to memorize them &mdash; they&rsquo;ll make sense as you build.</p>
+
+    <div class="glossary">
+      <dl>
+        <dt>Claude Code</dt>
+        <dd>Anthropic&rsquo;s command-line coding tool &mdash; you run <code>claude</code> in a repo and it reads, writes, and runs commands to help you develop. This lab is about configuring and driving <em>it</em> (not building an agent with the SDK).</dd>
+
+        <dt>CLAUDE.md</dt>
+        <dd>A markdown file of persistent instructions Claude Code loads at the start of every session &mdash; your build commands, conventions, and architectural notes, so you don&rsquo;t re-explain them each time. Treated as context, not enforced rules.</dd>
+
+        <dt>Configuration hierarchy</dt>
+        <dd>The layered set of memory files &mdash; user (<code>~/.claude/CLAUDE.md</code>), project (<code>./CLAUDE.md</code>), path-scoped rules (<code>.claude/rules/</code>), and more &mdash; where more specific instructions take precedence over broader ones.</dd>
+
+        <dt>Path-scoped rule</dt>
+        <dd>A file in <code>.claude/rules/</code> with a <code>paths:</code> glob in its frontmatter, so its instructions load only when Claude works on matching files. How you keep area-specific rules out of every session&rsquo;s context.</dd>
+
+        <dt>Slash command</dt>
+        <dd>A reusable prompt you invoke by typing <code>/name</code>. Defined as a markdown file in <code>.claude/commands/</code> (legacy) or <code>.claude/skills/&lt;name&gt;/SKILL.md</code> (current), with optional frontmatter (<code>description</code>, <code>allowed-tools</code>, <code>argument-hint</code>, <code>model</code>) and a <code>$ARGUMENTS</code> placeholder.</dd>
+
+        <dt>Plan mode</dt>
+        <dd>A read-only permission mode where Claude Code investigates and proposes a plan but changes nothing until you approve. Reached with Shift+Tab, <code>/plan</code>, or <code>--permission-mode plan</code>. Its read-only nature is enforced at the tool level.</dd>
+
+        <dt>Direct execution</dt>
+        <dd>Letting Claude Code make changes as it goes &mdash; the default and acceptEdits modes &mdash; without a separate planning step. Right for small, well-scoped, reversible tasks.</dd>
+
+        <dt>Permission mode</dt>
+        <dd>How often Claude Code pauses for approval: default (asks), acceptEdits (auto-approves edits), plan (read-only), plus dontAsk / bypass for automation. Cycle the common three with Shift+Tab.</dd>
+
+        <dt>Context (window)</dt>
+        <dd>Everything the session holds at once &mdash; CLAUDE.md, files read, the conversation. It&rsquo;s finite; a long session fills it and adherence drops. <code>/context</code> shows usage; <code>/compact</code> compresses it.</dd>
+
+        <dt>Compaction</dt>
+        <dd>Compressing the conversation to free context (<code>/compact</code>, or automatic near the limit). Project-root CLAUDE.md survives it &mdash; re-read from disk &mdash; but conversation-only instructions do not.</dd>
+
+        <dt>Hook</dt>
+        <dd>A callback that fires at a lifecycle point (e.g. <code>PreToolUse</code>) and can allow, deny, or modify an action. Where hard guarantees belong, because a hook&rsquo;s deny holds regardless of what Claude decides &mdash; unlike CLAUDE.md, which is guidance.</dd>
+
+        <dt>Explore &rarr; Plan &rarr; Execute</dt>
+        <dd>The workflow this lab teaches: let Claude explore the code, produce a plan you approve, then switch to execution. The pattern that makes plan mode pay off on non-trivial work.</dd>
+      </dl>
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Before Stage 1</span>
+      <ul>
+        <li>You can state, in one sentence, what the finished setup gives your team.</li>
+        <li>You can trace a task through the diagram: context + command &rarr; session &rarr; plan or execute.</li>
+        <li>You can name the difference between CLAUDE.md (guidance) and a hook (enforced).</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ STAGE 1 ============ -->
+  <section class="stage" id="s1">
+    <div class="stage-head">
+      <span class="stage-num">Stage 01</span>
+      <h2>Pick the repo &amp; write CLAUDE.md</h2>
+      <span class="domain-tag">Claude Code Configuration &amp; Workflows &middot; 20%</span>
+    </div>
+    <p class="lede">Everything starts with project context. A good <code>CLAUDE.md</code> is the onboarding document Claude reads before every session &mdash; it&rsquo;s the highest-leverage file in your whole setup, because a bad line here degrades every task. Write a tight one for your repo.</p>
+
+    <div class="scenario">Every new session, Claude Code starts knowing nothing about your repo. Without CLAUDE.md, you re-explain your build command, your conventions, and your architecture every single time.</div>
+
+    <h3>1a &middot; Create the project CLAUDE.md</h3>
+    <p>It lives at <code>./CLAUDE.md</code> (or <code>./.claude/CLAUDE.md</code>) in your repo root, and it&rsquo;s committed &mdash; shared with everyone on the team. Run <code>claude</code> in your repo and use the <code>/init</code> command to scaffold one from your codebase, then edit it down.</p>
+    <span class="code-label">./CLAUDE.md</span>
+    <div class="code"><span class="c"># [Your Project] — context for Claude Code</span>
+
+<span class="c">## Commands</span>
+- build: `make build`
+- test:  `pytest -q`
+- lint:  `ruff check .`
+
+<span class="c">## Conventions</span>
+- Python 3.11, type hints required on public functions.
+- Errors: raise typed exceptions, never return None on failure.
+- Tests live next to the module as `test_*.py`.
+
+<span class="c">## Architecture</span>
+- `api/` HTTP layer · `core/` domain logic · `store/` persistence.
+- Never import `store/` directly from `api/` — go through `core/`.</div>
+
+    <h3>1b &middot; What belongs &mdash; and what doesn&rsquo;t</h3>
+    <p>The discipline that separates a useful CLAUDE.md from a bloated one:</p>
+    <ul>
+      <li><strong>Do include:</strong> build/test/lint commands, project-wide conventions, architectural constraints, naming rules &mdash; things that apply to <em>every</em> session and that Claude can&rsquo;t infer from the code.</li>
+      <li><strong>Don&rsquo;t include:</strong> generic advice (&ldquo;write clean code&rdquo; &mdash; Claude already knows), one-off task instructions (those go in the prompt), or detailed style rules a <em>linter</em> should enforce. Claude is an in-context learner; if your code is consistent, it picks up style by reading it.</li>
+    </ul>
+
+    <h3>1c &middot; Keep it under ~200 lines</h3>
+    <p>CLAUDE.md loads into context at the start of every session, spending tokens alongside your work. The docs target <strong>under 200 lines</strong>; past that, context fills and adherence to your instructions actually drops. If it&rsquo;s growing, that&rsquo;s the signal to split into path-scoped rules &mdash; Stage 2.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      Know that CLAUDE.md is <strong>context, not enforcement</strong> &mdash; Claude treats it as
+      guidance, so &ldquo;put a hard rule in CLAUDE.md&rdquo; is the wrong answer when the scenario
+      needs a guarantee (that&rsquo;s a hook, Stage 6). Know the 200-line adherence effect, and that
+      style belongs in a linter, not CLAUDE.md. These are recurring distractors.
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      <code>/init</code>, the <code>./CLAUDE.md</code> vs <code>./.claude/CLAUDE.md</code> locations, and
+      the 200-line guidance are current, but specifics shift. Confirm against
+      <code>code.claude.com/docs/en/memory</code>.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 1 done when</span>
+      <ul>
+        <li>Your repo has a committed <code>CLAUDE.md</code> with real commands, conventions, and architecture.</li>
+        <li>It contains nothing generic, no one-off task notes, and no style rules a linter should own.</li>
+        <li>It&rsquo;s under ~200 lines &mdash; and you know what you&rsquo;d split out if it grew.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 2 ============ -->
+  <section class="stage" id="s2">
+    <div class="stage-head">
+      <span class="stage-num">Stage 02</span>
+      <h2>Layer the configuration hierarchy</h2>
+      <span class="domain-tag">Claude Code Configuration &amp; Workflows &middot; 20%</span>
+    </div>
+    <p class="lede">One CLAUDE.md rarely fits a whole team and a whole codebase. Claude Code reads a <em>hierarchy</em> of memory files, from your personal preferences down to rules that fire only in specific folders. Understanding what wins when they conflict is exactly what the exam probes.</p>
+
+    <h3>2a &middot; The layers, broad to specific</h3>
+    <p>Claude Code walks up the directory tree and loads every CLAUDE.md it finds, plus rules. In order of increasing specificity:</p>
+    <ul>
+      <li><strong>User</strong> &mdash; <code>~/.claude/CLAUDE.md</code>: your personal preferences across <em>all</em> projects. Never committed. (&ldquo;When no project style exists, I prefer explicit error handling.&rdquo;)</li>
+      <li><strong>Project</strong> &mdash; <code>./CLAUDE.md</code>: team-wide, committed via git. The Stage 1 file.</li>
+      <li><strong>Path-scoped rules</strong> &mdash; <code>.claude/rules/*.md</code>: load conditionally by <code>paths:</code> glob. Same priority as the project CLAUDE.md, but scoped.</li>
+      <li><strong>Local</strong> &mdash; <code>CLAUDE.local.md</code>: your personal, project-specific notes; auto-gitignored.</li>
+      <li><strong>Subdirectory</strong> &mdash; a <code>CLAUDE.md</code> deeper in the tree loads on demand when Claude reads files there.</li>
+    </ul>
+    <p><strong>Precedence:</strong> more specific wins. If your user file says &ldquo;2-space indent&rdquo; and the project file says &ldquo;4-space,&rdquo; the project instruction wins for that project.</p>
+
+    <h3>2b &middot; Path-scoped rules for area-specific instructions</h3>
+    <p>When a rule only matters for one part of the codebase, scope it &mdash; so it loads only when Claude touches those files, keeping every other session&rsquo;s context lean.</p>
+    <span class="code-label">.claude/rules/api.md</span>
+    <div class="code"><span class="c">---</span>
+<span class="k">paths</span>:
+  - <span class="s">"api/**/*.py"</span>
+<span class="c">---</span>
+<span class="c"># API-layer rules</span>
+- Every endpoint validates input before touching core logic.
+- Use the standard error envelope: {code, message, retryable}.
+- Never call `store/` directly — route through `core/`.</div>
+    <div class="note">
+      A rule with no <code>paths:</code> field loads <em>unconditionally</em> &mdash; the usual reason
+      a rule that should be scoped is firing everywhere. And <code>.claude/rules/*.md</code> share
+      priority with <code>.claude/CLAUDE.md</code>; they don&rsquo;t override it.
+    </div>
+
+    <h3>2c &middot; Diagnose a &ldquo;why isn&rsquo;t my rule applying?&rdquo; problem</h3>
+    <p>This is a core exam skill. When behavior diverges &mdash; a teammate isn&rsquo;t getting an instruction, or a rule fires in the wrong place &mdash; check <strong>scope</strong> first:</p>
+    <ul>
+      <li>Teammate not receiving an instruction? It&rsquo;s probably in <em>your</em> user file or <code>CLAUDE.local.md</code>, which aren&rsquo;t shared &mdash; move it to the project CLAUDE.md.</li>
+      <li>Rule firing everywhere? It&rsquo;s missing a <code>paths:</code> field.</li>
+      <li>Instruction vanished after <code>/compact</code>? It was given in conversation only, or lives in a nested CLAUDE.md that hasn&rsquo;t reloaded &mdash; put it in the project file to persist.</li>
+      <li>Use <code>/memory</code> to see exactly which files are loaded and in what order before concluding a rule is ignored.</li>
+    </ul>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      This domain is tested heavily as <strong>hierarchy diagnosis</strong>: a scenario describes
+      conflicting or missing instructions and asks which level wins or where the fix goes. The
+      keys: more-specific-wins, user is personal / project is shared / path-rules are scoped,
+      and <code>/memory</code> is the debugging tool. Know when to reach for
+      <code>.claude/rules/</code> versus a directory-level CLAUDE.md.
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      The layer set and precedence are current, but exact filenames (<code>CLAUDE.local.md</code>),
+      the <code>paths:</code> frontmatter, and the managed/enterprise layers evolve. Confirm the
+      full resolution order against <code>code.claude.com/docs/en/memory</code>.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 2 done when</span>
+      <ul>
+        <li>You have a user-level preference, a project CLAUDE.md, and at least one path-scoped rule that fires only in its folder.</li>
+        <li>You&rsquo;ve deliberately created a conflict and confirmed the more-specific instruction wins.</li>
+        <li>You can use <code>/memory</code> to explain which files loaded and why.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 3 ============ -->
+  <section class="stage" id="s3">
+    <div class="stage-head">
+      <span class="stage-num">Stage 03</span>
+      <h2>Build the four team slash commands</h2>
+      <span class="domain-tag">Claude Code Configuration &amp; Workflows &middot; 20%</span>
+    </div>
+    <p class="lede">Your team does four things with Claude Code daily: generate, refactor, debug, document. Turn each into a slash command &mdash; a saved prompt anyone invokes with six keystrokes, committed to the repo so the whole team shares the same workflow.</p>
+
+    <h3>3a &middot; The shape of a command</h3>
+    <p>A command is a markdown file whose body is the prompt and whose filename is the command name. Optional YAML frontmatter tunes it: <code>description</code> (shown in the picker), <code>allowed-tools</code> (restricts scope), <code>argument-hint</code>, and <code>model</code> (pin a model for the task). <code>$ARGUMENTS</code> holds whatever you type after the command.</p>
+    <div class="note">
+      Location note: <code>.claude/commands/*.md</code> is the original format and still works;
+      the current recommended format is <code>.claude/skills/&lt;name&gt;/SKILL.md</code>, which supports
+      the same <code>/name</code> invocation plus autonomous use by Claude. This lab shows the
+      <code>.claude/commands/</code> form for clarity &mdash; the frontmatter is the same either way.
+    </div>
+
+    <h3>3b &middot; The four commands</h3>
+    <p>Each maps a team task to a command, with the frontmatter doing real work &mdash; note how <code>allowed-tools</code> and <code>model</code> encode intent.</p>
+
+    <span class="code-label">.claude/commands/generate.md</span>
+    <div class="code"><span class="c">---</span>
+<span class="k">description</span>: Generate a new module or function to spec
+<span class="k">argument-hint</span>: [what to build]
+<span class="k">allowed-tools</span>: Read, Edit, Bash(pytest *)
+<span class="c">---</span>
+Generate: $ARGUMENTS
+
+Follow the conventions in CLAUDE.md. Write the code, add tests
+next to it as test_*.py, and run pytest to confirm they pass.</div>
+
+    <span class="code-label">.claude/commands/refactor.md</span>
+    <div class="code"><span class="c">---</span>
+<span class="k">description</span>: Refactor code without changing behavior
+<span class="k">argument-hint</span>: [file or module]
+<span class="k">allowed-tools</span>: Read, Edit, Bash(pytest *)
+<span class="k">model</span>: opus            <span class="c"># design work — pin the stronger model</span>
+<span class="c">---</span>
+Refactor $ARGUMENTS for clarity and structure. Do NOT change
+behavior. Run the tests before and after to prove equivalence.</div>
+
+    <span class="code-label">.claude/commands/debug.md</span>
+    <div class="code"><span class="c">---</span>
+<span class="k">description</span>: Reproduce and fix a bug
+<span class="k">argument-hint</span>: [bug description or issue #]
+<span class="k">allowed-tools</span>: Read, Edit, Bash
+<span class="c">---</span>
+Debug: $ARGUMENTS
+
+1. Write a failing test that reproduces it.
+2. Find the root cause — explain it before fixing.
+3. Fix, then confirm the test passes and nothing else broke.</div>
+
+    <span class="code-label">.claude/commands/document.md</span>
+    <div class="code"><span class="c">---</span>
+<span class="k">description</span>: Add or update documentation for code
+<span class="k">argument-hint</span>: [file or module]
+<span class="k">allowed-tools</span>: Read, Edit
+<span class="k">model</span>: haiku           <span class="c"># mechanical work — cheaper model is plenty</span>
+<span class="c">---</span>
+Document $ARGUMENTS: docstrings on public functions, and a short
+module header explaining its role. Match the existing doc style.</div>
+
+    <h3>3c &middot; Why the frontmatter matters</h3>
+    <ul>
+      <li><strong><code>allowed-tools</code> declares intent.</strong> <code>/document</code> lists only <code>Read, Edit</code> &mdash; it can&rsquo;t run shell commands, so it can&rsquo;t accidentally do more than document. A narrow surface is a safer command.</li>
+      <li><strong><code>model</code> matches the task.</strong> Mechanical work (docs) runs fine on Haiku at a fraction of the cost; design work (refactor) pins Opus so nobody invokes it on a downgraded model and gets a worse result than it was tuned for.</li>
+      <li><strong>Namespacing:</strong> subfolders group commands &mdash; <code>.claude/commands/release/notes.md</code> becomes <code>/release:notes</code>.</li>
+    </ul>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      Expect questions on <strong>frontmatter</strong> (what <code>allowed-tools</code> restricts,
+      what <code>$ARGUMENTS</code> captures), on <strong>scope</strong> (project
+      <code>.claude/commands/</code> shared vs. <code>~/.claude/commands/</code> personal), and on the
+      <strong>commands-are-now-skills</strong> convergence. Model-pinning per command (Haiku for
+      mechanical, Opus for design) is a favorite &ldquo;which is most cost-effective&rdquo; item.
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      The <code>.claude/commands/</code> vs <code>.claude/skills/</code> split, frontmatter keys, and
+      whether <code>model</code> takes a friendly name or full ID all move between versions.
+      Confirm against the slash-commands and skills docs before committing team-wide.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 3 done when</span>
+      <ul>
+        <li>All four commands exist, are committed, and run on your repo.</li>
+        <li>At least one restricts <code>allowed-tools</code> and one pins a <code>model</code> to fit the task.</li>
+        <li>You&rsquo;ve invoked one with an argument and seen <code>$ARGUMENTS</code> substituted.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 4 ============ -->
+  <section class="stage" id="s4">
+    <div class="stage-head">
+      <span class="stage-num">Stage 04</span>
+      <h2>Plan mode vs. direct execution</h2>
+      <span class="domain-tag">Claude Code Configuration &amp; Workflows &middot; 20%</span>
+    </div>
+    <p class="lede">Knowing <em>when</em> to plan is one of the highest-value judgments in the whole tool. Plan mode makes Claude investigate and propose before touching anything; direct execution just does the work. Use the wrong one and you either add friction to a typo fix or let a risky refactor run unsupervised.</p>
+
+    <div class="scenario">&ldquo;Fix this type annotation&rdquo; wants direct execution &mdash; one obvious change. &ldquo;Restructure the API layer to add input validation everywhere&rdquo; wants a plan you approve first, or Claude may reorganize things in a direction you didn&rsquo;t want.</div>
+
+    <h3>4a &middot; What plan mode is</h3>
+    <p>Plan mode is a <strong>read-only permission mode</strong>: Claude reads, searches, and proposes a step-by-step plan, but the read-only constraint is enforced at the tool level &mdash; it <em>cannot</em> edit files or run commands until you approve. Enter it three ways:</p>
+    <div class="code"><span class="c"># 1. Mid-session: cycle permission modes</span>
+Shift+Tab   <span class="c"># default → acceptEdits → plan (watch the status bar)</span>
+
+<span class="c"># 2. Slash command</span>
+/plan
+
+<span class="c"># 3. Start the session in plan mode</span>
+claude --permission-mode plan</div>
+    <div class="note">
+      On some terminals Shift+Tab only toggles two modes; use <code>/plan</code> or check your key
+      bindings. The status bar shows <code>&#9208; plan mode on</code> when it&rsquo;s active &mdash; watch
+      it rather than assuming one keypress landed.
+    </div>
+
+    <h3>4b &middot; The decision, as a rule</h3>
+    <p>The heuristic worth making muscle memory: <strong>if you can already picture the diff, execute directly; if you can&rsquo;t, plan first.</strong> Concretely:</p>
+    <ul>
+      <li><strong>Plan first</strong> when: the change touches many files, it&rsquo;s a refactor crossing module boundaries, it&rsquo;s a codebase you don&rsquo;t know, it hits auth / billing / migrations, or the instruction is ambiguous. The plan is cheaper than the rework.</li>
+      <li><strong>Execute directly</strong> when: it&rsquo;s a single-file change, it&rsquo;s trivially reversible (a <code>git revert</code> fixes it), you&rsquo;ve done this shape of task before, or you&rsquo;re in a tight iteration loop.</li>
+    </ul>
+
+    <h3>4c &middot; The Explore &rarr; Plan &rarr; Execute pattern</h3>
+    <p>For a real feature, run the full loop: let Claude <strong>explore</strong> (read the relevant code in plan mode), have it <strong>plan</strong> (a specific, file-by-file proposal you can edit &mdash; open it with Ctrl+G and tighten it), then approve and <strong>execute</strong>. Because it explored and you approved the approach, execution has no surprises. Plan mode also reads your CLAUDE.md during exploration, so your conventions shape the plan.</p>
+    <div class="note">
+      A subtlety worth internalizing: plan mode prevents accidental writes <em>during planning</em>
+      &mdash; it does not stop you approving a <em>bad</em> plan. The judgment is still yours; the mode
+      just makes the risky part visible before any file changes.
+    </div>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      Scenario-heavy: a task is described, you choose plan or direct. Map to the heuristic
+      &mdash; wide/risky/unfamiliar/ambiguous &rarr; plan; small/reversible/known &rarr; execute.
+      Know plan mode is a <strong>true tool-level read-only sandbox</strong>, the three ways to
+      enter it, and that it reads CLAUDE.md. The tempting wrong answers either plan everything
+      (friction) or execute everything (risk).
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      The Shift+Tab cycle order, <code>/plan</code>, the <code>--permission-mode plan</code> flag,
+      Ctrl+G to edit the plan, and model eligibility for plan mode are current but shift between
+      versions and platforms. Confirm against <code>code.claude.com/docs/en/permission-modes</code>.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 4 done when</span>
+      <ul>
+        <li>You&rsquo;ve run a trivial task with direct execution and a multi-file task through plan mode.</li>
+        <li>You reviewed and edited a proposed plan before approving it.</li>
+        <li>You can state the plan-vs-execute rule in one sentence and defend it on three examples.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 5 ============ -->
+  <section class="stage" id="s5">
+    <div class="stage-head">
+      <span class="stage-num">Stage 05</span>
+      <h2>Manage context on a long session</h2>
+      <span class="domain-tag">Context Management &amp; Reliability &middot; 15%</span>
+    </div>
+    <p class="lede">A long working session &mdash; hours of generating, refactoring, debugging &mdash; fills the context window. CLAUDE.md, every file read, the whole conversation all consume it, and as it fills, Claude&rsquo;s adherence to your instructions drops. Keep the working context lean.</p>
+
+    <h3>5a &middot; See what you&rsquo;re spending</h3>
+    <p>You can&rsquo;t manage what you can&rsquo;t see. <code>/context</code> shows how much of the window is in use and where it&rsquo;s going &mdash; CLAUDE.md, tool results, conversation. Check it when a long session starts feeling less sharp.</p>
+    <div class="code">/context     <span class="c"># show current context usage and breakdown</span>
+/memory      <span class="c"># show which instruction files are loaded, in order</span></div>
+
+    <h3>5b &middot; Compact, clear, and what survives</h3>
+    <p>Two levers when the window fills:</p>
+    <ul>
+      <li><code>/compact</code> compresses the conversation to free space. Crucially, <strong>project-root CLAUDE.md survives</strong> &mdash; Claude re-reads it from disk and re-injects it. Instructions given only in conversation do <em>not</em> survive; if a rule matters, it belongs in CLAUDE.md.</li>
+      <li><code>/clear</code> wipes the conversation entirely for a fresh start &mdash; use it between unrelated tasks so old context doesn&rsquo;t bleed in.</li>
+    </ul>
+    <div class="note">
+      This is the answer to a classic confusion: &ldquo;my instruction disappeared after /compact.&rdquo;
+      It was conversation-only, or in a nested CLAUDE.md that hasn&rsquo;t reloaded. The fix is to
+      write persistent rules into the project CLAUDE.md, not to re-type them each session.
+    </div>
+
+    <h3>5c &middot; Delegate investigation to a subagent</h3>
+    <p>When a task needs Claude to read widely &mdash; &ldquo;how is error handling done across this codebase?&rdquo; &mdash; that exploration can flood your main context with twenty files. Let Claude spawn an Explore subagent: it reads in its own context and returns a concise summary, so the main session gets the finding, not the raw files. Check <code>/context</code> after &mdash; usage stays minimal despite a thorough investigation.</p>
+
+    <h3>5d &middot; A scratchpad for long work</h3>
+    <p>For multi-hour work, keep durable state on disk &mdash; a short notes or task file Claude updates &mdash; rather than trusting it all to stay in the window. State lives in the file; the window holds only what the current step needs. It also means a <code>/clear</code> or a new session can pick up where you left off.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      Scenarios describe a session degrading over time; you pick the fix. The cluster:
+      <strong>observe</strong> with <code>/context</code>, <strong>compact/clear</strong> to reclaim space,
+      <strong>delegate</strong> exploration to a subagent for isolation, and <strong>external state</strong>
+      over in-context memory. Know what survives compaction (project CLAUDE.md) and what doesn&rsquo;t
+      (conversation-only instructions) &mdash; that exact distinction shows up.
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      <code>/context</code>, <code>/compact</code>, <code>/clear</code>, <code>/memory</code>, and the
+      compaction-survival behavior are current but evolving (auto-compaction, auto memory).
+      Confirm against <code>code.claude.com/docs/en/memory</code> and the CLI reference.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 5 done when</span>
+      <ul>
+        <li>You&rsquo;ve read <code>/context</code> on a real session and can say where the tokens went.</li>
+        <li>You&rsquo;ve compacted and confirmed your CLAUDE.md rules stayed active afterward.</li>
+        <li>You delegated a wide investigation to a subagent and saw the main context stay small.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 6 ============ -->
+  <section class="stage" id="s6">
+    <div class="stage-head">
+      <span class="stage-num">Stage 06</span>
+      <h2>Add guardrails that always hold</h2>
+      <span class="domain-tag">Context Management &amp; Reliability &middot; 15%</span>
+    </div>
+    <p class="lede">CLAUDE.md is guidance &mdash; Claude usually follows it, but it&rsquo;s context, not a wall. For things that must <em>never</em> happen (no edits to generated files, no committing secrets, tests must pass before a commit), you need enforcement that holds regardless of what Claude decides. That&rsquo;s hooks and settings.</p>
+
+    <h3>6a &middot; Guidance vs. enforcement</h3>
+    <p>The distinction the exam leans on:</p>
+    <ul>
+      <li><strong>CLAUDE.md</strong> = guidance. Loaded as context; strongly influences behavior; can be crowded out or not followed perfectly. Right for conventions and preferences.</li>
+      <li><strong>Hooks &amp; <code>settings.json</code> rules</strong> = enforcement. Evaluated by the client regardless of the model&rsquo;s reasoning. A hook&rsquo;s deny holds even in permissive modes. Right for guarantees.</li>
+    </ul>
+    <p>If a scenario says &ldquo;ensure X never happens,&rdquo; the answer is a hook or a deny rule &mdash; not a line in CLAUDE.md.</p>
+
+    <h3>6b &middot; A PreToolUse hook that blocks the unwanted</h3>
+    <p>A <code>PreToolUse</code> hook runs before any tool call and can deny it. Use one to protect generated files, lockfiles, or credential paths &mdash; a guarantee that holds no matter what the model tries.</p>
+    <div class="code"><span class="c"># .claude/settings.json — block edits to generated files</span>
+{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"PreToolUse"</span>: [{
+      <span class="k">"matcher"</span>: <span class="s">"Edit|Write"</span>,
+      <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>,
+        <span class="k">"command"</span>: <span class="s">"block-if-path-matches '**/*.generated.*' '**/lock'"</span> }]
+    }]
+  }
+}</div>
+
+    <h3>6c &middot; A quality gate with a Stop hook</h3>
+    <p>Hooks also fire at other lifecycle points. A <code>Stop</code> hook can run your linter and formatter automatically when Claude finishes, so mechanical quality is enforced deterministically rather than hoped for in CLAUDE.md &mdash; which the docs explicitly recommend over asking Claude to lint.</p>
+    <div class="code"><span class="c"># run lint + format every time Claude wraps up</span>
+{ <span class="k">"hooks"</span>: { <span class="k">"Stop"</span>: [{ <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>,
+    <span class="k">"command"</span>: <span class="s">"ruff check --fix . && ruff format ."</span> }] }] } }</div>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      The single most tested idea in this pair of domains: <strong>guidance vs. enforcement</strong>.
+      CLAUDE.md influences; hooks and deny rules guarantee. &ldquo;Put a hard constraint in
+      CLAUDE.md&rdquo; is the classic wrong answer. Also know: use deterministic tools (linters via
+      hooks) for mechanical rules rather than spending CLAUDE.md&rsquo;s instruction budget on them.
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      Hook event names (<code>PreToolUse</code>, <code>Stop</code>), the <code>settings.json</code> hook
+      shape, and matcher syntax are current but version-sensitive. The <code>block-if-path-matches</code>
+      command above is illustrative &mdash; write a real script or use a supported matcher. Confirm
+      against <code>code.claude.com/docs/en/hooks</code>.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 6 done when</span>
+      <ul>
+        <li>You can state which belongs in CLAUDE.md and which needs a hook, with an example of each.</li>
+        <li>A <code>PreToolUse</code> hook denies an edit you want blocked &mdash; and holds even in acceptEdits mode.</li>
+        <li>A lint/format step runs automatically rather than living as a CLAUDE.md instruction.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 7 ============ -->
+  <section class="stage" id="s7">
+    <div class="stage-head">
+      <span class="stage-num">Stage 07</span>
+      <h2>Ship it to the team</h2>
+      <span class="domain-tag">Workflow in practice</span>
+    </div>
+    <p class="lede">The whole point of this setup is that the <em>team</em> inherits it. A workflow that lives only on your machine helps one person; committed to the repo, it standardizes how everyone works. Commit the shared parts, keep the personal parts personal, and confirm a teammate gets what you intended.</p>
+
+    <h3>7a &middot; Commit the shared config</h3>
+    <p>These belong in version control so every teammate picks them up on clone:</p>
+    <ul>
+      <li><code>./CLAUDE.md</code> &mdash; the project context.</li>
+      <li><code>.claude/rules/*.md</code> &mdash; path-scoped rules.</li>
+      <li><code>.claude/commands/*.md</code> (or <code>.claude/skills/</code>) &mdash; the four commands.</li>
+      <li><code>.claude/settings.json</code> &mdash; the hooks and guardrails.</li>
+    </ul>
+
+    <h3>7b &middot; Keep personal things out of the shared config</h3>
+    <p>These are per-developer and must <em>not</em> be committed: your <code>~/.claude/CLAUDE.md</code> preferences (they live in your home dir, not the repo) and any <code>CLAUDE.local.md</code> (auto-gitignored). If a rule needs to reach the whole team, it goes in the project file &mdash; the Stage 2 diagnosis in reverse.</p>
+
+    <h3>7c &middot; Verify a teammate gets it</h3>
+    <p>Confirm the setup actually transfers: have a teammate (or a fresh clone) run <code>claude</code> in the repo, then <code>/memory</code> to see the project CLAUDE.md and rules load, and <code>/help</code> to see the four commands appear. If something&rsquo;s missing, it&rsquo;s almost always a scope problem &mdash; it was in a personal file, not the committed one.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      The recurring theme: <strong>shared vs. personal scope</strong>. Project files (committed)
+      reach the team; user and local files don&rsquo;t. A &ldquo;teammate isn&rsquo;t getting the behavior&rdquo;
+      scenario is nearly always a rule sitting in a personal file that should be in the project
+      config. Know which files are committed and which are gitignored.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 7 done when</span>
+      <ul>
+        <li>CLAUDE.md, rules, commands, and settings are committed; personal preferences are not.</li>
+        <li>A fresh clone loads the project context and shows the four commands.</li>
+        <li>You can explain, for any instruction, whether it should be shared or personal &mdash; and where it goes.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ CLOSE ============ -->
+  <section class="stage" id="close">
+    <div class="stage-head">
+      <span class="stage-num">Wrap-up</span>
+      <h2>What you built, and how it maps</h2>
+    </div>
+    <p>You now have one real repo with a complete Claude Code workflow on it, exercising the scenario&rsquo;s two primary domains: Claude Code Configuration &amp; Workflows (20%) &mdash; a layered CLAUDE.md hierarchy, path-scoped rules, four team slash commands with intent-encoding frontmatter, and the plan-vs-execute judgment &mdash; and Context Management &amp; Reliability (15%) &mdash; observing and reclaiming context, delegating investigation, and enforcing guarantees with hooks rather than hoping CLAUDE.md holds. Completing it, you should be able to answer any question the scenario raises: what wins when configs conflict, when to plan versus execute, what survives compaction, and where a hard rule belongs.</p>
+    <p>The exam is 60 scenario questions in 120 minutes, and it rewards judgment over recall &mdash; the wrong answers are written to tempt people with partial knowledge. Having actually configured the hierarchy, felt the plan-vs-execute tradeoff, and enforced a guardrail with a hook is the difference between recognizing the right call and guessing.</p>
+    <div class="prep-banner" style="margin-top:24px">
+      <span class="icn">&#9873;</span>
+      <span>
+        <strong>Next step toward the exam.</strong> Complete Anthropic&rsquo;s four official
+        Skilljar courses, request exam access, and take the official practice test before
+        booking. This lab is preparation &mdash; the credential comes from Anthropic&rsquo;s
+        proctored exam, not from here.
+      </span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>SF Knowledge Hub</strong> &middot; CCA-F Capstone Lab &middot; Scenario: A Claude Code Development Workflow
+  <p class="disclaimer">
+    A recommended preparatory lab for the Anthropic Claude Certified Architect &mdash;
+    Foundations (CCA-F) exam. Not affiliated with or endorsed by Anthropic, and not a
+    substitute for the official exam or its prerequisites. Commands, file locations, frontmatter
+    keys, and key bindings reflect the toolchain as of mid-2026 and carry a real shelf-life
+    &mdash; check every <em>Verify</em> note against current documentation before relying on it.
+  </p>
+</footer>
+
+</body>
+</html>
