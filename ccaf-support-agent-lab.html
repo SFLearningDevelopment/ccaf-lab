@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<!-- build: 2026071301 -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCA-F Capstone Lab · Build a Customer Support Resolution Agent</title>
+<style>
+  :root{
+    --ink:#1c1a17;
+    --ink-soft:#4a4640;
+    --paper:#f6f3ec;
+    --paper-raised:#fffdf8;
+    --line:#ddd6c8;
+    --line-strong:#c7bfab;
+    --accent:#2f6f5e;      /* deep teal-green: the "pass" signal */
+    --accent-deep:#204b40;
+    --accent-wash:#e5efe9;
+    --amber:#a56a1e;       /* escalation / caution */
+    --amber-wash:#f5ebd9;
+    --code-bg:#20241f;
+    --code-ink:#e7e4d8;
+    --code-key:#9ecb8f;
+    --code-str:#e0b877;
+    --code-dim:#8a877c;
+    --domain:#7a5cc4;      /* domain tag */
+    --domain-wash:#ece7f7;
+    --radius:10px;
+    --maxw:820px;
+    --mono:'DM Mono','SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;
+    --serif:'Newsreader',Georgia,'Times New Roman',serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--sans);font-size:17px;line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent-deep);text-underline-offset:2px}
+
+  /* ---------- Header ---------- */
+  header.masthead{
+    background:linear-gradient(180deg,var(--paper-raised),var(--paper));
+    border-bottom:1px solid var(--line-strong);
+    padding:56px 24px 40px;
+  }
+  .masthead-inner{max-width:var(--maxw);margin:0 auto}
+  .eyebrow{
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 18px;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  h1.title{
+    font-family:var(--serif);font-weight:600;font-size:clamp(34px,6vw,52px);
+    line-height:1.05;letter-spacing:-.01em;margin:0 0 20px;color:var(--ink);
+  }
+  h1.title em{font-style:italic;color:var(--accent-deep)}
+  .standfirst{
+    font-family:var(--serif);font-size:20px;line-height:1.5;color:var(--ink-soft);
+    max-width:64ch;margin:0 0 26px;
+  }
+  .prep-banner{
+    display:flex;gap:14px;align-items:flex-start;
+    background:var(--accent-wash);border:1px solid #bcd6cb;
+    border-radius:var(--radius);padding:16px 18px;font-size:15px;line-height:1.55;
+    color:var(--accent-deep);
+  }
+  .prep-banner strong{font-weight:600}
+  .prep-banner .icn{flex:0 0 auto;font-family:var(--mono);font-weight:500}
+
+  /* ---------- Layout ---------- */
+  main{max-width:var(--maxw);margin:0 auto;padding:8px 24px 96px}
+  section.stage{padding-top:52px;scroll-margin-top:20px}
+
+  .stage-head{margin-bottom:8px}
+  .stage-num{
+    font-family:var(--mono);font-size:13px;color:var(--accent);
+    letter-spacing:.08em;display:block;margin-bottom:6px;
+  }
+  h2{
+    font-family:var(--serif);font-weight:600;font-size:clamp(24px,4vw,32px);
+    line-height:1.15;letter-spacing:-.01em;margin:0 0 10px;
+  }
+  .domain-tag{
+    display:inline-block;font-family:var(--mono);font-size:11.5px;
+    letter-spacing:.04em;background:var(--domain-wash);color:var(--domain);
+    border-radius:20px;padding:3px 11px;margin-bottom:14px;
+  }
+  h3{font-family:var(--sans);font-weight:600;font-size:18px;margin:28px 0 8px}
+  p{margin:0 0 15px}
+  ul,ol{margin:0 0 15px;padding-left:22px}
+  li{margin-bottom:7px}
+  code{
+    font-family:var(--mono);font-size:.87em;background:#eae5da;
+    padding:1px 6px;border-radius:5px;color:var(--accent-deep);
+  }
+  .lede{font-size:18px;color:var(--ink-soft)}
+
+  /* ---------- Code blocks ---------- */
+  .code{
+    background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);
+    padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
+    line-height:1.6;margin:16px 0;border:1px solid #2c322a;
+  }
+  .code .k{color:var(--code-key)}
+  .code .s{color:var(--code-str)}
+  .code .c{color:var(--code-dim);font-style:italic}
+  .code .cmd{color:#e7e4d8}
+  .code-label{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent);margin:20px 0 -6px;display:block;
+  }
+
+  /* ---------- Callouts ---------- */
+  .note,.verify,.checkpoint{
+    border-radius:var(--radius);padding:15px 18px;margin:18px 0;font-size:15px;line-height:1.55;
+  }
+  .note{background:var(--paper-raised);border:1px solid var(--line-strong)}
+  .verify{background:var(--amber-wash);border:1px solid #e0c78f;color:#6b4a15}
+  .verify .lbl,.checkpoint .lbl{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    display:block;margin-bottom:5px;font-weight:500;
+  }
+  .verify .lbl{color:var(--amber)}
+  .checkpoint{background:var(--accent-wash);border:1px solid #bcd6cb;color:var(--accent-deep)}
+  .checkpoint .lbl{color:var(--accent)}
+  .checkpoint ul{margin:6px 0 0;padding-left:20px}
+  .checkpoint li{margin-bottom:4px}
+
+  /* ---------- Exam-lens ---------- */
+  .exam-lens{
+    border-left:3px solid var(--domain);background:var(--domain-wash);
+    padding:13px 16px 13px 18px;margin:18px 0;border-radius:0 var(--radius) var(--radius) 0;
+    font-size:14.5px;line-height:1.55;color:#3d2f5e;
+  }
+  .exam-lens .lbl{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--domain);display:block;margin-bottom:5px;font-weight:500;
+  }
+
+  /* ---------- Map / TOC ---------- */
+  .roadmap{
+    background:var(--paper-raised);border:1px solid var(--line-strong);
+    border-radius:var(--radius);padding:24px;margin:36px 0 8px;
+  }
+  .roadmap h2{font-size:20px;margin:0 0 4px}
+  .roadmap .sub{font-size:14px;color:var(--ink-soft);margin:0 0 18px}
+  .roadmap ol{list-style:none;padding:0;margin:0;counter-reset:rm}
+  .roadmap li{
+    counter-increment:rm;display:flex;gap:14px;align-items:baseline;
+    padding:11px 0;border-top:1px solid var(--line);margin:0;
+  }
+  .roadmap li:first-child{border-top:none}
+  .roadmap li::before{
+    content:counter(rm,decimal-leading-zero);font-family:var(--mono);font-size:13px;
+    color:var(--accent);flex:0 0 auto;width:24px;
+  }
+  .roadmap li.rm-start{counter-increment:none}
+  .roadmap li.rm-start::before{content:"\2192";font-size:14px}
+  .roadmap a{text-decoration:none;font-weight:500;color:var(--ink)}
+  .roadmap a:hover{color:var(--accent-deep)}
+  .roadmap .rm-domain{
+    font-family:var(--mono);font-size:11px;color:var(--domain);
+    margin-left:auto;flex:0 0 auto;white-space:nowrap;padding-left:12px;
+  }
+  .roadmap .rm-body{display:flex;flex-direction:column}
+  .roadmap .rm-body small{color:var(--ink-soft);font-weight:400;font-size:13.5px}
+
+  hr.rule{border:none;border-top:1px solid var(--line);margin:0}
+
+  /* ---------- Prereqs box ---------- */
+  .prereqs{
+    background:var(--paper-raised);border:1px dashed var(--line-strong);
+    border-radius:var(--radius);padding:20px 22px;margin:28px 0;
+  }
+  .prereqs h3{margin-top:0}
+  .prereqs code{background:#eae5da}
+
+  /* ---------- Footer ---------- */
+  footer{
+    max-width:var(--maxw);margin:0 auto;padding:40px 24px 80px;
+    border-top:1px solid var(--line-strong);color:var(--ink-soft);font-size:14px;
+  }
+  footer .disclaimer{font-size:13px;line-height:1.6;margin-top:14px}
+
+  .scenario{
+    font-family:var(--serif);font-style:italic;font-size:18px;line-height:1.55;
+    color:var(--ink-soft);border-left:3px solid var(--accent);
+    padding:4px 0 4px 18px;margin:18px 0;
+  }
+
+  /* ---------- Orientation ---------- */
+  .orient-intro{
+    font-size:18px;line-height:1.6;color:var(--ink-soft);margin:0 0 8px;
+  }
+  .orient-intro strong{color:var(--ink);font-weight:600}
+
+  .build-card{
+    background:var(--paper-raised);border:1px solid var(--line-strong);
+    border-radius:var(--radius);padding:22px 24px;margin:24px 0;
+  }
+  .build-card h3{margin:0 0 12px;font-size:16px}
+  .build-card .reads{
+    display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;
+    font-family:var(--mono);font-size:12.5px;
+  }
+  .build-card .chip{
+    background:var(--accent-wash);border:1px solid #bcd6cb;color:var(--accent-deep);
+    border-radius:20px;padding:4px 12px;
+  }
+
+  /* Flow diagram */
+  .flow-wrap{margin:28px 0 8px}
+  .flow-wrap figcaption{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-soft);margin-top:12px;text-align:center;
+  }
+  .flow-svg{width:100%;height:auto;display:block;
+    background:var(--paper-raised);border:1px solid var(--line-strong);border-radius:var(--radius);
+  }
+  .flow-svg .box{fill:var(--paper);stroke:var(--line-strong);stroke-width:1.2}
+  .flow-svg .box-accent{fill:var(--accent-wash);stroke:#bcd6cb;stroke-width:1.2}
+  .flow-svg .box-amber{fill:var(--amber-wash);stroke:#e0c78f;stroke-width:1.2}
+  .flow-svg .lbl{font-family:var(--sans);font-size:13px;font-weight:600;fill:var(--ink)}
+  .flow-svg .sub{font-family:var(--mono);font-size:10px;fill:var(--ink-soft)}
+  .flow-svg .stg{font-family:var(--mono);font-size:9.5px;fill:var(--accent);letter-spacing:.05em}
+  .flow-svg .flowline{stroke:var(--line-strong);stroke-width:1.4;fill:none}
+  .flow-svg .flowline-accent{stroke:var(--accent);stroke-width:1.6;fill:none}
+  .flow-svg .loopline{stroke:var(--accent);stroke-width:1.4;fill:none;stroke-dasharray:4 3}
+  .flow-svg .arrowhead{fill:var(--line-strong)}
+  .flow-svg .arrowhead-accent{fill:var(--accent)}
+  .flow-svg .zonelbl{font-family:var(--mono);font-size:10px;fill:var(--ink-soft);letter-spacing:.06em}
+
+  /* Glossary */
+  .glossary{margin:24px 0 8px}
+  .glossary dl{margin:0;border-top:1px solid var(--line)}
+  .glossary dt{
+    font-family:var(--mono);font-size:14px;font-weight:500;color:var(--accent-deep);
+    margin-top:16px;
+  }
+  .glossary dd{margin:4px 0 0;font-size:15px;line-height:1.55;color:var(--ink-soft)}
+  .glossary dd .also{font-family:var(--mono);font-size:12px;color:var(--ink-soft);opacity:.8}
+
+  @media (max-width:600px){
+    body{font-size:16px}
+    header.masthead{padding:40px 20px 32px}
+    main{padding:8px 20px 72px}
+    .roadmap li{flex-wrap:wrap}
+    .roadmap .rm-domain{margin-left:34px;padding-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="eyebrow"><span class="dot"></span> SF Knowledge Hub · Exam Prep Lab</p>
+    <h1 class="title">Build a support agent<br>that knows <em>when to act</em>.</h1>
+    <p class="standfirst">
+      A single hands-on capstone: a customer-support resolution agent built on the Claude
+      Agent SDK, reaching into your backend through four custom MCP tools. It resolves the
+      clear cases &mdash; returns, billing questions, account fixes &mdash; and escalates the
+      genuinely ambiguous ones. Target: <strong>80%+ first-contact resolution</strong> without
+      ever guessing at an action that moves money.
+    </p>
+    <div class="prep-banner">
+      <span class="icn">&#9873;</span>
+      <span>
+        <strong>This is a recommended preparatory step, not a certification course.</strong>
+        Finishing this lab does not grant a certificate and is not the CCA-F exam.
+        The exam is booked separately through Anthropic and requires completing
+        Anthropic&rsquo;s four official Skilljar courses first. Treat this as the
+        &ldquo;build something real&rdquo; practice the exam rewards.
+      </span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div class="roadmap">
+    <h2>The build, in seven stages</h2>
+    <p class="sub">One project &mdash; a support agent that reads a customer request, works it against your backend tools, and resolves or escalates. Work top to bottom; each stage builds on the last.</p>
+    <ol>
+      <li class="rm-start"><div class="rm-body"><a href="#orient">Orientation &mdash; what you&rsquo;re building</a><small>the system, the flow diagram, the terms</small></div><span class="rm-domain">start here</span></li>
+      <li><div class="rm-body"><a href="#s1">Stand up the resolution loop</a><small>Agent SDK, session per conversation</small></div><span class="rm-domain">Agentic Arch · 27%</span></li>
+      <li><div class="rm-body"><a href="#s2">Build the four MCP tools</a><small>get_customer, lookup_order, process_refund, escalate</small></div><span class="rm-domain">Tool &amp; MCP · 18%</span></li>
+      <li><div class="rm-body"><a href="#s3">Differentiate &amp; error-proof the tools</a><small>sharp descriptions, error categories, retryable</small></div><span class="rm-domain">Tool &amp; MCP · 18%</span></li>
+      <li><div class="rm-body"><a href="#s4">Guard the money-moving action</a><small>confirmation gate, caps, idempotency</small></div><span class="rm-domain">Agentic Arch · 27%</span></li>
+      <li><div class="rm-body"><a href="#s5">Decide: resolve or escalate</a><small>triggers, confidence, human handoff</small></div><span class="rm-domain">Context &amp; Reliability · 15%</span></li>
+      <li><div class="rm-body"><a href="#s6">Manage context across the conversation</a><small>fact extraction, scratchpad, delegation</small></div><span class="rm-domain">Context &amp; Reliability · 15%</span></li>
+      <li><div class="rm-body"><a href="#s7">Measure first-contact resolution</a><small>test tickets, the 80% target, tuning</small></div><span class="rm-domain">reliability in practice</span></li>
+    </ol>
+  </div>
+
+  <div class="prereqs">
+    <h3>Before you start</h3>
+    <p>You should be comfortable in a terminal and reading code &mdash; this lab assumes the developer experience the exam itself assumes (roughly 6+ months building with Claude). It does not stop to explain package managers or async functions.</p>
+    <ul>
+      <li><strong>Python 3.10+</strong> or <strong>Node 18+</strong> &mdash; the Agent SDK ships for both. Examples lead in Python; the shape is identical in TypeScript.</li>
+      <li>An <strong>Anthropic API key</strong> exported as <code>ANTHROPIC_API_KEY</code>. (Bedrock or Vertex auth also works.)</li>
+      <li>No real backend needed &mdash; you&rsquo;ll build the four tools against a small <strong>in-memory fake dataset</strong> (a few customers and orders). That&rsquo;s deliberate: it keeps <code>process_refund</code> safe to run while you learn to guard it.</li>
+    </ul>
+    <div class="verify">
+      <span class="lbl">Verify before you build</span>
+      The Agent SDK, its MCP tooling, and the permission system have all moved recently and
+      continue to. Package names, the permission-evaluation order, and a few option fields
+      below carry real shelf-life. Wherever you see a <em>Verify</em> note, check it against
+      the current docs at <code>code.claude.com/docs</code> and <code>platform.claude.com/docs</code>.
+      The <em>shape</em> of each pattern is stable; exact identifiers drift.
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- ============ ORIENTATION ============ -->
+  <section class="stage" id="orient">
+    <div class="stage-head">
+      <span class="stage-num">Orientation</span>
+      <h2>What you&rsquo;re building, before you build it</h2>
+    </div>
+
+    <p class="orient-intro">
+      By the end of this lab you&rsquo;ll have <strong>one working program</strong>: a support
+      agent that takes a customer message (&ldquo;I want a refund for order 4471, it arrived
+      broken&rdquo;), identifies the customer, pulls up the order, decides whether it can
+      resolve the request itself, and either <strong>acts</strong> &mdash; issuing a guarded
+      refund &mdash; or <strong>escalates</strong> to a human with the context already gathered.
+      Every stage adds one capability to that same agent. You are not building seven
+      disconnected exercises; you are building one agent in seven passes.
+    </p>
+
+    <div class="build-card">
+      <h3>The one thing you&rsquo;re building</h3>
+      <p style="margin:0">
+        A <strong>customer-support resolution agent</strong>. It reads a high-ambiguity request,
+        reaches into backend systems through four custom MCP tools
+        (<code>get_customer</code>, <code>lookup_order</code>, <code>process_refund</code>,
+        <code>escalate_to_human</code>), resolves what it safely can, and hands off what it
+        can&rsquo;t &mdash; aiming for 80%+ first-contact resolution.
+      </p>
+      <div class="reads">
+        <span class="chip">input &rarr; a customer request</span>
+        <span class="chip">output &rarr; resolution or escalation</span>
+        <span class="chip">guardrail &rarr; refunds never guessed</span>
+      </div>
+    </div>
+
+    <h3>How the seven stages connect</h3>
+    <p>
+      Read the diagram as a decision flow. The <strong>resolution loop</strong> (Stage 1) is the
+      engine; the <strong>four MCP tools</strong> (Stages 2&ndash;3) are how it reaches your
+      backend; a <strong>guard</strong> (Stage 4) sits in front of the one action that moves money;
+      the <strong>decision</strong> (Stage 5) routes each request to resolve or escalate;
+      <strong>context management</strong> (Stage 6) keeps the agent coherent across a multi-turn
+      conversation; and <strong>measurement</strong> (Stage 7) proves it hits the target.
+    </p>
+
+    <figure class="flow-wrap">
+      <svg class="flow-svg" viewBox="0 0 820 500" xmlns="http://www.w3.org/2000/svg" role="img"
+           aria-label="Flow diagram of the support resolution agent: a customer request enters an agent loop that calls get_customer and lookup_order to gather context; a decision step routes to either a guarded process_refund action or escalate_to_human; context management wraps the loop across the conversation.">
+        <defs>
+          <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 Z" class="arrowhead"/>
+          </marker>
+          <marker id="aha" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 Z" class="arrowhead-accent"/>
+          </marker>
+        </defs>
+
+        <!-- INPUT -->
+        <rect class="box" x="20" y="210" width="120" height="62" rx="8"/>
+        <text class="lbl" x="80" y="237" text-anchor="middle">Customer</text>
+        <text class="sub" x="80" y="254" text-anchor="middle">a request</text>
+        <path class="flowline-accent" d="M140,241 C168,241 172,241 198,241" marker-end="url(#aha)"/>
+
+        <!-- context zone wraps loop + read tools -->
+        <rect x="168" y="120" width="330" height="250" rx="12" fill="none"
+              stroke="var(--accent)" stroke-width="1" stroke-dasharray="5 4" opacity="0.55"/>
+        <text class="zonelbl" x="176" y="138">STAGE 6 · context management across the conversation</text>
+
+        <!-- RESOLUTION LOOP -->
+        <rect class="box-accent" x="202" y="204" width="150" height="96" rx="10"/>
+        <text class="stg" x="277" y="224" text-anchor="middle">STAGE 1</text>
+        <text class="lbl" x="277" y="244" text-anchor="middle">Resolution loop</text>
+        <text class="sub" x="277" y="262" text-anchor="middle">model &rarr; tool &rarr; result</text>
+        <text class="sub" x="277" y="276" text-anchor="middle">one session / convo</text>
+        <path class="loopline" d="M217,204 C202,176 352,176 337,204" marker-end="url(#aha)"/>
+        <text class="stg" x="277" y="184" text-anchor="middle">gather until confident</text>
+
+        <!-- READ TOOLS feed loop (bottom) -->
+        <rect class="box" x="168" y="316" width="150" height="44" rx="8"/>
+        <text class="stg" x="243" y="333" text-anchor="middle">STAGE 2&ndash;3</text>
+        <text class="lbl" x="243" y="350" text-anchor="middle" style="font-size:11.5px">get_customer · lookup_order</text>
+        <path class="flowline" d="M277,316 L277,302" marker-end="url(#ah)"/>
+
+        <!-- loop → decision -->
+        <path class="flowline-accent" d="M352,252 L392,252" marker-end="url(#aha)"/>
+
+        <!-- DECISION -->
+        <rect class="box-amber" x="396" y="222" width="150" height="60" rx="10"/>
+        <text class="stg" x="471" y="242" text-anchor="middle">STAGE 5</text>
+        <text class="lbl" x="471" y="260" text-anchor="middle">Resolve or escalate?</text>
+        <text class="sub" x="471" y="275" text-anchor="middle">triggers · confidence</text>
+
+        <!-- decision → guarded refund (up path) -->
+        <path class="flowline-accent" d="M546,238 C580,238 582,210 606,210" marker-end="url(#aha)"/>
+        <!-- decision → escalate (down path) -->
+        <path class="flowline" d="M546,266 C580,266 582,320 606,320" marker-end="url(#ah)"/>
+
+        <!-- GUARD + REFUND -->
+        <rect x="600" y="150" width="200" height="110" rx="10" fill="none"
+              stroke="var(--amber)" stroke-width="1.2" stroke-dasharray="4 3"/>
+        <text class="stg" x="700" y="168" text-anchor="middle" style="fill:var(--amber)">STAGE 4 · the guard</text>
+        <rect class="box-accent" x="620" y="182" width="160" height="62" rx="8"/>
+        <text class="lbl" x="700" y="206" text-anchor="middle">process_refund</text>
+        <text class="sub" x="700" y="223" text-anchor="middle">cap · confirm · idempotent</text>
+        <text class="sub" x="700" y="236" text-anchor="middle">the money-moving action</text>
+
+        <!-- ESCALATE -->
+        <rect class="box-amber" x="620" y="292" width="160" height="56" rx="8"/>
+        <text class="lbl" x="700" y="316" text-anchor="middle">escalate_to_human</text>
+        <text class="sub" x="700" y="332" text-anchor="middle">with context attached</text>
+
+        <!-- outcomes to resolution -->
+        <text class="stg" x="700" y="274" text-anchor="middle" style="fill:var(--accent)">resolved on first contact</text>
+        <text class="stg" x="700" y="368" text-anchor="middle" style="fill:var(--ink-soft)">handed off, not dropped</text>
+
+        <!-- measurement badge -->
+        <rect class="box" x="300" y="418" width="220" height="52" rx="10"/>
+        <text class="stg" x="410" y="438" text-anchor="middle">STAGE 7</text>
+        <text class="lbl" x="410" y="456" text-anchor="middle">Measure: 80%+ first-contact</text>
+        <path class="flowline" d="M410,418 C410,395 410,300 410,284" marker-end="url(#ah)" opacity="0.5"/>
+      </svg>
+      <figcaption>The request enters the loop; each request exits either resolved or cleanly escalated.</figcaption>
+    </figure>
+
+    <div class="note">
+      Don&rsquo;t worry if a box uses a word you don&rsquo;t know yet &mdash; the glossary below defines
+      every term in the diagram, and each stage explains its own box in full when you reach it.
+    </div>
+
+    <h3>The terms this lab uses</h3>
+    <p>These come up across multiple stages. Skim them now; you don&rsquo;t need to memorize them &mdash; they&rsquo;ll make sense as you build.</p>
+
+    <div class="glossary">
+      <dl>
+        <dt>Resolution loop</dt>
+        <dd>The cycle the SDK runs for you: send the model the customer request, let it call a tool (look up the customer, fetch an order), feed the result back, repeat &mdash; until it can resolve or decides to escalate. The agent loop, in support terms.</dd>
+
+        <dt>Claude Agent SDK</dt>
+        <dd>The library that runs the loop, tools, permissions, and context management for you, from Python or TypeScript. <span class="also">The renamed successor to the &ldquo;Claude Code SDK&rdquo; &mdash; old names <code>claude-code-sdk</code> / <code>ClaudeCodeOptions</code> are stale.</span></dd>
+
+        <dt>MCP <span class="also">(Model Context Protocol)</span></dt>
+        <dd>The open protocol that connects the agent to external systems. Here you use the SDK&rsquo;s <em>in-process</em> MCP server to expose four functions as tools &mdash; no separate server process.</dd>
+
+        <dt>Custom tool</dt>
+        <dd>One of your own functions the agent can call, defined with the <code>@tool</code> decorator (Python) or <code>tool()</code> helper (TS): a name, a description, an input schema, and a handler. Your four are <code>get_customer</code>, <code>lookup_order</code>, <code>process_refund</code>, <code>escalate_to_human</code>.</dd>
+
+        <dt>Read tool vs. action tool</dt>
+        <dd>A distinction this lab leans on. <em>Read</em> tools (<code>get_customer</code>, <code>lookup_order</code>) only fetch &mdash; safe to call freely. <em>Action</em> tools (<code>process_refund</code>) change the world &mdash; they need a guard.</dd>
+
+        <dt>Session</dt>
+        <dd>One continuous run of the agent with memory &mdash; here, one customer conversation. Multi-turn (&ldquo;actually, also order 4472&rdquo;) means resuming the same session so the agent keeps the context.</dd>
+
+        <dt>Context (window)</dt>
+        <dd>Everything the model can see at once &mdash; the conversation plus every tool result so far. It&rsquo;s finite, so a long back-and-forth can fill it; keeping it small and relevant is Stage 6.</dd>
+
+        <dt>Permission gate <span class="also">(canUseTool / hooks)</span></dt>
+        <dd>The SDK&rsquo;s runtime checkpoint before a tool runs. You use it to stop <code>process_refund</code> from executing unless the request passes your rules &mdash; the core of Stage 4&rsquo;s guard.</dd>
+
+        <dt>Idempotency</dt>
+        <dd>The property that repeating the same action produces the same result &mdash; so a retried refund doesn&rsquo;t pay out twice. Enforced with an idempotency key the action tool remembers.</dd>
+
+        <dt>Escalation / human handoff</dt>
+        <dd>Handing a request to a person instead of resolving it &mdash; on a defined trigger (policy gap, explicit request, can&rsquo;t progress) or when confidence is too low. The <code>escalate_to_human</code> tool, plus the judgment for when to call it.</dd>
+
+        <dt>First-contact resolution (FCR)</dt>
+        <dd>The share of requests fully resolved in one interaction without handing off. The lab&rsquo;s 80% target &mdash; measured against test tickets, not assumed.</dd>
+
+        <dt>Error category / retryable flag</dt>
+        <dd>Structure in a tool&rsquo;s error response &mdash; a category (<code>not_found</code>, <code>rate_limited</code>&hellip;) and whether retrying could help &mdash; so the loop can decide to retry, fall back, or escalate instead of treating every failure the same.</dd>
+      </dl>
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Before Stage 1</span>
+      <ul>
+        <li>You can state, in one sentence, what the finished agent does end to end.</li>
+        <li>You can trace a single request through the diagram: loop &rarr; read tools &rarr; decision &rarr; refund <em>or</em> escalate.</li>
+        <li>You can name which of the four tools is the dangerous one, and why.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ STAGE 1 ============ -->
+  <section class="stage" id="s1">
+    <div class="stage-head">
+      <span class="stage-num">Stage 01</span>
+      <h2>Stand up the resolution loop</h2>
+      <span class="domain-tag">Agentic Architecture &amp; Orchestration &middot; 27%</span>
+    </div>
+    <p class="lede">Everything rests on one loop: send the customer&rsquo;s request to the model, run the tools it asks for, feed results back, repeat until it can resolve or escalate. Build that first, then make it hold a multi-turn conversation.</p>
+
+    <div class="scenario">&ldquo;I want a refund for order 4471 &mdash; it showed up cracked.&rdquo; The agent needs to find the customer, pull the order, judge the request, and act &mdash; possibly over several turns.</div>
+
+    <h3>1a &middot; Install and make one query</h3>
+    <p>The Claude Agent SDK is the renamed successor to the old &ldquo;Claude Code SDK.&rdquo; If a tutorial imports <code>claude-code-sdk</code> or <code>ClaudeCodeOptions</code>, it&rsquo;s stale &mdash; the code won&rsquo;t run.</p>
+    <span class="code-label">Install</span>
+    <div class="code"><span class="c"># Python 3.10+</span>
+<span class="cmd">pip install claude-agent-sdk</span>
+
+<span class="c"># TypeScript (bundles the Claude Code binary — nothing else to install)</span>
+<span class="cmd">npm install @anthropic-ai/claude-agent-sdk</span></div>
+
+    <span class="code-label">The loop, with a support system prompt (Python)</span>
+    <div class="code"><span class="k">import</span> asyncio
+<span class="k">from</span> claude_agent_sdk <span class="k">import</span> query, ClaudeAgentOptions
+
+SYSTEM = <span class="s">"""You are a customer support resolution agent.</span>
+<span class="s">Resolve returns, billing questions, and account issues when you can do so</span>
+<span class="s">confidently and within policy. Look up the customer and their order before</span>
+<span class="s">deciding. If you cannot resolve confidently, escalate — do not guess."""</span>
+
+<span class="k">async def</span> main():
+    <span class="k">async for</span> message <span class="k">in</span> query(
+        prompt=<span class="s">"Customer says: refund for order 4471, arrived cracked."</span>,
+        options=ClaudeAgentOptions(
+            system_prompt=SYSTEM,
+            max_turns=<span class="s">10</span>,          <span class="c"># circuit breaker — never loop forever</span>
+        ),
+    ):
+        <span class="k">if</span> hasattr(message, <span class="s">"result"</span>):
+            print(message.result)
+
+asyncio.run(main())</div>
+    <p>You did not hand-write the loop. <code>query()</code> runs the full model&ndash;tool&ndash;result cycle and streams every message back, ending with a result message. Right now the agent has no tools &mdash; it can only talk. Stage 2 gives it the four it needs.</p>
+
+    <h3>1b &middot; Cap the run and handle failure</h3>
+    <p>The SDK ships no default turn limit, budget cap, or retry logic. For a customer-facing agent, <code>max_turns</code> is your circuit breaker and a budget cap is your cost ceiling. Wrap the loop and branch on the result&rsquo;s error subtype (<code>rate_limit</code>, <code>overloaded</code>, <code>authentication_failed</code>, <code>server_error</code>) rather than treating every failure alike.</p>
+    <div class="code">options=ClaudeAgentOptions(
+    system_prompt=SYSTEM,
+    max_turns=<span class="s">10</span>,
+    <span class="c"># set a per-session budget cap in production — support traffic is high-volume</span>
+)</div>
+
+    <h3>1c &middot; Hold the conversation (sessions)</h3>
+    <p>Support is multi-turn: the customer replies, corrects, adds a second order. Each <code>query()</code> starts fresh, so capture the <code>session_id</code> from the init message and <code>resume</code> it on the next turn &mdash; that&rsquo;s how the agent remembers it already looked up this customer.</p>
+    <div class="code"><span class="c"># Turn 1: grab session_id from the init message.</span>
+<span class="c"># Turn 2 ("actually, also order 4472"): resume it.</span>
+options=ClaudeAgentOptions(system_prompt=SYSTEM, resume=session_id)</div>
+    <div class="note">
+      For a continuous conversation, <code>ClaudeSDKClient</code> keeps one session open across
+      many <code>query()</code> calls &mdash; often cleaner for chat than resuming by ID each turn.
+      Either works; pick one and be consistent.
+    </div>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      Scenarios test whether you know the SDK runs the loop <em>for</em> you (versus the raw
+      Messages API, where you write the <code>tool_use</code> plumbing), and that an agent
+      without an explicit <code>max_turns</code> / budget cap is a production hazard. Session
+      continuity &mdash; remembering earlier turns &mdash; is the other reliable theme here.
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      The SDK is pre-1.0 and moving. Confirm the import path, <code>ClaudeAgentOptions</code>
+      fields, <code>system_prompt</code>, and the session-resume shape against
+      <code>code.claude.com/docs/en/agent-sdk</code> before relying on them.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 1 done when</span>
+      <ul>
+        <li>Your agent responds to a customer message over multiple turns, with a system prompt that tells it to resolve-or-escalate.</li>
+        <li>A follow-up turn resumes the same session with full context.</li>
+        <li><code>max_turns</code> is set, and you handle at least one error subtype deliberately.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 2 ============ -->
+  <section class="stage" id="s2">
+    <div class="stage-head">
+      <span class="stage-num">Stage 02</span>
+      <h2>Build the four MCP tools</h2>
+      <span class="domain-tag">Tool Design &amp; MCP Integration &middot; 18%</span>
+    </div>
+    <p class="lede">The agent reaches your backend through four custom tools. You&rsquo;ll define them as an in-process MCP server &mdash; ordinary functions the SDK exposes to the model. Back them with a small fake dataset so the whole thing runs locally and <code>process_refund</code> is harmless while you learn to guard it.</p>
+
+    <h3>2a &middot; A fake backend to call</h3>
+    <p>Two dictionaries stand in for your real systems. Everything the tools return comes from here.</p>
+    <div class="code">CUSTOMERS = {
+    <span class="s">"cust_88"</span>: {<span class="k">"id"</span>: <span class="s">"cust_88"</span>, <span class="k">"name"</span>: <span class="s">"Rae Ortiz"</span>, <span class="k">"tier"</span>: <span class="s">"standard"</span>,
+                 <span class="k">"email"</span>: <span class="s">"rae@example.com"</span>},
+}
+ORDERS = {
+    <span class="s">"4471"</span>: {<span class="k">"id"</span>: <span class="s">"4471"</span>, <span class="k">"customer_id"</span>: <span class="s">"cust_88"</span>, <span class="k">"amount"</span>: <span class="s">42.00</span>,
+              <span class="k">"status"</span>: <span class="s">"delivered"</span>, <span class="k">"refundable"</span>: <span class="k">True</span>},
+}
+REFUNDS_DONE = {}   <span class="c"># idempotency ledger — Stage 4 uses this</span></div>
+
+    <h3>2b &middot; Define the tools as an in-process MCP server</h3>
+    <p>Each tool is four parts: a <strong>name</strong> the model calls, a <strong>description</strong> that tells it when to use it, an <strong>input schema</strong>, and a <strong>handler</strong>. Wrap them with <code>create_sdk_mcp_server</code> &mdash; it runs inside your process, no subprocess.</p>
+    <div class="code"><span class="k">import</span> json
+<span class="k">from</span> claude_agent_sdk <span class="k">import</span> tool, create_sdk_mcp_server
+
+<span class="k">@tool</span>(<span class="s">"get_customer"</span>, <span class="s">"Fetch a customer record by customer_id."</span>, {<span class="s">"customer_id"</span>: str})
+<span class="k">async def</span> get_customer(args):
+    c = CUSTOMERS.get(args[<span class="s">"customer_id"</span>])
+    <span class="k">if not</span> c:
+        <span class="k">return</span> {<span class="s">"content"</span>: [{<span class="s">"type"</span>: <span class="s">"text"</span>,
+                <span class="s">"text"</span>: '{"error":{"category":"not_found","retryable":false}}'}]}
+    <span class="k">return</span> {<span class="s">"content"</span>: [{<span class="s">"type"</span>: <span class="s">"text"</span>, <span class="s">"text"</span>: json.dumps(c)}]}
+
+<span class="k">@tool</span>(<span class="s">"lookup_order"</span>, <span class="s">"Fetch one order by order_id, including amount and refundable flag."</span>, {<span class="s">"order_id"</span>: str})
+<span class="k">async def</span> lookup_order(args):
+    o = ORDERS.get(args[<span class="s">"order_id"</span>])
+    <span class="k">if not</span> o:
+        <span class="k">return</span> {<span class="s">"content"</span>: [{<span class="s">"type"</span>: <span class="s">"text"</span>,
+                <span class="s">"text"</span>: '{"error":{"category":"not_found","retryable":false}}'}]}
+    <span class="k">return</span> {<span class="s">"content"</span>: [{<span class="s">"type"</span>: <span class="s">"text"</span>, <span class="s">"text"</span>: json.dumps(o)}]}
+
+<span class="k">@tool</span>(<span class="s">"process_refund"</span>,
+      <span class="s">"Issue a refund for an order. Moves money — only call after verifying "</span>
+      <span class="s">"the order is refundable and within policy. Requires order_id and amount."</span>,
+      {<span class="s">"order_id"</span>: str, <span class="s">"amount"</span>: float, <span class="s">"idempotency_key"</span>: str})
+<span class="k">async def</span> process_refund(args):
+    <span class="c"># Stage 4 adds the real guard. For now, record it against the ledger.</span>
+    key = args[<span class="s">"idempotency_key"</span>]
+    <span class="k">if</span> key <span class="k">in</span> REFUNDS_DONE:
+        <span class="k">return</span> {<span class="s">"content"</span>: [{<span class="s">"type"</span>: <span class="s">"text"</span>,
+                <span class="s">"text"</span>: json.dumps(REFUNDS_DONE[key])}]}   <span class="c"># idempotent replay</span>
+    receipt = {<span class="s">"refunded"</span>: args[<span class="s">"amount"</span>], <span class="s">"order_id"</span>: args[<span class="s">"order_id"</span>], <span class="s">"key"</span>: key}
+    REFUNDS_DONE[key] = receipt
+    <span class="k">return</span> {<span class="s">"content"</span>: [{<span class="s">"type"</span>: <span class="s">"text"</span>, <span class="s">"text"</span>: json.dumps(receipt)}]}
+
+<span class="k">@tool</span>(<span class="s">"escalate_to_human"</span>,
+      <span class="s">"Hand this case to a human agent. Call when the request is outside policy, "</span>
+      <span class="s">"explicitly requested, or you cannot resolve it confidently. Include a reason "</span>
+      <span class="s">"and the context gathered so far."</span>,
+      {<span class="s">"reason"</span>: str, <span class="s">"summary"</span>: str})
+<span class="k">async def</span> escalate_to_human(args):
+    ticket = {<span class="s">"escalated"</span>: <span class="k">True</span>, <span class="s">"reason"</span>: args[<span class="s">"reason"</span>], <span class="s">"summary"</span>: args[<span class="s">"summary"</span>]}
+    <span class="k">return</span> {<span class="s">"content"</span>: [{<span class="s">"type"</span>: <span class="s">"text"</span>, <span class="s">"text"</span>: json.dumps(ticket)}]}
+
+support = create_sdk_mcp_server(name=<span class="s">"support"</span>, version=<span class="s">"1.0.0"</span>,
+                               tools=[get_customer, lookup_order, process_refund, escalate_to_human])</div>
+
+    <h3>2c &middot; Give the agent the tools</h3>
+    <p>Pass the server in <code>mcp_servers</code>. Tool names follow the pattern <code>mcp__{server}__{tool}</code>. Listing them in <code>allowed_tools</code> pre-approves the safe ones so they run without a prompt &mdash; note we deliberately <em>leave <code>process_refund</code> out</em> so it falls through to the guard you build in Stage 4.</p>
+    <div class="code">options = ClaudeAgentOptions(
+    system_prompt=SYSTEM,
+    mcp_servers={<span class="s">"support"</span>: support},
+    allowed_tools=[
+        <span class="s">"mcp__support__get_customer"</span>,
+        <span class="s">"mcp__support__lookup_order"</span>,
+        <span class="s">"mcp__support__escalate_to_human"</span>,
+        <span class="c"># process_refund intentionally omitted — gated in Stage 4</span>
+    ],
+    max_turns=<span class="s">10</span>,
+)</div>
+    <div class="note">
+      Subtlety worth knowing: <code>allowed_tools</code> controls <em>pre-approval</em>, not
+      <em>availability</em>. A tool the agent can see but that isn&rsquo;t pre-approved still gets
+      offered to the model &mdash; it just has to pass the permission step when called. That&rsquo;s
+      exactly the behavior you want for <code>process_refund</code>.
+    </div>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      Know the <strong>four parts of a tool</strong> and that custom tools are <em>in-process MCP
+      servers</em> via <code>create_sdk_mcp_server</code>. And know the availability-vs-permission
+      distinction: <code>allowed_tools</code> pre-approves; it does not decide what the model can
+      see. Distractors blur those two layers.
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      The <code>@tool</code> signature, <code>create_sdk_mcp_server</code>, and the
+      <code>mcp__server__tool</code> naming are current, but the schema shorthand
+      (<code>{"customer_id": str}</code> vs. a full JSON Schema) and <code>allowed_tools</code>
+      semantics can shift. Confirm against the custom-tools guide before relying on them.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 2 done when</span>
+      <ul>
+        <li>All four tools are defined and wrapped in one in-process MCP server.</li>
+        <li>The agent calls <code>get_customer</code> and <code>lookup_order</code> on its own to gather context.</li>
+        <li><code>process_refund</code> is deliberately not pre-approved &mdash; ready for its guard.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 3 ============ -->
+  <section class="stage" id="s3">
+    <div class="stage-head">
+      <span class="stage-num">Stage 03</span>
+      <h2>Differentiate &amp; error-proof the tools</h2>
+      <span class="domain-tag">Tool Design &amp; MCP Integration &middot; 18%</span>
+    </div>
+    <p class="lede">The agent only picks the right tool if your descriptions make the choice obvious, and only recovers from failure if your errors tell it what went wrong. Sharpen both, then try to trip the agent up on purpose.</p>
+
+    <h3>3a &middot; Descriptions that draw a boundary</h3>
+    <p>In a support flow, the confusable pair is <code>get_customer</code> vs. <code>lookup_order</code> &mdash; both &ldquo;look something up.&rdquo; State what each is <em>for</em> and, crucially, when <em>not</em> to reach for it.</p>
+    <div class="code"><span class="c"># get_customer</span>
+<span class="s">"Fetch a CUSTOMER record (name, tier, email) by customer_id. "</span>
+<span class="s">"Use to identify who you're helping. Do NOT use to look up an order — "</span>
+<span class="s">"it has no order data; use lookup_order for that."</span>
+
+<span class="c"># lookup_order</span>
+<span class="s">"Fetch ONE ORDER (amount, status, refundable) by order_id. "</span>
+<span class="s">"Use to check an order before acting on it. Do NOT use to find a customer's "</span>
+<span class="s">"details — use get_customer for that."</span></div>
+
+    <h3>3b &middot; Structured errors the loop can act on</h3>
+    <p>You already returned <code>{"error":{"category":...,"retryable":...}}</code> in Stage 2. That structure is the point: it lets the agent branch instead of getting stuck. A crucial SDK fact &mdash; a handler that <em>returns</em> an error keeps the loop alive; the model reads it and adapts. A handler that <em>throws</em> an uncaught exception is caught by the SDK and also returned as an error result, but you lose control of the message. Prefer returning structured errors.</p>
+    <div class="code"><span class="c"># category drives the agent's next move:</span>
+<span class="c">#   not_found      → stop, tell the customer, maybe escalate</span>
+<span class="c">#   invalid_input  → fix the arguments and retry</span>
+<span class="c">#   rate_limited   → wait and retry</span>
+<span class="c">#   upstream_down  → escalate; don't spin</span></div>
+
+    <h3>3c &middot; Try to confuse it</h3>
+    <p>Feed ambiguous requests and watch which tool the agent picks:</p>
+    <ul>
+      <li>&ldquo;Look up 4471&rdquo; &rarr; a bare number reads as an order &rarr; should pick <code>lookup_order</code>.</li>
+      <li>&ldquo;Who is cust_88?&rdquo; &rarr; should pick <code>get_customer</code>.</li>
+      <li>&ldquo;Check on Rae&rsquo;s cracked order&rdquo; &rarr; genuinely needs both, in sequence: customer first, then order. A good tool set makes the agent chain them; a poor one stalls.</li>
+    </ul>
+    <p>When it routes wrong, fix the description, not the model &mdash; tighten the &ldquo;do NOT use when&rdquo; clause and re-test.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      This domain is judgment about <strong>tool boundaries</strong> and <strong>structured
+      errors</strong>. Expect two overlapping tools and a &ldquo;why did it mis-select&rdquo; question
+      &mdash; the fix sharpens the boundary with negative guidance. And know why a category +
+      retryable flag beats a bare error string: it turns a dead end into a decision.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 3 done when</span>
+      <ul>
+        <li>Your two read tools have descriptions with explicit &ldquo;do NOT use when&rdquo; boundaries.</li>
+        <li>Every tool returns errors as a category + retryable flag, and the agent visibly adapts to one.</li>
+        <li>You&rsquo;ve run three ambiguous requests and logged which tool got picked and why.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 4 ============ -->
+  <section class="stage" id="s4">
+    <div class="stage-head">
+      <span class="stage-num">Stage 04</span>
+      <h2>Guard the money-moving action</h2>
+      <span class="domain-tag">Agentic Architecture &amp; Orchestration &middot; 27%</span>
+    </div>
+    <p class="lede">Three of your tools only read. One moves money. <code>process_refund</code> is where a model mistake, a prompt injection, or a retry becomes a real financial event &mdash; so it never runs on the model&rsquo;s say-so alone. You put a deterministic gate in front of it.</p>
+
+    <div class="scenario">The agent decides a refund is warranted and calls <code>process_refund(order_id="4471", amount=4200.00)</code> &mdash; two decimal places off. Without a guard, that pays out $4,200 on a $42 order.</div>
+
+    <h3>4a &middot; Gate the call with canUseTool</h3>
+    <p>The SDK evaluates every tool call through a fixed order: <strong>PreToolUse hook &rarr; deny rules &rarr; allow rules &rarr; permission mode &rarr; <code>can_use_tool</code> callback &rarr; PostToolUse hook</strong>. Because you left <code>process_refund</code> out of <code>allowed_tools</code>, its calls fall through to your <code>can_use_tool</code> callback &mdash; your runtime decision point. Approve only what passes policy; deny the rest with a message the model reads and adapts to.</p>
+    <div class="code"><span class="k">from</span> claude_agent_sdk.types <span class="k">import</span> PermissionResultAllow, PermissionResultDeny
+
+REFUND_CAP = <span class="s">200.00</span>          <span class="c"># auto-approve ceiling; above this, a human decides</span>
+
+<span class="k">async def</span> gate(tool_name, args, context):
+    <span class="k">if</span> tool_name == <span class="s">"mcp__support__process_refund"</span>:
+        order = ORDERS.get(args.get(<span class="s">"order_id"</span>, <span class="s">""</span>))
+        <span class="k">if not</span> order <span class="k">or not</span> order[<span class="s">"refundable"</span>]:
+            <span class="k">return</span> PermissionResultDeny(message=<span class="s">"Order not refundable — escalate instead."</span>)
+        <span class="k">if</span> args[<span class="s">"amount"</span>] &gt; order[<span class="s">"amount"</span>]:
+            <span class="k">return</span> PermissionResultDeny(message=<span class="s">"Refund exceeds order amount. Recheck."</span>)
+        <span class="k">if</span> args[<span class="s">"amount"</span>] &gt; REFUND_CAP:
+            <span class="k">return</span> PermissionResultDeny(message=<span class="s">"Above auto-approve cap — use escalate_to_human."</span>)
+        <span class="k">return</span> PermissionResultAllow()      <span class="c"># within policy → allow</span>
+    <span class="k">return</span> PermissionResultAllow()          <span class="c"># read tools & escalate: fine</span>
+
+options = ClaudeAgentOptions(
+    system_prompt=SYSTEM, mcp_servers={<span class="s">"support"</span>: support},
+    allowed_tools=[<span class="s">"mcp__support__get_customer"</span>, <span class="s">"mcp__support__lookup_order"</span>,
+                   <span class="s">"mcp__support__escalate_to_human"</span>],
+    can_use_tool=gate, max_turns=<span class="s">10</span>,
+)</div>
+    <p>Now the $4,200 slip is caught by the <code>amount &gt; order["amount"]</code> check and denied &mdash; the model reads the denial message and corrects or escalates, and no money moves.</p>
+
+    <h3>4b &middot; For guarantees that must always hold, use a hook</h3>
+    <p>A <code>can_use_tool</code> gate is your main line, but note one sharp edge from the evaluation order: a tool pre-approved by <code>allowed_tools</code> or a permissive mode <em>skips</em> the callback. If a refund guarantee must hold in <em>every</em> mode &mdash; even a misconfigured one &mdash; put it in a <strong>PreToolUse hook</strong>, which runs first and whose deny beats everything, including bypass mode. Belt and braces for the one action that moves money.</p>
+
+    <h3>4c &middot; Idempotency: never pay twice</h3>
+    <p>Retries happen &mdash; a timeout, a resumed session, a double-click upstream. Your tool already keys each refund and replays the stored receipt instead of issuing a second one (the <code>REFUNDS_DONE</code> ledger from Stage 2). Make the agent pass a stable <code>idempotency_key</code> per request so a retry lands on the same key. This is the difference between a robust action tool and a lawsuit.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      This is heavily tested. Know the <strong>permission evaluation order</strong> cold, and the
+      two footguns: <code>allowed_tools</code> does <em>not</em> constrain <code>bypassPermissions</code>,
+      and a pre-approved tool skips <code>can_use_tool</code>. Hard guarantees belong in
+      <strong>deny rules or PreToolUse hooks</strong> because deny always wins. Idempotency and
+      caps are the canonical guardrails for a money-moving tool. &ldquo;Trust the model to only
+      refund the right amount&rdquo; is always the wrong answer.
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      <code>PermissionResultAllow</code>/<code>Deny</code>, the <code>can_use_tool</code> signature,
+      and the exact evaluation order are current but version-sensitive (the TS SDK even warns
+      when a callback is unreachable). Confirm against the permissions guide at
+      <code>code.claude.com/docs/en/agent-sdk/permissions</code>.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 4 done when</span>
+      <ul>
+        <li>A refund above the cap, above the order amount, or on a non-refundable order is denied &mdash; and the agent adapts.</li>
+        <li>You can explain why a hard guarantee goes in a hook, not just the callback.</li>
+        <li>A retried refund with the same key pays out once, not twice.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 5 ============ -->
+  <section class="stage" id="s5">
+    <div class="stage-head">
+      <span class="stage-num">Stage 05</span>
+      <h2>Decide: resolve or escalate</h2>
+      <span class="domain-tag">Context Management &amp; Reliability &middot; 15%</span>
+    </div>
+    <p class="lede">The target is 80%+ first-contact resolution &mdash; which is <em>not</em> &ldquo;resolve everything.&rdquo; It&rsquo;s resolving the clear cases confidently and escalating the genuinely ambiguous ones, cleanly, with context attached. Get this line right and the metric follows.</p>
+
+    <h3>5a &middot; When to escalate vs. resolve</h3>
+    <p>Escalate on a defined trigger, not a hunch. The three that matter:</p>
+    <ul>
+      <li><strong>Policy gap</strong> &mdash; nothing in the agent&rsquo;s rules covers the case (a refund past the window, a dispute on a closed account). No basis to decide &rarr; escalate.</li>
+      <li><strong>Explicit request</strong> &mdash; the customer asks for a human, or a rule requires sign-off (refunds over the cap, from Stage 4).</li>
+      <li><strong>Inability to progress</strong> &mdash; a tool keeps returning <code>upstream_down</code>, the account data conflicts, the agent can&rsquo;t verify the claim. Don&rsquo;t spin &rarr; escalate.</li>
+    </ul>
+    <p>Everything else &mdash; the in-policy refund, the simple status question, the address fix &mdash; it resolves autonomously. That&rsquo;s the 80%.</p>
+
+    <h3>5b &middot; Escalate <em>with</em> context, not a cold handoff</h3>
+    <p>A good escalation isn&rsquo;t &ldquo;I can&rsquo;t help&rdquo; &mdash; it&rsquo;s a handoff a human can act on in seconds. Your <code>escalate_to_human</code> tool already takes a <code>reason</code> and a <code>summary</code>; require the summary to carry what the agent gathered: customer, order, what was attempted, why it stopped.</p>
+    <div class="code">escalate_to_human(
+    reason=<span class="s">"refund_past_window"</span>,
+    summary=<span class="s">"Rae Ortiz (cust_88), order 4471 ($42, delivered 40 days ago). "</span>
+           <span class="s">"Requests refund for damage. Past 30-day window — needs human judgment."</span>
+)</div>
+
+    <h3>5c &middot; Confidence-based routing</h3>
+    <p>Where the agent can attach a confidence to its own conclusion, route on it: high confidence and in-policy &rarr; resolve; low confidence or out-of-policy &rarr; escalate. The middle band is the whole point &mdash; not confident enough to act, so a human decides. Routing <em>everything</em> to a human defeats the agent; routing <em>nothing</em> is how bad refunds ship.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      Pure judgment, and scenario-heavy. A situation is described; you pick resolve or
+      escalate. Map to the triggers: policy gap / explicit request / can&rsquo;t progress &rarr;
+      escalate; clear and in-policy &rarr; resolve. Beware answers that maximize the FCR metric
+      by <em>never</em> escalating &mdash; the exam treats gaming the metric as the wrong call.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 5 done when</span>
+      <ul>
+        <li>The agent resolves clear in-policy cases and escalates on each of the three triggers.</li>
+        <li>Every escalation carries a summary a human could act on without re-asking the customer.</li>
+        <li>You can articulate why 80% FCR is a ceiling on escalation, not a floor on resolution.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 6 ============ -->
+  <section class="stage" id="s6">
+    <div class="stage-head">
+      <span class="stage-num">Stage 06</span>
+      <h2>Manage context across the conversation</h2>
+      <span class="domain-tag">Context Management &amp; Reliability &middot; 15%</span>
+    </div>
+    <p class="lede">A real support conversation runs long: several turns, repeated lookups, verbose tool payloads. The context window fills and the agent drifts &mdash; forgets the order it already fetched, re-asks what the customer said. Keep the working context small and organized.</p>
+
+    <h3>6a &middot; Extract facts from verbose tool output</h3>
+    <p>A full customer record or order history can be a wall of fields the agent mostly doesn&rsquo;t need. Carry the distilled facts forward, not the raw dump.</p>
+    <div class="code"><span class="c"># Instead of the whole customer + order JSON, carry what the decision needs:</span>
+{ <span class="k">"customer"</span>: <span class="s">"cust_88 (standard)"</span>, <span class="k">"order"</span>: <span class="s">"4471 $42 delivered refundable"</span> }</div>
+
+    <h3>6b &middot; A scratchpad for the case</h3>
+    <p>For a multi-turn case, keep running state outside the context window &mdash; a short case note the agent updates: who, what they want, what&rsquo;s been checked, what&rsquo;s pending. A resumed session reads the note instead of re-deriving everything. State lives outside the window; the window holds only what the current turn needs.</p>
+
+    <h3>6c &middot; Delegate a noisy sub-task</h3>
+    <p>If resolving a billing dispute means reading a long transaction history, spin that into a subagent: it reads the history in its own context and returns a three-line summary. The parent pays for the summary, not the whole history &mdash; the second reason subagents exist, alongside specialization.</p>
+    <div class="note">
+      The SDK compacts automatically as the limit nears and re-reads your system prompt after
+      compaction &mdash; but designing for small context beats relying on compaction, especially
+      in a high-volume support agent where every extra token is paid per conversation.
+    </div>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      Scenarios describe an agent degrading over a long conversation; you pick the fix. The
+      answers cluster around <strong>fact extraction</strong> (carry distilled facts, not raw
+      output), <strong>external state</strong> (scratchpad over in-context memory), and
+      <strong>delegation for context isolation</strong>. Know why each shrinks the working set.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 6 done when</span>
+      <ul>
+        <li>Verbose tool output is distilled to the facts the decision needs before moving on.</li>
+        <li>A case note holds state across turns / a resumed session.</li>
+        <li>At least one noisy sub-task is delegated to keep the main context small.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 7 ============ -->
+  <section class="stage" id="s7">
+    <div class="stage-head">
+      <span class="stage-num">Stage 07</span>
+      <h2>Measure first-contact resolution</h2>
+      <span class="domain-tag">Reliability in practice</span>
+    </div>
+    <p class="lede">&ldquo;80%+ first-contact resolution&rdquo; is only real if you measure it. Build a small set of test tickets, define what &ldquo;resolved&rdquo; means, run the agent, and compute the rate. Then tune &mdash; without gaming the number by suppressing escalations you should be making.</p>
+
+    <h3>7a &middot; Define &ldquo;resolved on first contact&rdquo;</h3>
+    <p>Pin it down before measuring. A reasonable definition for this agent: the request reached a correct terminal outcome in one conversation, with <em>no</em> handoff &mdash; either a valid in-policy refund was issued, or the correct answer was given. An escalation is <strong>not</strong> a resolution &mdash; but escalating when you <em>should</em> is a correct outcome, not a failure. Those are different axes: track resolution rate <em>and</em> escalation-correctness.</p>
+
+    <h3>7b &middot; A test set with a known right answer</h3>
+    <p>Write tickets that span the real distribution &mdash; clear resolvables and genuine escalations &mdash; each labeled with what should happen.</p>
+    <div class="code">TEST_TICKETS = [
+  {<span class="k">"msg"</span>: <span class="s">"Refund order 4471, arrived cracked."</span>,       <span class="k">"expect"</span>: <span class="s">"refund"</span>},
+  {<span class="k">"msg"</span>: <span class="s">"What's the status of order 4471?"</span>,           <span class="k">"expect"</span>: <span class="s">"answer"</span>},
+  {<span class="k">"msg"</span>: <span class="s">"Refund my order from 6 months ago."</span>,          <span class="k">"expect"</span>: <span class="s">"escalate"</span>},  <span class="c"># past window</span>
+  {<span class="k">"msg"</span>: <span class="s">"I want to speak to a person about a dispute."</span>, <span class="k">"expect"</span>: <span class="s">"escalate"</span>},  <span class="c"># explicit</span>
+  {<span class="k">"msg"</span>: <span class="s">"Refund order 4471 for $4200."</span>,               <span class="k">"expect"</span>: <span class="s">"deny_then_correct"</span>},
+]</div>
+    <p>Run each through the agent, capture the terminal outcome, and score it against <code>expect</code>. Your unit tests cover the tools as plain functions (no model needed); this is the end-to-end harness &mdash; pin a model for repeatability and keep <code>max_turns</code> tight.</p>
+
+    <h3>7c &middot; Compute FCR, then tune the honest way</h3>
+    <p>First-contact resolution = correct in-policy resolutions &divide; total tickets that <em>should</em> resolve without a human. If you&rsquo;re under 80%, the fix is one of: sharper tool descriptions (Stage 3) so the agent gathers the right facts, a clearer resolve/escalate line (Stage 5), or a system prompt that better states policy. The dishonest fix &mdash; suppressing escalations to inflate the rate &mdash; trades a metric for real refunds gone wrong. Track escalation-correctness alongside FCR precisely so that gaming shows up.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      The exam frames reliability as <strong>measurable</strong>: evals over vibes, a labeled
+      test set, a metric with a definition. And it consistently rewards the honest reading of a
+      target &mdash; 80% FCR is achieved by resolving what&rsquo;s resolvable, not by refusing to
+      escalate. Expect a scenario where raising FCR the wrong way is the tempting distractor.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 7 done when</span>
+      <ul>
+        <li>&ldquo;Resolved on first contact&rdquo; has a written definition, separate from escalation-correctness.</li>
+        <li>A labeled test set runs end to end and produces an FCR number.</li>
+        <li>You&rsquo;ve tuned toward 80%+ without suppressing warranted escalations &mdash; and can show both metrics moving.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ CLOSE ============ -->
+  <section class="stage" id="close">
+    <div class="stage-head">
+      <span class="stage-num">Wrap-up</span>
+      <h2>What you built, and how it maps</h2>
+    </div>
+    <p>You now have one working agent that exercises the scenario&rsquo;s three primary domains: a resolution loop with sessions and subagents (Agentic Architecture, 27%); four custom MCP tools with sharp descriptions, structured errors, and a permission-gated money-moving action (Tool &amp; MCP, 18%, plus the guardrail judgment that lives in Agentic Architecture); and context management with confidence-based escalation and a measured 80% first-contact-resolution target (Context &amp; Reliability, 15%). Completing it, you should be able to answer any question the scenario raises &mdash; how the loop works, why <code>process_refund</code> is gated where it is, when to escalate, and how the target is measured rather than assumed.</p>
+    <p>The exam is 60 scenario questions in 120 minutes, and it rewards judgment over recall &mdash; the wrong answers are written to tempt people with partial knowledge. Having actually built the guard, the escalation line, and the measurement harness is the difference between recognizing the right call and guessing.</p>
+    <div class="prep-banner" style="margin-top:24px">
+      <span class="icn">&#9873;</span>
+      <span>
+        <strong>Next step toward the exam.</strong> Complete Anthropic&rsquo;s four official
+        Skilljar courses, request exam access, and take the official practice test before
+        booking. This lab is preparation &mdash; the credential comes from Anthropic&rsquo;s
+        proctored exam, not from here.
+      </span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>SF Knowledge Hub</strong> &middot; CCA-F Capstone Lab &middot; Scenario 1: Customer Support Resolution Agent
+  <p class="disclaimer">
+    A recommended preparatory lab for the Anthropic Claude Certified Architect &mdash;
+    Foundations (CCA-F) exam. Not affiliated with or endorsed by Anthropic, and not a
+    substitute for the official exam or its prerequisites. Commands, package names, and API
+    fields reflect the toolchain as of mid-2026 and carry a real shelf-life &mdash; check
+    every <em>Verify</em> note against current documentation before relying on it.
+  </p>
+</footer>
+
+</body>
+</html>
