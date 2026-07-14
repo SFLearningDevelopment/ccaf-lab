@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<!-- build: 2026071406 -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Certified Architect — Knowledge Track · Course Map</title>
+<style>
+  :root{
+    --ink:#1c1a17;
+    --ink-soft:#4a4640;
+    --paper:#f6f3ec;
+    --paper-raised:#fffdf8;
+    --line:#ddd6c8;
+    --line-strong:#c7bfab;
+    --accent:#2f6f5e;      /* deep teal-green: the "pass" signal */
+    --accent-deep:#204b40;
+    --accent-wash:#e5efe9;
+    --amber:#a56a1e;       /* escalation / caution */
+    --amber-wash:#f5ebd9;
+    --code-bg:#20241f;
+    --code-ink:#e7e4d8;
+    --code-key:#9ecb8f;
+    --code-str:#e0b877;
+    --code-dim:#8a877c;
+    --domain:#7a5cc4;      /* domain tag */
+    --domain-wash:#ece7f7;
+    --radius:10px;
+    --maxw:820px;
+    --mono:'DM Mono','SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;
+    --serif:'Newsreader',Georgia,'Times New Roman',serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--sans);font-size:17px;line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent-deep);text-underline-offset:2px}
+
+  /* ---------- Header ---------- */
+  header.masthead{
+    background:linear-gradient(180deg,var(--paper-raised),var(--paper));
+    border-bottom:1px solid var(--line-strong);
+    padding:56px 24px 40px;
+  }
+  .masthead-inner{max-width:var(--maxw);margin:0 auto}
+  .eyebrow{
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 18px;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  h1.title{
+    font-family:var(--serif);font-weight:600;font-size:clamp(34px,6vw,52px);
+    line-height:1.05;letter-spacing:-.01em;margin:0 0 20px;color:var(--ink);
+  }
+  h1.title em{font-style:italic;color:var(--accent-deep)}
+  .standfirst{
+    font-family:var(--serif);font-size:20px;line-height:1.5;color:var(--ink-soft);
+    max-width:64ch;margin:0 0 26px;
+  }
+  .prep-banner{
+    display:flex;gap:14px;align-items:flex-start;
+    background:var(--accent-wash);border:1px solid #bcd6cb;
+    border-radius:var(--radius);padding:16px 18px;font-size:15px;line-height:1.55;
+    color:var(--accent-deep);
+  }
+  .prep-banner strong{font-weight:600}
+  .prep-banner .icn{flex:0 0 auto;font-family:var(--mono);font-weight:500}
+
+  /* ---------- Layout ---------- */
+  main{max-width:var(--maxw);margin:0 auto;padding:8px 24px 96px}
+  section.stage{padding-top:52px;scroll-margin-top:20px}
+
+  .stage-head{margin-bottom:8px}
+  .stage-num{
+    font-family:var(--mono);font-size:13px;color:var(--accent);
+    letter-spacing:.08em;display:block;margin-bottom:6px;
+  }
+  h2{
+    font-family:var(--serif);font-weight:600;font-size:clamp(24px,4vw,32px);
+    line-height:1.15;letter-spacing:-.01em;margin:0 0 10px;
+  }
+  .domain-tag{
+    display:inline-block;font-family:var(--mono);font-size:11.5px;
+    letter-spacing:.04em;background:var(--domain-wash);color:var(--domain);
+    border-radius:20px;padding:3px 11px;margin-bottom:14px;
+  }
+  h3{font-family:var(--sans);font-weight:600;font-size:18px;margin:28px 0 8px}
+  p{margin:0 0 15px}
+  ul,ol{margin:0 0 15px;padding-left:22px}
+  li{margin-bottom:7px}
+  code{
+    font-family:var(--mono);font-size:.87em;background:#eae5da;
+    padding:1px 6px;border-radius:5px;color:var(--accent-deep);
+  }
+  .lede{font-size:18px;color:var(--ink-soft)}
+
+  /* ---------- Code blocks ---------- */
+  .code{
+    background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);
+    padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
+    line-height:1.6;margin:16px 0;border:1px solid #2c322a;
+  }
+  .code .k{color:var(--code-key)}
+  .code .s{color:var(--code-str)}
+  .code .c{color:var(--code-dim);font-style:italic}
+  .code .cmd{color:#e7e4d8}
+  .code-label{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent);margin:20px 0 -6px;display:block;
+  }
+
+  /* ---------- Callouts ---------- */
+  .note,.verify,.checkpoint{
+    border-radius:var(--radius);padding:15px 18px;margin:18px 0;font-size:15px;line-height:1.55;
+  }
+  .note{background:var(--paper-raised);border:1px solid var(--line-strong)}
+  .verify{background:var(--amber-wash);border:1px solid #e0c78f;color:#6b4a15}
+  .verify .lbl,.checkpoint .lbl{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    display:block;margin-bottom:5px;font-weight:500;
+  }
+  .verify .lbl{color:var(--amber)}
+  .checkpoint{background:var(--accent-wash);border:1px solid #bcd6cb;color:var(--accent-deep)}
+  .checkpoint .lbl{color:var(--accent)}
+  .checkpoint ul{margin:6px 0 0;padding-left:20px}
+  .checkpoint li{margin-bottom:4px}
+
+  /* ---------- Exam-lens ---------- */
+  .exam-lens{
+    border-left:3px solid var(--domain);background:var(--domain-wash);
+    padding:13px 16px 13px 18px;margin:18px 0;border-radius:0 var(--radius) var(--radius) 0;
+    font-size:14.5px;line-height:1.55;color:#3d2f5e;
+  }
+  .exam-lens .lbl{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--domain);display:block;margin-bottom:5px;font-weight:500;
+  }
+
+  /* ---------- Map / TOC ---------- */
+  .roadmap{
+    background:var(--paper-raised);border:1px solid var(--line-strong);
+    border-radius:var(--radius);padding:24px;margin:36px 0 8px;
+  }
+  .roadmap h2{font-size:20px;margin:0 0 4px}
+  .roadmap .sub{font-size:14px;color:var(--ink-soft);margin:0 0 18px}
+  .roadmap ol{list-style:none;padding:0;margin:0;counter-reset:rm}
+  .roadmap li{
+    counter-increment:rm;display:flex;gap:14px;align-items:baseline;
+    padding:11px 0;border-top:1px solid var(--line);margin:0;
+  }
+  .roadmap li:first-child{border-top:none}
+  .roadmap li::before{
+    content:counter(rm,decimal-leading-zero);font-family:var(--mono);font-size:13px;
+    color:var(--accent);flex:0 0 auto;width:24px;
+  }
+  .roadmap li.rm-start{counter-increment:none}
+  .roadmap li.rm-start::before{content:"\2192";font-size:14px}
+  .roadmap a{text-decoration:none;font-weight:500;color:var(--ink)}
+  .roadmap a:hover{color:var(--accent-deep)}
+  .roadmap .rm-domain{
+    font-family:var(--mono);font-size:11px;color:var(--domain);
+    margin-left:auto;flex:0 0 auto;white-space:nowrap;padding-left:12px;
+  }
+  .roadmap .rm-body{display:flex;flex-direction:column}
+  .roadmap .rm-body small{color:var(--ink-soft);font-weight:400;font-size:13.5px}
+
+  hr.rule{border:none;border-top:1px solid var(--line);margin:0}
+
+  /* ---------- Prereqs box ---------- */
+  .prereqs{
+    background:var(--paper-raised);border:1px dashed var(--line-strong);
+    border-radius:var(--radius);padding:20px 22px;margin:28px 0;
+  }
+  .prereqs h3{margin-top:0}
+  .prereqs code{background:#eae5da}
+
+  /* ---------- Footer ---------- */
+  footer{
+    max-width:var(--maxw);margin:0 auto;padding:40px 24px 80px;
+    border-top:1px solid var(--line-strong);color:var(--ink-soft);font-size:14px;
+  }
+  footer .disclaimer{font-size:13px;line-height:1.6;margin-top:14px}
+
+  .scenario{
+    font-family:var(--serif);font-style:italic;font-size:18px;line-height:1.55;
+    color:var(--ink-soft);border-left:3px solid var(--accent);
+    padding:4px 0 4px 18px;margin:18px 0;
+  }
+
+  /* ---------- Orientation ---------- */
+  .orient-intro{
+    font-size:18px;line-height:1.6;color:var(--ink-soft);margin:0 0 8px;
+  }
+  .orient-intro strong{color:var(--ink);font-weight:600}
+
+  .build-card{
+    background:var(--paper-raised);border:1px solid var(--line-strong);
+    border-radius:var(--radius);padding:22px 24px;margin:24px 0;
+  }
+  .build-card h3{margin:0 0 12px;font-size:16px}
+  .build-card .reads{
+    display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;
+    font-family:var(--mono);font-size:12.5px;
+  }
+  .build-card .chip{
+    background:var(--accent-wash);border:1px solid #bcd6cb;color:var(--accent-deep);
+    border-radius:20px;padding:4px 12px;
+  }
+
+  /* Flow diagram */
+  .flow-wrap{margin:28px 0 8px}
+  .flow-wrap figcaption{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-soft);margin-top:12px;text-align:center;
+  }
+  .flow-svg{width:100%;height:auto;display:block;
+    background:var(--paper-raised);border:1px solid var(--line-strong);border-radius:var(--radius);
+  }
+  .flow-svg .box{fill:var(--paper);stroke:var(--line-strong);stroke-width:1.2}
+  .flow-svg .box-accent{fill:var(--accent-wash);stroke:#bcd6cb;stroke-width:1.2}
+  .flow-svg .box-amber{fill:var(--amber-wash);stroke:#e0c78f;stroke-width:1.2}
+  .flow-svg .lbl{font-family:var(--sans);font-size:13px;font-weight:600;fill:var(--ink)}
+  .flow-svg .sub{font-family:var(--mono);font-size:10px;fill:var(--ink-soft)}
+  .flow-svg .stg{font-family:var(--mono);font-size:9.5px;fill:var(--accent);letter-spacing:.05em}
+  .flow-svg .flowline{stroke:var(--line-strong);stroke-width:1.4;fill:none}
+  .flow-svg .flowline-accent{stroke:var(--accent);stroke-width:1.6;fill:none}
+  .flow-svg .loopline{stroke:var(--accent);stroke-width:1.4;fill:none;stroke-dasharray:4 3}
+  .flow-svg .arrowhead{fill:var(--line-strong)}
+  .flow-svg .arrowhead-accent{fill:var(--accent)}
+  .flow-svg .zonelbl{font-family:var(--mono);font-size:10px;fill:var(--ink-soft);letter-spacing:.06em}
+
+  /* Glossary */
+  .glossary{margin:24px 0 8px}
+  .glossary dl{margin:0;border-top:1px solid var(--line)}
+  .glossary dt{
+    font-family:var(--mono);font-size:14px;font-weight:500;color:var(--accent-deep);
+    margin-top:16px;
+  }
+  .glossary dd{margin:4px 0 0;font-size:15px;line-height:1.55;color:var(--ink-soft)}
+  .glossary dd .also{font-family:var(--mono);font-size:12px;color:var(--ink-soft);opacity:.8}
+
+  @media (max-width:600px){
+    body{font-size:16px}
+    header.masthead{padding:40px 20px 32px}
+    main{padding:8px 20px 72px}
+    .roadmap li{flex-wrap:wrap}
+    .roadmap .rm-domain{margin-left:34px;padding-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+/* ---- module-specific ---- */
+.antipattern{background:#fbeeee;border:1px solid #e3b7b0;border-left:3px solid #b0432f;border-radius:8px;padding:16px 20px;margin:22px 0;font-size:15px}
+.antipattern .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#b0432f;margin-bottom:8px;font-weight:600}
+.antipattern ul{margin:8px 0 0;padding-left:20px}
+.antipattern li{margin:5px 0}
+.capstone{background:#eaf1ee;border:1px solid #bcd6cb;border-radius:10px;padding:16px 20px;margin:22px 0;display:flex;gap:14px;align-items:flex-start}
+.capstone .icn{color:var(--accent);font-size:20px;line-height:1;flex-shrink:0;margin-top:1px}
+.capstone .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:5px;font-weight:600}
+.capstone a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:1px solid rgba(47,111,94,.35)}
+.capstone a:hover{border-bottom-color:var(--accent)}
+.kpoints{margin:16px 0}
+.kpoints .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;font-weight:600}
+.taskref{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.in-practice{margin:16px 0}
+.in-practice .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;font-weight:600}
+/* ---- course map ---- */
+.mod-grid{display:flex;flex-direction:column;gap:16px;margin:26px 0}
+.mod-card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px;transition:border-color .15s,transform .15s}
+.mod-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.mod-card .mnum{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.mod-card h3{margin:6px 0 8px;font-size:21px;font-weight:600;color:var(--ink)}
+.mod-card p{margin:0 0 12px;color:var(--ink-soft);font-size:15px;line-height:1.55}
+.mod-card .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mod-card .tag{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:20px;background:var(--paper-2);border:1px solid var(--line);color:var(--ink-soft)}
+.mod-card .tag.count{background:#eaf1ee;border-color:#bcd6cb;color:var(--accent)}
+.mod-card .soon{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#a56a1e;background:#f5ebd9;border:1px solid #e0c78f;border-radius:20px;padding:3px 9px}
+.lab-row{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 4px}
+.lab-chip{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-size:14px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 14px;transition:border-color .15s}
+.lab-chip:hover{border-color:var(--accent)}
+.lab-chip .dm{font-family:var(--mono);font-size:10px;color:var(--accent);background:#eaf1ee;border-radius:12px;padding:2px 7px}
+.matrix{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.matrix th,.matrix td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.matrix th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.matrix td:first-child{font-weight:600;color:var(--accent);white-space:nowrap}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="eyebrow"><span class="dot"></span> SF Knowledge Hub</p>
+    <h1 class="title">Claude Certified Architect<br><em>Knowledge Track</em></h1>
+    <p class="standfirst">
+      The structured-knowledge layer for the CCA exam: five modules, one per exam domain, covering
+      all 29 task statements. Each module teaches the knowledge the exam tests and points you to the
+      hands-on <strong>capstone lab</strong> where you build it for real. Work the modules, build the
+      capstones, then take the evaluation.
+    </p>
+    <div class="prep-banner">
+      <span class="icn">&#9873;</span>
+      <span>
+        <strong>This is a recommended preparatory track, not a certification course.</strong>
+        Completing it does not grant a certificate and is not the CCA exam. The exam is booked
+        separately through Anthropic and has its own prerequisites. This track is preparation &mdash;
+        pair the knowledge modules with the capstone labs for the strongest footing.
+      </span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div class="prereqs">
+    <h3>How the track works</h3>
+    <p>Two layers, one path. The <strong>knowledge modules</strong> below are the structured theory &mdash; every task statement, its anti-patterns, and the exam-lens traps. The <strong>capstone labs</strong> are where you build real systems that exercise those ideas. Each module links to its labs, and the evaluation at the end draws its questions from the lab scenarios &mdash; so building the capstones is the best preparation for it.</p>
+    <div class="note">
+      Suggested path: read a module, build at least one of its linked capstones, then move on. Take
+      the <strong>evaluation after all five modules</strong> are complete. The modules are ordered to
+      build on each other, but you can jump to a domain you want to shore up.
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- ============ MODULES ============ -->
+  <section class="stage">
+    <div class="stage-head">
+      <span class="stage-num">The five modules</span>
+      <h2>One per exam domain</h2>
+    </div>
+    <p class="lede">All 29 task statements, mapped to five modules that mirror the exam&rsquo;s own domain structure. Section counts reflect each domain&rsquo;s weight &mdash; Agentic Architecture is the largest.</p>
+
+    <div class="mod-grid">
+
+      <a class="mod-card" href="module-1-agentic-architecture.html?v=2026071404">
+        <span class="mnum">Module 1 · Domain 1</span>
+        <h3>Agentic Architecture &amp; Orchestration</h3>
+        <p>The agentic loop, coordinator&ndash;subagent orchestration, context passing, workflow enforcement, SDK hooks, task decomposition, and session state. The foundation the whole exam rests on.</p>
+        <div class="meta">
+          <span class="tag count">7 sections</span>
+          <span class="tag">Tasks 1.1&ndash;1.7</span>
+          <span class="tag">stop_reason · hub-and-spoke · hooks</span>
+        </div>
+      </a>
+
+      <a class="mod-card" href="module-2-tool-design-mcp.html?v=2026071405">
+        <span class="mnum">Module 2 · Domain 2</span>
+        <h3>Tool Design &amp; MCP Integration</h3>
+        <p>Tool interfaces the model selects reliably, structured error responses, scoped tool distribution and <code>tool_choice</code>, MCP server integration, and the built-in tools. What makes an agent pick the right tool and recover when one fails.</p>
+        <div class="meta">
+          <span class="tag count">5 sections</span>
+          <span class="tag">Tasks 2.1&ndash;2.5</span>
+          <span class="tag">descriptions · isError · MCP scoping</span>
+        </div>
+      </a>
+
+      <a class="mod-card" href="module-3-claude-code-config.html">
+        <span class="mnum">Module 3 · Domain 3</span>
+        <h3>Claude Code Configuration &amp; Workflows</h3>
+        <p>CLAUDE.md hierarchy and modularity, custom slash commands and skills, path-specific rules, plan mode vs direct execution, iterative refinement, and CI/CD integration.</p>
+        <div class="meta">
+          <span class="tag count">6 sections</span>
+          <span class="tag">Tasks 3.1&ndash;3.6</span>
+          <span class="soon">building next</span>
+        </div>
+      </a>
+
+      <a class="mod-card" href="module-4-prompt-structured-output.html">
+        <span class="mnum">Module 4 · Domain 4</span>
+        <h3>Prompt Engineering &amp; Structured Output</h3>
+        <p>Explicit criteria to cut false positives, few-shot prompting, structured output via tool use and JSON schemas, validation and retry loops, batch processing, and multi-pass review architectures.</p>
+        <div class="meta">
+          <span class="tag count">6 sections</span>
+          <span class="tag">Tasks 4.1&ndash;4.6</span>
+          <span class="soon">building next</span>
+        </div>
+      </a>
+
+      <a class="mod-card" href="module-5-context-reliability.html">
+        <span class="mnum">Module 5 · Domain 5</span>
+        <h3>Context Management &amp; Reliability</h3>
+        <p>Preserving context across long interactions, escalation and ambiguity resolution, error propagation across agents, large-codebase context, human review and confidence calibration, and provenance in multi-source synthesis.</p>
+        <div class="meta">
+          <span class="tag count">6 sections</span>
+          <span class="tag">Tasks 5.1&ndash;5.6</span>
+          <span class="soon">building next</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ CAPSTONES ============ -->
+  <section class="stage">
+    <div class="stage-head">
+      <span class="stage-num">The capstone labs</span>
+      <h2>Where you build it for real</h2>
+    </div>
+    <p class="lede">Seven hands-on labs, each taking one real project through seven stages. They&rsquo;re the applied layer of the track &mdash; and the evaluation&rsquo;s scenario questions are drawn from them, so building them is exam prep twice over.</p>
+
+    <div class="lab-row">
+      <a class="lab-chip" href="ccaf-support-agent-lab.html"><span class="dm">D1·D2·D5</span> Customer Support Resolution Agent</a>
+      <a class="lab-chip" href="ccaf-research-system-lab.html"><span class="dm">D1·D2·D5</span> Multi-Agent Research System</a>
+      <a class="lab-chip" href="ccaf-dev-productivity-lab.html"><span class="dm">D1·D2·D3·D5</span> Developer Productivity</a>
+      <a class="lab-chip" href="ccaf-claude-code-workflow-lab.html"><span class="dm">D3·D5</span> Claude Code Development Workflow</a>
+      <a class="lab-chip" href="ccaf-cicd-lab.html"><span class="dm">D3·D4</span> Claude Code in CI/CD</a>
+      <a class="lab-chip" href="ccaf-data-extraction-lab.html"><span class="dm">D4·D5</span> Structured Data Extraction</a>
+      <a class="lab-chip" href="ccaf-prep-capstone-lab.html"><span class="dm">all five</span> Code-Review Agent</a>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ MAPPING ============ -->
+  <section class="stage">
+    <div class="stage-head">
+      <span class="stage-num">Domain &harr; lab map</span>
+      <h2>Which lab builds which domain</h2>
+    </div>
+    <p class="lede">Use this to pick a capstone that reinforces the module you&rsquo;re studying. Most labs span several domains, because real systems do.</p>
+
+    <table class="matrix">
+      <thead>
+        <tr><th>Domain</th><th>Primary capstone labs</th><th>What you build</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>D1 · Agentic Architecture</td>
+          <td>Research System · Support Agent · Dev Productivity</td>
+          <td>Coordinator&ndash;subagent orchestration, the agentic loop, prerequisite gates and hooks, adaptive decomposition</td>
+        </tr>
+        <tr>
+          <td>D2 · Tool &amp; MCP</td>
+          <td>Dev Productivity · Support Agent · Research System</td>
+          <td>Tool interface design, structured errors, scoped tool sets, MCP server integration, built-in tools</td>
+        </tr>
+        <tr>
+          <td>D3 · Claude Code Config</td>
+          <td>Claude Code Workflow · CI/CD · Dev Productivity</td>
+          <td>CLAUDE.md hierarchy, slash commands, plan mode, path rules, CI/CD headless mode</td>
+        </tr>
+        <tr>
+          <td>D4 · Prompt &amp; Structured Output</td>
+          <td>Data Extraction · CI/CD · Code-Review Agent</td>
+          <td>JSON-schema constrained output, validation-retry, false-positive control, multi-pass review</td>
+        </tr>
+        <tr>
+          <td>D5 · Context &amp; Reliability</td>
+          <td>Data Extraction · Research System · Dev Productivity</td>
+          <td>Context preservation, error propagation, provenance and synthesis, confidence calibration</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ EVALUATION ============ -->
+  <section class="stage">
+    <div class="stage-head">
+      <span class="stage-num">The evaluation</span>
+      <h2>After all five modules</h2>
+    </div>
+    <p class="lede">The track ends with a scenario-based evaluation modeled on the CCA exam&rsquo;s own style &mdash; situations drawn from the seven capstone labs, with answers written to reward applied judgment over recall.</p>
+    <p>Because every question is framed as a situation you&rsquo;ve seen in a lab &mdash; a CI/CD reviewer dismissed too often, a coordinator missing subtopics, an extraction fabricating a required field &mdash; <strong>the best way to prepare is to build the capstones</strong>. The evaluation unlocks once the modules are complete.</p>
+    <div class="prep-banner" style="margin-top:22px">
+      <span class="icn">&#9873;</span>
+      <span>
+        <strong>The credential is Anthropic&rsquo;s.</strong> This track and its evaluation are preparation.
+        The Claude Certified Architect exam is proctored and booked through Anthropic, with its own
+        prerequisites &mdash; completing this track is not a substitute for it.
+      </span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>SF Knowledge Hub</strong> &middot; Claude Certified Architect &mdash; Knowledge Track &middot; Course Map
+  <p class="disclaimer">
+    The structured-knowledge companion to the CCA capstone labs. A recommended preparatory resource
+    &mdash; not affiliated with or endorsed by Anthropic, and not a substitute for the official exam or
+    its prerequisites. Content reflects the toolchain as of mid-2026 and carries a real shelf-life;
+    verify against current documentation before relying on specifics.
+  </p>
+</footer>
+
+</body>
+</html>
