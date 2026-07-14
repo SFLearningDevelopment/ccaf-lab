@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<!-- build: 2026071403 -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCA-F Capstone Lab · Build a Structured Data Extraction System</title>
+<style>
+  :root{
+    --ink:#1c1a17;
+    --ink-soft:#4a4640;
+    --paper:#f6f3ec;
+    --paper-raised:#fffdf8;
+    --line:#ddd6c8;
+    --line-strong:#c7bfab;
+    --accent:#2f6f5e;      /* deep teal-green: the "pass" signal */
+    --accent-deep:#204b40;
+    --accent-wash:#e5efe9;
+    --amber:#a56a1e;       /* escalation / caution */
+    --amber-wash:#f5ebd9;
+    --code-bg:#20241f;
+    --code-ink:#e7e4d8;
+    --code-key:#9ecb8f;
+    --code-str:#e0b877;
+    --code-dim:#8a877c;
+    --domain:#7a5cc4;      /* domain tag */
+    --domain-wash:#ece7f7;
+    --radius:10px;
+    --maxw:820px;
+    --mono:'DM Mono','SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;
+    --serif:'Newsreader',Georgia,'Times New Roman',serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--sans);font-size:17px;line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent-deep);text-underline-offset:2px}
+
+  /* ---------- Header ---------- */
+  header.masthead{
+    background:linear-gradient(180deg,var(--paper-raised),var(--paper));
+    border-bottom:1px solid var(--line-strong);
+    padding:56px 24px 40px;
+  }
+  .masthead-inner{max-width:var(--maxw);margin:0 auto}
+  .eyebrow{
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 18px;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  h1.title{
+    font-family:var(--serif);font-weight:600;font-size:clamp(34px,6vw,52px);
+    line-height:1.05;letter-spacing:-.01em;margin:0 0 20px;color:var(--ink);
+  }
+  h1.title em{font-style:italic;color:var(--accent-deep)}
+  .standfirst{
+    font-family:var(--serif);font-size:20px;line-height:1.5;color:var(--ink-soft);
+    max-width:64ch;margin:0 0 26px;
+  }
+  .prep-banner{
+    display:flex;gap:14px;align-items:flex-start;
+    background:var(--accent-wash);border:1px solid #bcd6cb;
+    border-radius:var(--radius);padding:16px 18px;font-size:15px;line-height:1.55;
+    color:var(--accent-deep);
+  }
+  .prep-banner strong{font-weight:600}
+  .prep-banner .icn{flex:0 0 auto;font-family:var(--mono);font-weight:500}
+
+  /* ---------- Layout ---------- */
+  main{max-width:var(--maxw);margin:0 auto;padding:8px 24px 96px}
+  section.stage{padding-top:52px;scroll-margin-top:20px}
+
+  .stage-head{margin-bottom:8px}
+  .stage-num{
+    font-family:var(--mono);font-size:13px;color:var(--accent);
+    letter-spacing:.08em;display:block;margin-bottom:6px;
+  }
+  h2{
+    font-family:var(--serif);font-weight:600;font-size:clamp(24px,4vw,32px);
+    line-height:1.15;letter-spacing:-.01em;margin:0 0 10px;
+  }
+  .domain-tag{
+    display:inline-block;font-family:var(--mono);font-size:11.5px;
+    letter-spacing:.04em;background:var(--domain-wash);color:var(--domain);
+    border-radius:20px;padding:3px 11px;margin-bottom:14px;
+  }
+  h3{font-family:var(--sans);font-weight:600;font-size:18px;margin:28px 0 8px}
+  p{margin:0 0 15px}
+  ul,ol{margin:0 0 15px;padding-left:22px}
+  li{margin-bottom:7px}
+  code{
+    font-family:var(--mono);font-size:.87em;background:#eae5da;
+    padding:1px 6px;border-radius:5px;color:var(--accent-deep);
+  }
+  .lede{font-size:18px;color:var(--ink-soft)}
+
+  /* ---------- Code blocks ---------- */
+  .code{
+    background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);
+    padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
+    line-height:1.6;margin:16px 0;border:1px solid #2c322a;
+  }
+  .code .k{color:var(--code-key)}
+  .code .s{color:var(--code-str)}
+  .code .c{color:var(--code-dim);font-style:italic}
+  .code .cmd{color:#e7e4d8}
+  .code-label{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent);margin:20px 0 -6px;display:block;
+  }
+
+  /* ---------- Callouts ---------- */
+  .note,.verify,.checkpoint{
+    border-radius:var(--radius);padding:15px 18px;margin:18px 0;font-size:15px;line-height:1.55;
+  }
+  .note{background:var(--paper-raised);border:1px solid var(--line-strong)}
+  .verify{background:var(--amber-wash);border:1px solid #e0c78f;color:#6b4a15}
+  .verify .lbl,.checkpoint .lbl{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    display:block;margin-bottom:5px;font-weight:500;
+  }
+  .verify .lbl{color:var(--amber)}
+  .checkpoint{background:var(--accent-wash);border:1px solid #bcd6cb;color:var(--accent-deep)}
+  .checkpoint .lbl{color:var(--accent)}
+  .checkpoint ul{margin:6px 0 0;padding-left:20px}
+  .checkpoint li{margin-bottom:4px}
+
+  /* ---------- Exam-lens ---------- */
+  .exam-lens{
+    border-left:3px solid var(--domain);background:var(--domain-wash);
+    padding:13px 16px 13px 18px;margin:18px 0;border-radius:0 var(--radius) var(--radius) 0;
+    font-size:14.5px;line-height:1.55;color:#3d2f5e;
+  }
+  .exam-lens .lbl{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--domain);display:block;margin-bottom:5px;font-weight:500;
+  }
+
+  /* ---------- Map / TOC ---------- */
+  .roadmap{
+    background:var(--paper-raised);border:1px solid var(--line-strong);
+    border-radius:var(--radius);padding:24px;margin:36px 0 8px;
+  }
+  .roadmap h2{font-size:20px;margin:0 0 4px}
+  .roadmap .sub{font-size:14px;color:var(--ink-soft);margin:0 0 18px}
+  .roadmap ol{list-style:none;padding:0;margin:0;counter-reset:rm}
+  .roadmap li{
+    counter-increment:rm;display:flex;gap:14px;align-items:baseline;
+    padding:11px 0;border-top:1px solid var(--line);margin:0;
+  }
+  .roadmap li:first-child{border-top:none}
+  .roadmap li::before{
+    content:counter(rm,decimal-leading-zero);font-family:var(--mono);font-size:13px;
+    color:var(--accent);flex:0 0 auto;width:24px;
+  }
+  .roadmap li.rm-start{counter-increment:none}
+  .roadmap li.rm-start::before{content:"\2192";font-size:14px}
+  .roadmap a{text-decoration:none;font-weight:500;color:var(--ink)}
+  .roadmap a:hover{color:var(--accent-deep)}
+  .roadmap .rm-domain{
+    font-family:var(--mono);font-size:11px;color:var(--domain);
+    margin-left:auto;flex:0 0 auto;white-space:nowrap;padding-left:12px;
+  }
+  .roadmap .rm-body{display:flex;flex-direction:column}
+  .roadmap .rm-body small{color:var(--ink-soft);font-weight:400;font-size:13.5px}
+
+  hr.rule{border:none;border-top:1px solid var(--line);margin:0}
+
+  /* ---------- Prereqs box ---------- */
+  .prereqs{
+    background:var(--paper-raised);border:1px dashed var(--line-strong);
+    border-radius:var(--radius);padding:20px 22px;margin:28px 0;
+  }
+  .prereqs h3{margin-top:0}
+  .prereqs code{background:#eae5da}
+
+  /* ---------- Footer ---------- */
+  footer{
+    max-width:var(--maxw);margin:0 auto;padding:40px 24px 80px;
+    border-top:1px solid var(--line-strong);color:var(--ink-soft);font-size:14px;
+  }
+  footer .disclaimer{font-size:13px;line-height:1.6;margin-top:14px}
+
+  .scenario{
+    font-family:var(--serif);font-style:italic;font-size:18px;line-height:1.55;
+    color:var(--ink-soft);border-left:3px solid var(--accent);
+    padding:4px 0 4px 18px;margin:18px 0;
+  }
+
+  /* ---------- Orientation ---------- */
+  .orient-intro{
+    font-size:18px;line-height:1.6;color:var(--ink-soft);margin:0 0 8px;
+  }
+  .orient-intro strong{color:var(--ink);font-weight:600}
+
+  .build-card{
+    background:var(--paper-raised);border:1px solid var(--line-strong);
+    border-radius:var(--radius);padding:22px 24px;margin:24px 0;
+  }
+  .build-card h3{margin:0 0 12px;font-size:16px}
+  .build-card .reads{
+    display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;
+    font-family:var(--mono);font-size:12.5px;
+  }
+  .build-card .chip{
+    background:var(--accent-wash);border:1px solid #bcd6cb;color:var(--accent-deep);
+    border-radius:20px;padding:4px 12px;
+  }
+
+  /* Flow diagram */
+  .flow-wrap{margin:28px 0 8px}
+  .flow-wrap figcaption{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-soft);margin-top:12px;text-align:center;
+  }
+  .flow-svg{width:100%;height:auto;display:block;
+    background:var(--paper-raised);border:1px solid var(--line-strong);border-radius:var(--radius);
+  }
+  .flow-svg .box{fill:var(--paper);stroke:var(--line-strong);stroke-width:1.2}
+  .flow-svg .box-accent{fill:var(--accent-wash);stroke:#bcd6cb;stroke-width:1.2}
+  .flow-svg .box-amber{fill:var(--amber-wash);stroke:#e0c78f;stroke-width:1.2}
+  .flow-svg .lbl{font-family:var(--sans);font-size:13px;font-weight:600;fill:var(--ink)}
+  .flow-svg .sub{font-family:var(--mono);font-size:10px;fill:var(--ink-soft)}
+  .flow-svg .stg{font-family:var(--mono);font-size:9.5px;fill:var(--accent);letter-spacing:.05em}
+  .flow-svg .flowline{stroke:var(--line-strong);stroke-width:1.4;fill:none}
+  .flow-svg .flowline-accent{stroke:var(--accent);stroke-width:1.6;fill:none}
+  .flow-svg .loopline{stroke:var(--accent);stroke-width:1.4;fill:none;stroke-dasharray:4 3}
+  .flow-svg .arrowhead{fill:var(--line-strong)}
+  .flow-svg .arrowhead-accent{fill:var(--accent)}
+  .flow-svg .zonelbl{font-family:var(--mono);font-size:10px;fill:var(--ink-soft);letter-spacing:.06em}
+
+  /* Glossary */
+  .glossary{margin:24px 0 8px}
+  .glossary dl{margin:0;border-top:1px solid var(--line)}
+  .glossary dt{
+    font-family:var(--mono);font-size:14px;font-weight:500;color:var(--accent-deep);
+    margin-top:16px;
+  }
+  .glossary dd{margin:4px 0 0;font-size:15px;line-height:1.55;color:var(--ink-soft)}
+  .glossary dd .also{font-family:var(--mono);font-size:12px;color:var(--ink-soft);opacity:.8}
+
+  @media (max-width:600px){
+    body{font-size:16px}
+    header.masthead{padding:40px 20px 32px}
+    main{padding:8px 20px 72px}
+    .roadmap li{flex-wrap:wrap}
+    .roadmap .rm-domain{margin-left:34px;padding-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="eyebrow"><span class="dot"></span> SF Knowledge Hub · Exam Prep Lab</p>
+    <h1 class="title">Turn documents into<br><em>schema-valid</em> JSON.</h1>
+    <p class="standfirst">
+      A single hands-on capstone: a structured data extraction system on the Claude API. It reads
+      unstructured documents &mdash; invoices, contracts, resumes &mdash; and emits JSON that
+      <strong>validates against a schema every time</strong>, handles the messy edge cases without
+      fabricating, and hands clean records to whatever runs downstream. You design the schema,
+      constrain the output, and build the validation loop that makes it reliable.
+    </p>
+    <div class="prep-banner">
+      <span class="icn">&#9873;</span>
+      <span>
+        <strong>This is a recommended preparatory step, not a certification course.</strong>
+        Finishing this lab does not grant a certificate and is not the CCA-F exam.
+        The exam is booked separately through Anthropic and requires completing
+        Anthropic&rsquo;s four official Skilljar courses first. Treat this as the
+        &ldquo;build something real&rdquo; practice the exam rewards.
+      </span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div class="roadmap">
+    <h2>The build, in seven stages</h2>
+    <p class="sub">One project &mdash; a pipeline that turns unstructured documents into validated JSON records a downstream system can trust. Work top to bottom; each stage builds on the last.</p>
+    <ol>
+      <li class="rm-start"><div class="rm-body"><a href="#orient">Orientation &mdash; what you&rsquo;re building</a><small>the pipeline, the flow diagram, the terms</small></div><span class="rm-domain">start here</span></li>
+      <li><div class="rm-body"><a href="#s1">Design the extraction schema</a><small>the JSON Schema, and its subset rules</small></div><span class="rm-domain">Prompt &amp; Output · 20%</span></li>
+      <li><div class="rm-body"><a href="#s2">Constrain the output</a><small>output_config vs. strict tool use</small></div><span class="rm-domain">Prompt &amp; Output · 20%</span></li>
+      <li><div class="rm-body"><a href="#s3">Prompt for accurate extraction</a><small>format is guaranteed; accuracy isn&rsquo;t</small></div><span class="rm-domain">Prompt &amp; Output · 20%</span></li>
+      <li><div class="rm-body"><a href="#s4">Handle edge cases gracefully</a><small>missing fields, ambiguity, nulls</small></div><span class="rm-domain">Context &amp; Reliability · 15%</span></li>
+      <li><div class="rm-body"><a href="#s5">Validate &amp; retry</a><small>schema is format, not correctness</small></div><span class="rm-domain">Context &amp; Reliability · 15%</span></li>
+      <li><div class="rm-body"><a href="#s6">Scale to many documents</a><small>batch, long docs, refusals</small></div><span class="rm-domain">Context &amp; Reliability · 15%</span></li>
+      <li><div class="rm-body"><a href="#s7">Integrate downstream</a><small>the contract with the next system</small></div><span class="rm-domain">integration in practice</span></li>
+    </ol>
+  </div>
+
+  <div class="prereqs">
+    <h3>Before you start</h3>
+    <p>You should be comfortable calling an API and reading JSON Schema &mdash; this lab assumes the developer experience the exam itself assumes. It does not stop to explain what a schema is or how to make an HTTP request.</p>
+    <ul>
+      <li><strong>Python 3.10+</strong> or <strong>Node 18+</strong> with the Anthropic SDK, and an <strong>API key</strong> exported as <code>ANTHROPIC_API_KEY</code>. Examples lead in Python.</li>
+      <li>A <strong>schema validator</strong> for post-checks &mdash; <code>jsonschema</code> (Python) or <code>ajv</code> (Node). You&rsquo;ll validate even constrained output, for reasons Stage 5 makes clear.</li>
+      <li>A handful of <strong>real, messy documents</strong> of one type (say, five invoices) &mdash; including at least one with a missing field or an ambiguous value, so the edge-case stages have something to bite on.</li>
+    </ul>
+    <div class="verify">
+      <span class="lbl">Verify before you build</span>
+      Structured outputs moved to general availability recently, and the exact surface is still
+      settling. The field name (<code>output_config.format</code>), whether a beta header is needed,
+      the supported JSON Schema subset, and strict-tool-use flags all carry real shelf-life.
+      Wherever you see a <em>Verify</em> note, check it against the current docs at
+      <code>platform.claude.com/docs</code>. The <em>shape</em> of each pattern is stable; exact
+      identifiers drift.
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- ============ ORIENTATION ============ -->
+  <section class="stage" id="orient">
+    <div class="stage-head">
+      <span class="stage-num">Orientation</span>
+      <h2>What you&rsquo;re building, before you build it</h2>
+    </div>
+
+    <p class="orient-intro">
+      By the end of this lab you&rsquo;ll have <strong>one working pipeline</strong>: a program that takes
+      an unstructured document, extracts the fields you care about, and returns JSON that
+      validates against your schema &mdash; reliably enough that a downstream system can consume it
+      without a human in the loop. The through-line is a promise you&rsquo;re making to that downstream
+      system: <em>every record will match the schema, and a missing value will be an honest null,
+      never an invention</em>. Each stage builds one part of keeping that promise. You are not doing
+      seven disconnected exercises; you are building one extraction pipeline in seven passes.
+    </p>
+
+    <div class="build-card">
+      <h3>The one thing you&rsquo;re building</h3>
+      <p style="margin:0">
+        A <strong>structured data extraction pipeline</strong>. It reads an unstructured document,
+        uses a <strong>constrained-output</strong> call against a <strong>JSON Schema</strong> you design,
+        validates the result, retries on failure, and hands a clean, schema-valid record to a
+        downstream system &mdash; handling missing and ambiguous data gracefully rather than guessing.
+      </p>
+      <div class="reads">
+        <span class="chip">input &rarr; an unstructured document</span>
+        <span class="chip">output &rarr; a schema-valid JSON record</span>
+        <span class="chip">promise &rarr; valid every time, no fabrication</span>
+      </div>
+    </div>
+
+    <h3>How the seven stages connect</h3>
+    <p>
+      Read the diagram as a document&rsquo;s journey to a validated record. A <strong>schema</strong>
+      (Stage 1) defines the shape; <strong>constrained decoding</strong> (Stage 2) forces the model&rsquo;s
+      output into it; the <strong>prompt</strong> (Stage 3) and <strong>edge-case handling</strong>
+      (Stage 4) make the <em>contents</em> accurate and honest; the <strong>validate-and-retry loop</strong>
+      (Stage 5) is the gate that guarantees correctness the schema alone can&rsquo;t; <strong>scaling</strong>
+      (Stage 6) runs it over many documents; and the <strong>downstream contract</strong> (Stage 7) is
+      who consumes the result.
+    </p>
+
+    <figure class="flow-wrap">
+      <svg class="flow-svg" viewBox="0 0 820 500" xmlns="http://www.w3.org/2000/svg" role="img"
+           aria-label="Diagram of a structured data extraction pipeline: an unstructured document plus a JSON schema feed a constrained extraction call; the prompt and edge-case handling shape the contents; a validate-and-retry loop gates the output, sending failures back; valid records flow to a downstream system, and the pipeline scales over many documents via batch.">
+        <defs>
+          <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 Z" class="arrowhead"/>
+          </marker>
+          <marker id="aha" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 Z" class="arrowhead-accent"/>
+          </marker>
+        </defs>
+
+        <!-- document input -->
+        <rect class="box" x="20" y="150" width="118" height="56" rx="8"/>
+        <text class="lbl" x="79" y="174" text-anchor="middle">Document</text>
+        <text class="sub" x="79" y="191" text-anchor="middle">unstructured</text>
+        <path class="flowline-accent" d="M138,178 C176,178 182,214 214,214" marker-end="url(#aha)"/>
+
+        <!-- schema input -->
+        <rect class="box" x="20" y="250" width="118" height="56" rx="8"/>
+        <text class="stg" x="79" y="270" text-anchor="middle">STAGE 1</text>
+        <text class="lbl" x="79" y="288" text-anchor="middle">JSON Schema</text>
+        <path class="flowline-accent" d="M138,278 C176,278 182,242 214,242" marker-end="url(#aha)"/>
+
+        <!-- constrained extraction call -->
+        <rect class="box-accent" x="218" y="196" width="164" height="76" rx="10"/>
+        <text class="stg" x="300" y="216" text-anchor="middle">STAGE 2&ndash;3</text>
+        <text class="lbl" x="300" y="236" text-anchor="middle">Extraction call</text>
+        <text class="sub" x="300" y="254" text-anchor="middle">constrained decoding</text>
+
+        <!-- edge-case handling feeds the call (top) -->
+        <rect class="box" x="218" y="120" width="164" height="40" rx="8"/>
+        <text class="stg" x="300" y="137" text-anchor="middle">STAGE 4</text>
+        <text class="lbl" x="300" y="153" text-anchor="middle" style="font-size:12px">Edge-case handling</text>
+        <path class="flowline" d="M300,160 L300,194" marker-end="url(#ah)"/>
+
+        <!-- call → validate -->
+        <path class="flowline-accent" d="M382,234 L420,234" marker-end="url(#aha)"/>
+
+        <!-- validate & retry gate -->
+        <rect class="box-amber" x="424" y="196" width="150" height="76" rx="10"/>
+        <text class="stg" x="499" y="216" text-anchor="middle">STAGE 5</text>
+        <text class="lbl" x="499" y="236" text-anchor="middle">Validate</text>
+        <text class="sub" x="499" y="254" text-anchor="middle">schema + rules</text>
+
+        <!-- retry loop back to call -->
+        <path class="flowline" d="M480,272 C470,320 340,320 300,274" marker-end="url(#ah)"/>
+        <text class="sub" x="390" y="314" text-anchor="middle" style="fill:var(--amber)">invalid → retry with the error</text>
+
+        <!-- valid → downstream -->
+        <path class="flowline-accent" d="M574,234 L612,234" marker-end="url(#aha)"/>
+        <rect class="box-accent" x="616" y="200" width="150" height="68" rx="10"/>
+        <text class="stg" x="691" y="222" text-anchor="middle">STAGE 7</text>
+        <text class="lbl" x="691" y="240" text-anchor="middle">Downstream</text>
+        <text class="sub" x="691" y="257" text-anchor="middle">clean records in</text>
+        <text class="sub" x="540" y="226" text-anchor="middle" style="fill:var(--accent);font-size:9px">valid</text>
+
+        <!-- scale / batch band under the call+validate -->
+        <rect x="206" y="360" width="380" height="46" rx="10" fill="none"
+              stroke="var(--accent)" stroke-width="1" stroke-dasharray="5 4" opacity="0.55"/>
+        <text class="stg" x="396" y="378" text-anchor="middle" style="fill:var(--accent)">STAGE 6</text>
+        <text class="lbl" x="396" y="396" text-anchor="middle" style="font-size:12px">Scale over many documents · batch</text>
+        <path class="flowline" d="M300,360 L300,274" marker-end="url(#ah)" opacity="0.4"/>
+        <path class="flowline" d="M499,360 L499,274" marker-end="url(#ah)" opacity="0.4"/>
+      </svg>
+      <figcaption>A document and a schema feed a constrained call; validation gates the output and loops back on failure; valid records flow downstream, at scale.</figcaption>
+    </figure>
+
+    <div class="note">
+      Don&rsquo;t worry if a box uses a word you don&rsquo;t know yet &mdash; the glossary below defines
+      every term in the diagram, and each stage explains its own box in full when you reach it.
+    </div>
+
+    <h3>The terms this lab uses</h3>
+    <p>These come up across multiple stages. Skim them now; you don&rsquo;t need to memorize them &mdash; they&rsquo;ll make sense as you build.</p>
+
+    <div class="glossary">
+      <dl>
+        <dt>Structured output</dt>
+        <dd>Getting the model to return data in a shape you specify &mdash; here, JSON matching a schema &mdash; rather than free text. The whole point of an extraction system: output a program can consume, not prose a human has to parse.</dd>
+
+        <dt>JSON Schema</dt>
+        <dd>The formal description of your target shape: which fields exist, their types, which are required. It&rsquo;s both the instruction to the model and the yardstick you validate against. Design it well and everything downstream is easier.</dd>
+
+        <dt>Constrained decoding</dt>
+        <dd>The mechanism behind guaranteed-valid output: the API compiles your schema into a grammar and restricts token generation so the response <em>must</em> fit the shape. It guarantees the <em>format</em> &mdash; not that the values are correct.</dd>
+
+        <dt>output_config.format <span class="also">(JSON outputs)</span></dt>
+        <dd>The request field that constrains the model&rsquo;s <em>final response</em> to your JSON Schema (<code>{"type":"json_schema","schema":{&hellip;}}</code>). The primary tool when the whole reply should be one structured record.</dd>
+
+        <dt>Strict tool use</dt>
+        <dd>The other constraint path: mark a tool&rsquo;s input schema <code>strict: true</code> so the model&rsquo;s <em>tool call arguments</em> are guaranteed to match. Right when extraction feeds a tool/function rather than being the whole reply.</dd>
+
+        <dt>Schema subset</dt>
+        <dd>Constrained decoding supports most, not all, of JSON Schema: every object needs <code>additionalProperties: false</code> and all keys in <code>required</code>; no recursion; some constraints (min/max, string length) aren&rsquo;t enforced and must be post-validated.</dd>
+
+        <dt>Nullable / optional field</dt>
+        <dd>How you let the model say &ldquo;not present&rdquo; honestly: a nullable type (<code>["string","null"]</code>) or omitting a field from <code>required</code>. The alternative &mdash; forcing a value &mdash; is what causes fabrication.</dd>
+
+        <dt>Enum + &ldquo;other&rdquo;</dt>
+        <dd>An escape hatch for classification fields: include an <code>"other"</code> (or <code>"unknown"</code>) option in an enum so the model isn&rsquo;t forced to miscategorize a value that doesn&rsquo;t fit any listed category.</dd>
+
+        <dt>Fabrication / hallucination</dt>
+        <dd>The core reliability risk in extraction: the model inventing a plausible value for something the document doesn&rsquo;t actually contain. Most edge-case design exists to prevent exactly this.</dd>
+
+        <dt>Validation &amp; retry</dt>
+        <dd>The reliability loop: check the output against the schema (and your business rules), and on failure feed the error back for another attempt. Necessary because constrained decoding guarantees shape, not accuracy or rule-compliance.</dd>
+
+        <dt>Batch <span class="also">(Message Batches API)</span></dt>
+        <dd>The path for bulk extraction: submit many documents in one batch, processed asynchronously at lower cost &mdash; for when you&rsquo;re extracting from thousands of files, not one interactively.</dd>
+
+        <dt>Downstream contract</dt>
+        <dd>The agreement with whatever consumes your records &mdash; a database, a queue, another service. The schema <em>is</em> that contract; honoring it (valid shape, honest nulls, stable fields) is what lets the next system trust your output.</dd>
+      </dl>
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Before Stage 1</span>
+      <ul>
+        <li>You can state, in one sentence, what the finished pipeline promises its downstream consumer.</li>
+        <li>You can trace a document through the diagram: schema + doc &rarr; constrained call &rarr; validate/retry &rarr; downstream.</li>
+        <li>You can explain why &ldquo;guaranteed-valid format&rdquo; is not the same as &ldquo;correct data.&rdquo;</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="rule">
+  <!-- ============ STAGE 1 ============ -->
+  <section class="stage" id="s1">
+    <div class="stage-head">
+      <span class="stage-num">Stage 01</span>
+      <h2>Design the extraction schema</h2>
+      <span class="domain-tag">Prompt Engineering &amp; Structured Output &middot; 20%</span>
+    </div>
+    <p class="lede">The schema is the foundation of the whole system &mdash; it&rsquo;s the target shape, the instruction to the model, and the yardstick you validate against, all at once. A well-designed schema makes extraction accurate and downstream integration trivial; a sloppy one causes fabrication and breakage. Start here, deliberately.</p>
+
+    <div class="scenario">You&rsquo;re extracting from invoices: vendor, invoice number, date, line items, total. Some invoices have a PO number; some don&rsquo;t. Some totals are ambiguous. The schema has to express all of that precisely &mdash; what&rsquo;s required, what&rsquo;s optional, what can be absent.</div>
+
+    <h3>1a &middot; Write the target schema</h3>
+    <p>Describe the record you want. Field names and descriptions aren&rsquo;t decoration &mdash; the model reads them as extraction instructions, so name them well.</p>
+    <div class="code">{
+  <span class="k">"type"</span>: <span class="s">"object"</span>,
+  <span class="k">"properties"</span>: {
+    <span class="k">"vendor_name"</span>:    { <span class="k">"type"</span>: <span class="s">"string"</span>, <span class="k">"description"</span>: <span class="s">"Legal name of the issuing vendor"</span> },
+    <span class="k">"invoice_number"</span>: { <span class="k">"type"</span>: <span class="s">"string"</span> },
+    <span class="k">"invoice_date"</span>:   { <span class="k">"type"</span>: <span class="s">"string"</span>, <span class="k">"description"</span>: <span class="s">"ISO 8601 date, YYYY-MM-DD"</span> },
+    <span class="k">"po_number"</span>:      { <span class="k">"type"</span>: [<span class="s">"string"</span>, <span class="s">"null"</span>], <span class="k">"description"</span>: <span class="s">"PO number, or null if absent"</span> },
+    <span class="k">"total"</span>:          { <span class="k">"type"</span>: <span class="s">"number"</span> }
+  },
+  <span class="k">"required"</span>: [<span class="s">"vendor_name"</span>, <span class="s">"invoice_number"</span>, <span class="s">"invoice_date"</span>, <span class="s">"po_number"</span>, <span class="s">"total"</span>],
+  <span class="k">"additionalProperties"</span>: <span class="k">false</span>
+}</div>
+
+    <h3>1b &middot; Respect the supported subset</h3>
+    <p>Constrained decoding supports most of JSON Schema, but not all &mdash; and the exam expects you to know the boundaries:</p>
+    <ul>
+      <li>Every object needs <code>additionalProperties: false</code>, and every property must be listed in <code>required</code>. (To make a field &ldquo;optional,&rdquo; you keep it required but allow <code>null</code> &mdash; see 1c.)</li>
+      <li><strong>No recursive schemas</strong> &mdash; a schema that references itself won&rsquo;t compile. Flatten nested/recursive structures.</li>
+      <li>Some constraints aren&rsquo;t enforced by decoding &mdash; numeric <code>minimum</code>/<code>maximum</code>, string <code>minLength</code>, regex <code>pattern</code>. The shape is guaranteed; those value-level rules you must <em>post-validate</em> (Stage 5).</li>
+      <li>Enums are supported and are your friend for classification fields.</li>
+    </ul>
+
+    <h3>1c &middot; Model &ldquo;might be absent&rdquo; explicitly</h3>
+    <p>The single most important schema-design decision for accuracy: give the model a legitimate way to say &ldquo;this isn&rsquo;t here.&rdquo; A field that <em>might</em> be absent gets a nullable type (<code>["string","null"]</code>), so the model returns <code>null</code> instead of inventing a value to satisfy a required string. This one choice prevents a whole class of fabrication, and Stage 4 builds on it.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      Know the <strong>supported subset</strong> cold: <code>additionalProperties: false</code> everywhere,
+      all keys <code>required</code>, no recursion, and that min/max/length/pattern aren&rsquo;t enforced
+      by decoding. Know that <strong>descriptions guide extraction</strong> and that <strong>nullable
+      types</strong> are how you avoid forcing fabrication. &ldquo;Just mark the field optional&rdquo; is a
+      distractor &mdash; the subset wants it required-and-nullable.
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      The exact supported JSON Schema subset (recursion, <code>$ref</code>, which constraints are
+      enforced) is evolving as structured outputs mature. Confirm the current subset against
+      <code>platform.claude.com/docs</code> before finalizing a schema.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 1 done when</span>
+      <ul>
+        <li>You have a schema for your document type with typed fields and clear descriptions.</li>
+        <li>It obeys the subset: <code>additionalProperties: false</code>, all keys required, no recursion.</li>
+        <li>Fields that may be absent are nullable, not silently forced.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 2 ============ -->
+  <section class="stage" id="s2">
+    <div class="stage-head">
+      <span class="stage-num">Stage 02</span>
+      <h2>Constrain the output</h2>
+      <span class="domain-tag">Prompt Engineering &amp; Structured Output &middot; 20%</span>
+    </div>
+    <p class="lede">With a schema in hand, you make the model&rsquo;s output conform to it &mdash; not by asking nicely, but by constraining generation so the response <em>must</em> match. There are two ways to do this, and knowing which fits your case is a core exam skill.</p>
+
+    <h3>2a &middot; JSON outputs: constrain the final response</h3>
+    <p>When the whole reply should be one structured record, pass your schema in <code>output_config.format</code>. The API compiles it to a grammar and constrains decoding, so the response is guaranteed to fit the schema.</p>
+    <div class="code"><span class="k">import</span> anthropic
+client = anthropic.Anthropic()
+
+msg = client.messages.create(
+    model=<span class="s">"claude-opus-4-8"</span>,
+    max_tokens=<span class="s">1024</span>,
+    messages=[{<span class="k">"role"</span>: <span class="s">"user"</span>, <span class="k">"content"</span>: <span class="s">f"Extract the invoice fields:\n\n{document}"</span>}],
+    output_config={
+        <span class="k">"format"</span>: {
+            <span class="k">"type"</span>: <span class="s">"json_schema"</span>,
+            <span class="k">"schema"</span>: invoice_schema,   <span class="c"># the Stage 1 schema</span>
+        }
+    },
+)
+<span class="c"># msg.content is guaranteed to parse and match the schema shape</span></div>
+    <div class="note">
+      Structured outputs recently reached general availability. Earlier code used a beta header
+      (<code>structured-outputs-2025-11-13</code>) and/or an <code>output_format</code> field; the current
+      surface is <code>output_config.format</code>. If you&rsquo;re following an older tutorial, that&rsquo;s
+      the rename to watch for.
+    </div>
+
+    <h3>2b &middot; Strict tool use: constrain tool inputs</h3>
+    <p>The other path fits when extraction feeds a <em>tool</em> (a function you&rsquo;ve defined) rather than being the whole reply. Mark the tool&rsquo;s input schema <code>strict: true</code>, and the model&rsquo;s tool-call arguments are guaranteed to match it. Same guarantee, applied to the tool&rsquo;s inputs instead of the final message.</p>
+    <ul>
+      <li>Use <strong>JSON outputs</strong> when the response <em>is</em> the record.</li>
+      <li>Use <strong>strict tool use</strong> when the record is an argument to a function the model calls &mdash; and you can combine both in one request.</li>
+    </ul>
+
+    <h3>2c &middot; What the guarantee does and doesn&rsquo;t cover</h3>
+    <p>Constrained decoding is powerful but narrow: it guarantees the output <em>parses</em> and <em>matches the shape</em>. It does not guarantee the values are right, and it doesn&rsquo;t enforce the constraints the subset excludes (min/max, pattern). This is the hinge the next three stages turn on &mdash; format is solved here; accuracy and rules are not.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      Know the <strong>two constraint modes</strong> and when each applies &mdash; <code>output_config.format</code>
+      for the final response, <code>strict: true</code> tool use for tool arguments &mdash; and that they
+      combine. Know that constrained decoding is <strong>constrained decoding / grammar-based</strong>,
+      guaranteeing shape only. The older &ldquo;force a tool with <code>tool_choice</code> and hope&rdquo;
+      pattern is worth recognizing as the predecessor.
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      <code>output_config.format</code>, the <code>strict</code> tool flag, whether any beta header
+      applies, and incompatibilities (e.g. citations) are current but settling post-GA. Confirm
+      against <code>platform.claude.com/docs</code>.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 2 done when</span>
+      <ul>
+        <li>Your call returns JSON that parses and matches the schema, every time, via constrained output.</li>
+        <li>You can state whether your case wants JSON outputs or strict tool use, and why.</li>
+        <li>You can explain, in one sentence, what the guarantee does <em>not</em> cover.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 3 ============ -->
+  <section class="stage" id="s3">
+    <div class="stage-head">
+      <span class="stage-num">Stage 03</span>
+      <h2>Prompt for accurate extraction</h2>
+      <span class="domain-tag">Prompt Engineering &amp; Structured Output &middot; 20%</span>
+    </div>
+    <p class="lede">The schema guarantees shape; the prompt is what makes the <em>values</em> right. A constrained call with a lazy prompt gives you perfectly-formatted wrong answers. This stage is about the prompt-engineering that lifts accuracy inside the guaranteed shape.</p>
+
+    <div class="scenario">The schema forces a <code>total</code> number field &mdash; so the model will always return <em>a</em> number. Whether it returns the <em>right</em> number (the grand total, not the subtotal) is entirely down to how you prompt and describe the field.</div>
+
+    <h3>3a &middot; Let the field descriptions do work</h3>
+    <p>The descriptions you wrote in the schema are live extraction instructions. &ldquo;<code>total</code>: the grand total including tax, not the subtotal&rdquo; disambiguates a field far more reliably than hoping the model picks the right number. Precise descriptions are the highest-leverage accuracy tool you have, because they travel with the constraint.</p>
+
+    <h3>3b &middot; Give an example, and ground the extraction</h3>
+    <p>Two techniques that raise accuracy on messy documents:</p>
+    <ul>
+      <li><strong>A worked example</strong> in the prompt &mdash; a small sample document and its correct extraction &mdash; shows the model exactly how to handle your format&rsquo;s quirks.</li>
+      <li><strong>Ask it to ground values in the source:</strong> instruct the model to extract only what&rsquo;s present and, where useful, to quote the span it pulled a value from. Extraction tied to the text is far less prone to drift than extraction from memory.</li>
+    </ul>
+
+    <h3>3c &middot; Tell it what to do when unsure</h3>
+    <p>The instruction that most reduces fabrication: state the rule explicitly &mdash; &ldquo;if a field is not present in the document, return null; do not guess or infer a plausible value.&rdquo; The schema&rsquo;s nullable types (Stage 1) give the model somewhere honest to put &ldquo;I don&rsquo;t know&rdquo;; this instruction tells it to use them. Together they turn &ldquo;absent&rdquo; from a fabrication trigger into a clean null.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      Know that <strong>format guarantees don&rsquo;t buy accuracy</strong> &mdash; the prompt does. The
+      reliable levers: <strong>rich field descriptions</strong>, <strong>a worked example</strong>,
+      <strong>grounding values in the source text</strong>, and an <strong>explicit &ldquo;return null when
+      unsure, don&rsquo;t guess&rdquo; instruction</strong>. Scenarios that show a well-formed but wrong
+      extraction are pointing at a prompt problem, not a schema problem.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 3 done when</span>
+      <ul>
+        <li>Field descriptions disambiguate the tricky fields (which total, which date).</li>
+        <li>Your prompt includes a worked example and asks the model to ground values in the text.</li>
+        <li>It explicitly instructs &ldquo;null when absent, never guess&rdquo; &mdash; and you&rsquo;ve seen it comply.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 4 ============ -->
+  <section class="stage" id="s4">
+    <div class="stage-head">
+      <span class="stage-num">Stage 04</span>
+      <h2>Handle edge cases gracefully</h2>
+      <span class="domain-tag">Context Management &amp; Reliability &middot; 15%</span>
+    </div>
+    <p class="lede">Real documents are messy: fields missing, values ambiguous, categories that don&rsquo;t fit your enum, whole sections absent. A brittle extractor fabricates or crashes on these; a graceful one has a defined, honest answer for each. This is where extraction reliability is won or lost.</p>
+
+    <div class="scenario">One invoice has no PO number. Another lists a currency you didn&rsquo;t anticipate. A third is missing its date entirely. The system has to produce a valid record for each &mdash; without inventing a PO, mis-slotting the currency, or refusing outright.</div>
+
+    <h3>4a &middot; Missing fields become honest nulls</h3>
+    <p>This is the payoff of the Stage 1 nullable types plus the Stage 3 instruction: a missing field returns <code>null</code>, the record still validates, and the downstream system gets an honest &ldquo;not present&rdquo; instead of a fabricated value. Missing data is a <em>normal</em>, valid outcome &mdash; not an error and not an invention.</p>
+
+    <h3>4b &middot; The enum + &ldquo;other&rdquo; escape hatch</h3>
+    <p>For classification fields, a closed enum forces the model to pick one of your listed values &mdash; so an unanticipated category gets crammed into the nearest wrong bucket. The fix is an escape hatch: include <code>"other"</code> (or <code>"unknown"</code>) in the enum. Now a value that fits nothing lands in <code>other</code> honestly, instead of a confident miscategorization.</p>
+    <div class="code"><span class="k">"currency"</span>: {
+  <span class="k">"type"</span>: <span class="s">"string"</span>,
+  <span class="k">"enum"</span>: [<span class="s">"USD"</span>, <span class="s">"EUR"</span>, <span class="s">"GBP"</span>, <span class="s">"INR"</span>, <span class="s">"other"</span>]   <span class="c"># escape hatch prevents miscategorization</span>
+}</div>
+
+    <h3>4c &middot; Add a confidence or notes field</h3>
+    <p>For genuinely ambiguous extractions, give the model a place to flag uncertainty &mdash; a nullable <code>extraction_notes</code> field, or a per-field confidence. A record that says &ldquo;total was ambiguous: two candidate figures&rdquo; is far more useful downstream than a silent guess, because the consumer can route low-confidence records to human review. Graceful handling means <em>surfacing</em> uncertainty, not hiding it inside a clean-looking value.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      The reliability core of this scenario. Know the three moves: <strong>nullable for missing</strong>
+      (honest null, not fabrication), <strong>enum + &ldquo;other&rdquo;</strong> (no forced miscategorization),
+      and a <strong>notes/confidence field</strong> to surface ambiguity for downstream routing.
+      &ldquo;Make every field required so nothing is missing&rdquo; is the trap &mdash; it <em>forces</em>
+      fabrication, the opposite of graceful.
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      Enum support and nullable-type handling under constrained decoding are current, but confirm
+      the exact enum/nullable behavior against <code>platform.claude.com/docs</code> as the subset
+      settles.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 4 done when</span>
+      <ul>
+        <li>A document with a missing field yields a valid record with an honest null.</li>
+        <li>An unanticipated category lands in <code>other</code>, not a wrong bin.</li>
+        <li>Ambiguous extractions surface their uncertainty instead of hiding it.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 5 ============ -->
+  <section class="stage" id="s5">
+    <div class="stage-head">
+      <span class="stage-num">Stage 05</span>
+      <h2>Validate &amp; retry</h2>
+      <span class="domain-tag">Context Management &amp; Reliability &middot; 15%</span>
+    </div>
+    <p class="lede">Constrained decoding guarantees the shape &mdash; but not that the values obey your business rules, and not the constraints the subset doesn&rsquo;t enforce. So you validate anyway, and on failure you retry with the error. This loop is what turns &ldquo;usually right&rdquo; into &ldquo;reliably right.&rdquo;</p>
+
+    <div class="scenario">The schema guarantees <code>total</code> is a number. It does <em>not</em> guarantee the line items sum to that total, that the date is in the past, or that the tax rate is between 0 and 1. Those are your rules &mdash; and only a validation step enforces them.</div>
+
+    <h3>5a &middot; Validate the shape you were promised anyway</h3>
+    <p>Even with constrained output, validate against your schema with a real validator (<code>jsonschema</code>, <code>ajv</code>). It&rsquo;s cheap insurance against the edges &mdash; a truncated response (hit <code>max_tokens</code>), a refusal, an API change &mdash; and it&rsquo;s the boundary check a reliable pipeline always keeps.</p>
+
+    <h3>5b &middot; Then validate the rules decoding can&rsquo;t</h3>
+    <p>This is the part the schema guarantee never covered: the value-level and cross-field rules. Numeric ranges, string formats, and regex patterns (excluded from the enforced subset), plus business logic like &ldquo;line items sum to total&rdquo; or &ldquo;date is not in the future.&rdquo; Run these as a validation layer after parsing.</p>
+    <div class="code"><span class="k">from</span> jsonschema <span class="k">import</span> validate, ValidationError
+
+<span class="k">def</span> check(record):
+    validate(record, invoice_schema)                 <span class="c"># shape + enforced subset</span>
+    <span class="k">assert</span> <span class="s">0</span> &lt;= record[<span class="s">"tax_rate"</span>] &lt;= <span class="s">1</span>, <span class="s">"tax_rate out of range"</span>
+    <span class="k">assert</span> sum(li[<span class="s">"amount"</span>] <span class="k">for</span> li <span class="k">in</span> record[<span class="s">"line_items"</span>]) == record[<span class="s">"total"</span>], <span class="s">"lines != total"</span></div>
+
+    <h3>5c &middot; Retry with the error fed back</h3>
+    <p>When validation fails, don&rsquo;t just re-run the same call &mdash; retry with the <em>specific error</em> added to the prompt (&ldquo;the previous extraction had line items summing to 90 but a total of 100; re-extract and resolve&rdquo;). The model corrects far more reliably when it knows what was wrong. Bound the retries (two or three), and if it still fails, route the document to human review rather than looping forever or shipping a bad record.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      The defining idea of this scenario&rsquo;s reliability domain: <strong>constrained output guarantees
+      format, not correctness</strong> &mdash; so you still validate, especially the value-level and
+      business rules decoding doesn&rsquo;t enforce. Know the <strong>validate &rarr; retry-with-error &rarr;
+      bounded fallback</strong> loop, and that &ldquo;constrained decoding means I don&rsquo;t need to
+      validate&rdquo; is the trap answer. Also know <code>stop_reason</code> catches truncation/refusal.
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      Which constraints constrained decoding enforces vs. leaves to you shifts as the feature
+      matures &mdash; re-confirm the enforced subset so your validation layer covers exactly the
+      gaps. Check <code>platform.claude.com/docs</code>.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 5 done when</span>
+      <ul>
+        <li>Every record is schema-validated after parsing, even though output is constrained.</li>
+        <li>Your business rules (ranges, cross-field sums, formats) are checked in a validation layer.</li>
+        <li>Failures retry with the specific error, bounded, then fall back to review.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 6 ============ -->
+  <section class="stage" id="s6">
+    <div class="stage-head">
+      <span class="stage-num">Stage 06</span>
+      <h2>Scale to many documents</h2>
+      <span class="domain-tag">Context Management &amp; Reliability &middot; 15%</span>
+    </div>
+    <p class="lede">Extracting one document interactively is the easy case. Real systems process thousands &mdash; and that changes what matters: cost, throughput, long documents that strain context, and the failure modes that only show up at volume.</p>
+
+    <h3>6a &middot; Batch for bulk, async extraction</h3>
+    <p>When you&rsquo;re extracting from many documents and don&rsquo;t need each answer instantly, the <strong>Message Batches API</strong> is the right tool: submit a large set of extraction requests in one batch, processed asynchronously at lower cost than one-by-one interactive calls. It&rsquo;s built for exactly this bulk-extraction shape &mdash; not for the interactive single-document case.</p>
+
+    <h3>6b &middot; Long documents and the context window</h3>
+    <p>A single document can be large enough to strain the context window &mdash; a 90-page contract, a scanned report. When the source is too big to extract in one pass reliably, split it: extract per-section against the same schema and merge, or first locate the relevant section (retrieval) and extract from that. Keeping the working context focused on the relevant text improves both accuracy and cost, the same principle that governs any long-context task.</p>
+
+    <h3>6c &middot; Handle refusals and truncation at volume</h3>
+    <p>At scale, rare failure modes become certainties &mdash; some document trips a refusal, some response truncates at <code>max_tokens</code>. Check <code>stop_reason</code> on every response: a <code>max_tokens</code> stop means the record is incomplete (raise the limit or split), and a refusal means that document needs a different path. At volume you handle these programmatically, not by eyeballing, so one bad document doesn&rsquo;t silently corrupt the batch.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      Know the <strong>Message Batches API</strong> is for bulk/async extraction (cost, throughput),
+      not interactive single calls. Know that <strong>long documents</strong> are a context problem &mdash;
+      split or retrieve-then-extract. And know to monitor <strong><code>stop_reason</code></strong> for
+      truncation and refusals at volume. &ldquo;Send all 10,000 docs as interactive calls&rdquo; is the
+      wrong-tool distractor.
+    </div>
+
+    <div class="verify">
+      <span class="lbl">Verify</span>
+      Batch API limits (requests per batch, turnaround, discount), and whether structured outputs
+      apply cleanly in batch, are current but evolving. Confirm against
+      <code>platform.claude.com/docs</code>.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 6 done when</span>
+      <ul>
+        <li>Bulk extraction runs through the Batches API rather than a loop of interactive calls.</li>
+        <li>A document too large for one pass is split (or retrieved) and merged correctly.</li>
+        <li><code>stop_reason</code> is checked so truncations and refusals are handled, not silently dropped.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 7 ============ -->
+  <section class="stage" id="s7">
+    <div class="stage-head">
+      <span class="stage-num">Stage 07</span>
+      <h2>Integrate downstream</h2>
+      <span class="domain-tag">Integration in practice</span>
+    </div>
+    <p class="lede">Extraction isn&rsquo;t the goal &mdash; feeding a downstream system is. A database, a queue, another service consumes your records, and the whole pipeline&rsquo;s value depends on that handoff being clean and dependable. The schema you designed in Stage 1 turns out to be the contract that makes it work.</p>
+
+    <h3>7a &middot; The schema is the contract</h3>
+    <p>Whatever consumes your output &mdash; a table, an API, a message queue &mdash; expects a specific shape. Your JSON Schema <em>is</em> that agreement: honor it and the downstream system can rely on every record without defensive parsing. This is why the earlier stages matter downstream: constrained output keeps the shape, validation keeps the rules, honest nulls keep the semantics. The contract holds end to end.</p>
+
+    <h3>7b &middot; Decide what happens to invalid records</h3>
+    <p>A production pipeline needs a defined path for the records that <em>don&rsquo;t</em> make it through &mdash; the ones that failed validation after retries. Route them somewhere explicit: a dead-letter queue, a review table, an alert. What you must not do is silently drop them or let them through unvalidated. A clean pipeline is one where every document ends in a known state: extracted-and-valid, or flagged-for-review.</p>
+
+    <h3>7c &middot; Version the schema as it evolves</h3>
+    <p>The contract will change &mdash; a new field, a tightened type. Version it, so downstream consumers aren&rsquo;t broken by a silent shift and can migrate deliberately. Treat the extraction schema the way you&rsquo;d treat any API contract between two systems, because that&rsquo;s exactly what it is.</p>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      The integration framing: the <strong>schema is the contract</strong> with the downstream system,
+      which is why shape + validation + honest nulls matter beyond the extraction itself. Know that
+      <strong>invalid records need an explicit path</strong> (dead-letter/review), never a silent drop,
+      and that a schema is <strong>versioned like any API contract</strong>. Reliability here means every
+      document ends in a known state.
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Stage 7 done when</span>
+      <ul>
+        <li>Valid records flow to the downstream system in the exact schema shape it expects.</li>
+        <li>Invalid records go to an explicit review/dead-letter path &mdash; never silently dropped.</li>
+        <li>The schema is versioned so downstream consumers migrate deliberately.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ CLOSE ============ -->
+  <section class="stage" id="close">
+    <div class="stage-head">
+      <span class="stage-num">Wrap-up</span>
+      <h2>What you built, and how it maps</h2>
+    </div>
+    <p>You now have one working extraction pipeline that exercises the scenario&rsquo;s two primary domains: Prompt Engineering &amp; Structured Output (20%) &mdash; schema design within the supported subset, constrained output via <code>output_config.format</code> and strict tool use, and the prompting that makes values accurate inside the guaranteed shape &mdash; and Context Management &amp; Reliability (15%) &mdash; graceful edge-case handling, the validate-and-retry loop, scaling with batch and long-document strategies, and a clean downstream contract. Completing it, you should be able to answer any question the scenario raises &mdash; what the format guarantee does and doesn&rsquo;t cover, why nullable beats forced-required, when to validate despite constrained output, and how the schema serves as the downstream contract.</p>
+    <p>The exam is 60 scenario questions in 120 minutes, and it rewards judgment over recall &mdash; the wrong answers are written to tempt people with partial knowledge. Having actually designed the schema, watched constrained output guarantee shape but not accuracy, and built the validation loop that closes that gap is the difference between recognizing the right call and guessing.</p>
+    <div class="prep-banner" style="margin-top:24px">
+      <span class="icn">&#9873;</span>
+      <span>
+        <strong>Next step toward the exam.</strong> Complete Anthropic&rsquo;s four official
+        Skilljar courses, request exam access, and take the official practice test before
+        booking. This lab is preparation &mdash; the credential comes from Anthropic&rsquo;s
+        proctored exam, not from here.
+      </span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>SF Knowledge Hub</strong> &middot; CCA-F Capstone Lab &middot; Scenario: Structured Data Extraction
+  <p class="disclaimer">
+    A recommended preparatory lab for the Anthropic Claude Certified Architect &mdash;
+    Foundations (CCA-F) exam. Not affiliated with or endorsed by Anthropic, and not a
+    substitute for the official exam or its prerequisites. API fields, the supported schema
+    subset, and structured-output behavior reflect the toolchain as of mid-2026 and carry a real
+    shelf-life &mdash; check every <em>Verify</em> note against current documentation before relying on it.
+  </p>
+</footer>
+
+</body>
+</html>
