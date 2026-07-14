@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<!-- build: 2026071405 -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCA Knowledge Track · Module 2 · Tool Design &amp; MCP Integration</title>
+<style>
+  :root{
+    --ink:#1c1a17;
+    --ink-soft:#4a4640;
+    --paper:#f6f3ec;
+    --paper-raised:#fffdf8;
+    --line:#ddd6c8;
+    --line-strong:#c7bfab;
+    --accent:#2f6f5e;      /* deep teal-green: the "pass" signal */
+    --accent-deep:#204b40;
+    --accent-wash:#e5efe9;
+    --amber:#a56a1e;       /* escalation / caution */
+    --amber-wash:#f5ebd9;
+    --code-bg:#20241f;
+    --code-ink:#e7e4d8;
+    --code-key:#9ecb8f;
+    --code-str:#e0b877;
+    --code-dim:#8a877c;
+    --domain:#7a5cc4;      /* domain tag */
+    --domain-wash:#ece7f7;
+    --radius:10px;
+    --maxw:820px;
+    --mono:'DM Mono','SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;
+    --serif:'Newsreader',Georgia,'Times New Roman',serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--sans);font-size:17px;line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent-deep);text-underline-offset:2px}
+
+  /* ---------- Header ---------- */
+  header.masthead{
+    background:linear-gradient(180deg,var(--paper-raised),var(--paper));
+    border-bottom:1px solid var(--line-strong);
+    padding:56px 24px 40px;
+  }
+  .masthead-inner{max-width:var(--maxw);margin:0 auto}
+  .eyebrow{
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 18px;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  h1.title{
+    font-family:var(--serif);font-weight:600;font-size:clamp(34px,6vw,52px);
+    line-height:1.05;letter-spacing:-.01em;margin:0 0 20px;color:var(--ink);
+  }
+  h1.title em{font-style:italic;color:var(--accent-deep)}
+  .standfirst{
+    font-family:var(--serif);font-size:20px;line-height:1.5;color:var(--ink-soft);
+    max-width:64ch;margin:0 0 26px;
+  }
+  .prep-banner{
+    display:flex;gap:14px;align-items:flex-start;
+    background:var(--accent-wash);border:1px solid #bcd6cb;
+    border-radius:var(--radius);padding:16px 18px;font-size:15px;line-height:1.55;
+    color:var(--accent-deep);
+  }
+  .prep-banner strong{font-weight:600}
+  .prep-banner .icn{flex:0 0 auto;font-family:var(--mono);font-weight:500}
+
+  /* ---------- Layout ---------- */
+  main{max-width:var(--maxw);margin:0 auto;padding:8px 24px 96px}
+  section.stage{padding-top:52px;scroll-margin-top:20px}
+
+  .stage-head{margin-bottom:8px}
+  .stage-num{
+    font-family:var(--mono);font-size:13px;color:var(--accent);
+    letter-spacing:.08em;display:block;margin-bottom:6px;
+  }
+  h2{
+    font-family:var(--serif);font-weight:600;font-size:clamp(24px,4vw,32px);
+    line-height:1.15;letter-spacing:-.01em;margin:0 0 10px;
+  }
+  .domain-tag{
+    display:inline-block;font-family:var(--mono);font-size:11.5px;
+    letter-spacing:.04em;background:var(--domain-wash);color:var(--domain);
+    border-radius:20px;padding:3px 11px;margin-bottom:14px;
+  }
+  h3{font-family:var(--sans);font-weight:600;font-size:18px;margin:28px 0 8px}
+  p{margin:0 0 15px}
+  ul,ol{margin:0 0 15px;padding-left:22px}
+  li{margin-bottom:7px}
+  code{
+    font-family:var(--mono);font-size:.87em;background:#eae5da;
+    padding:1px 6px;border-radius:5px;color:var(--accent-deep);
+  }
+  .lede{font-size:18px;color:var(--ink-soft)}
+
+  /* ---------- Code blocks ---------- */
+  .code{
+    background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);
+    padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
+    line-height:1.6;margin:16px 0;border:1px solid #2c322a;
+  }
+  .code .k{color:var(--code-key)}
+  .code .s{color:var(--code-str)}
+  .code .c{color:var(--code-dim);font-style:italic}
+  .code .cmd{color:#e7e4d8}
+  .code-label{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent);margin:20px 0 -6px;display:block;
+  }
+
+  /* ---------- Callouts ---------- */
+  .note,.verify,.checkpoint{
+    border-radius:var(--radius);padding:15px 18px;margin:18px 0;font-size:15px;line-height:1.55;
+  }
+  .note{background:var(--paper-raised);border:1px solid var(--line-strong)}
+  .verify{background:var(--amber-wash);border:1px solid #e0c78f;color:#6b4a15}
+  .verify .lbl,.checkpoint .lbl{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    display:block;margin-bottom:5px;font-weight:500;
+  }
+  .verify .lbl{color:var(--amber)}
+  .checkpoint{background:var(--accent-wash);border:1px solid #bcd6cb;color:var(--accent-deep)}
+  .checkpoint .lbl{color:var(--accent)}
+  .checkpoint ul{margin:6px 0 0;padding-left:20px}
+  .checkpoint li{margin-bottom:4px}
+
+  /* ---------- Exam-lens ---------- */
+  .exam-lens{
+    border-left:3px solid var(--domain);background:var(--domain-wash);
+    padding:13px 16px 13px 18px;margin:18px 0;border-radius:0 var(--radius) var(--radius) 0;
+    font-size:14.5px;line-height:1.55;color:#3d2f5e;
+  }
+  .exam-lens .lbl{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--domain);display:block;margin-bottom:5px;font-weight:500;
+  }
+
+  /* ---------- Map / TOC ---------- */
+  .roadmap{
+    background:var(--paper-raised);border:1px solid var(--line-strong);
+    border-radius:var(--radius);padding:24px;margin:36px 0 8px;
+  }
+  .roadmap h2{font-size:20px;margin:0 0 4px}
+  .roadmap .sub{font-size:14px;color:var(--ink-soft);margin:0 0 18px}
+  .roadmap ol{list-style:none;padding:0;margin:0;counter-reset:rm}
+  .roadmap li{
+    counter-increment:rm;display:flex;gap:14px;align-items:baseline;
+    padding:11px 0;border-top:1px solid var(--line);margin:0;
+  }
+  .roadmap li:first-child{border-top:none}
+  .roadmap li::before{
+    content:counter(rm,decimal-leading-zero);font-family:var(--mono);font-size:13px;
+    color:var(--accent);flex:0 0 auto;width:24px;
+  }
+  .roadmap li.rm-start{counter-increment:none}
+  .roadmap li.rm-start::before{content:"\2192";font-size:14px}
+  .roadmap a{text-decoration:none;font-weight:500;color:var(--ink)}
+  .roadmap a:hover{color:var(--accent-deep)}
+  .roadmap .rm-domain{
+    font-family:var(--mono);font-size:11px;color:var(--domain);
+    margin-left:auto;flex:0 0 auto;white-space:nowrap;padding-left:12px;
+  }
+  .roadmap .rm-body{display:flex;flex-direction:column}
+  .roadmap .rm-body small{color:var(--ink-soft);font-weight:400;font-size:13.5px}
+
+  hr.rule{border:none;border-top:1px solid var(--line);margin:0}
+
+  /* ---------- Prereqs box ---------- */
+  .prereqs{
+    background:var(--paper-raised);border:1px dashed var(--line-strong);
+    border-radius:var(--radius);padding:20px 22px;margin:28px 0;
+  }
+  .prereqs h3{margin-top:0}
+  .prereqs code{background:#eae5da}
+
+  /* ---------- Footer ---------- */
+  footer{
+    max-width:var(--maxw);margin:0 auto;padding:40px 24px 80px;
+    border-top:1px solid var(--line-strong);color:var(--ink-soft);font-size:14px;
+  }
+  footer .disclaimer{font-size:13px;line-height:1.6;margin-top:14px}
+
+  .scenario{
+    font-family:var(--serif);font-style:italic;font-size:18px;line-height:1.55;
+    color:var(--ink-soft);border-left:3px solid var(--accent);
+    padding:4px 0 4px 18px;margin:18px 0;
+  }
+
+  /* ---------- Orientation ---------- */
+  .orient-intro{
+    font-size:18px;line-height:1.6;color:var(--ink-soft);margin:0 0 8px;
+  }
+  .orient-intro strong{color:var(--ink);font-weight:600}
+
+  .build-card{
+    background:var(--paper-raised);border:1px solid var(--line-strong);
+    border-radius:var(--radius);padding:22px 24px;margin:24px 0;
+  }
+  .build-card h3{margin:0 0 12px;font-size:16px}
+  .build-card .reads{
+    display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;
+    font-family:var(--mono);font-size:12.5px;
+  }
+  .build-card .chip{
+    background:var(--accent-wash);border:1px solid #bcd6cb;color:var(--accent-deep);
+    border-radius:20px;padding:4px 12px;
+  }
+
+  /* Flow diagram */
+  .flow-wrap{margin:28px 0 8px}
+  .flow-wrap figcaption{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-soft);margin-top:12px;text-align:center;
+  }
+  .flow-svg{width:100%;height:auto;display:block;
+    background:var(--paper-raised);border:1px solid var(--line-strong);border-radius:var(--radius);
+  }
+  .flow-svg .box{fill:var(--paper);stroke:var(--line-strong);stroke-width:1.2}
+  .flow-svg .box-accent{fill:var(--accent-wash);stroke:#bcd6cb;stroke-width:1.2}
+  .flow-svg .box-amber{fill:var(--amber-wash);stroke:#e0c78f;stroke-width:1.2}
+  .flow-svg .lbl{font-family:var(--sans);font-size:13px;font-weight:600;fill:var(--ink)}
+  .flow-svg .sub{font-family:var(--mono);font-size:10px;fill:var(--ink-soft)}
+  .flow-svg .stg{font-family:var(--mono);font-size:9.5px;fill:var(--accent);letter-spacing:.05em}
+  .flow-svg .flowline{stroke:var(--line-strong);stroke-width:1.4;fill:none}
+  .flow-svg .flowline-accent{stroke:var(--accent);stroke-width:1.6;fill:none}
+  .flow-svg .loopline{stroke:var(--accent);stroke-width:1.4;fill:none;stroke-dasharray:4 3}
+  .flow-svg .arrowhead{fill:var(--line-strong)}
+  .flow-svg .arrowhead-accent{fill:var(--accent)}
+  .flow-svg .zonelbl{font-family:var(--mono);font-size:10px;fill:var(--ink-soft);letter-spacing:.06em}
+
+  /* Glossary */
+  .glossary{margin:24px 0 8px}
+  .glossary dl{margin:0;border-top:1px solid var(--line)}
+  .glossary dt{
+    font-family:var(--mono);font-size:14px;font-weight:500;color:var(--accent-deep);
+    margin-top:16px;
+  }
+  .glossary dd{margin:4px 0 0;font-size:15px;line-height:1.55;color:var(--ink-soft)}
+  .glossary dd .also{font-family:var(--mono);font-size:12px;color:var(--ink-soft);opacity:.8}
+
+  @media (max-width:600px){
+    body{font-size:16px}
+    header.masthead{padding:40px 20px 32px}
+    main{padding:8px 20px 72px}
+    .roadmap li{flex-wrap:wrap}
+    .roadmap .rm-domain{margin-left:34px;padding-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+/* ---- module-specific ---- */
+.antipattern{background:#fbeeee;border:1px solid #e3b7b0;border-left:3px solid #b0432f;border-radius:8px;padding:16px 20px;margin:22px 0;font-size:15px}
+.antipattern .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#b0432f;margin-bottom:8px;font-weight:600}
+.antipattern ul{margin:8px 0 0;padding-left:20px}
+.antipattern li{margin:5px 0}
+.capstone{background:#eaf1ee;border:1px solid #bcd6cb;border-radius:10px;padding:16px 20px;margin:22px 0;display:flex;gap:14px;align-items:flex-start}
+.capstone .icn{color:var(--accent);font-size:20px;line-height:1;flex-shrink:0;margin-top:1px}
+.capstone .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:5px;font-weight:600}
+.capstone a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:1px solid rgba(47,111,94,.35)}
+.capstone a:hover{border-bottom-color:var(--accent)}
+.kpoints{margin:16px 0}
+.kpoints .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;font-weight:600}
+.taskref{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.in-practice{margin:16px 0}
+.in-practice .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;font-weight:600}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="eyebrow"><span class="dot"></span> SF Knowledge Hub · CCA Knowledge Track</p>
+    <h1 class="title">Module 2<br><em>Tool Design</em> &amp; MCP Integration</h1>
+    <p class="standfirst">
+      Agents are only as good as the tools they call. This domain is about designing tool
+      interfaces the model can select reliably, communicating failures in a way the agent can act
+      on, scoping tools to each agent&rsquo;s role, integrating MCP servers, and using the built-in
+      tools well &mdash; the five task statements that decide whether your agent picks the right
+      tool and recovers when one fails.
+    </p>
+    <div class="prep-banner">
+      <span class="icn">&#9873;</span>
+      <span>
+        <strong>This is a recommended preparatory step, not a certification course.</strong>
+        Completing this module does not grant a certificate and is not the CCA exam. The exam is
+        booked separately through Anthropic and has its own prerequisites. This track is the
+        structured-knowledge companion to the hands-on capstone labs &mdash; use both.
+      </span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div class="roadmap">
+    <h2>This module, in five sections</h2>
+    <p class="sub">One per task statement in the Tool Design &amp; MCP Integration domain. Each pairs the knowledge the exam tests with the anti-patterns it probes &mdash; and links to the capstone lab where you build it.</p>
+    <ol>
+      <li><div class="rm-body"><a href="#s2-1">2.1 · Design effective tool interfaces</a><small>descriptions as the selection mechanism</small></div><span class="rm-domain">Task 2.1</span></li>
+      <li><div class="rm-body"><a href="#s2-2">2.2 · Structured error responses for MCP tools</a><small>isError, categories, retryable metadata</small></div><span class="rm-domain">Task 2.2</span></li>
+      <li><div class="rm-body"><a href="#s2-3">2.3 · Distribute tools &amp; configure tool_choice</a><small>scoped access, auto / any / forced</small></div><span class="rm-domain">Task 2.3</span></li>
+      <li><div class="rm-body"><a href="#s2-4">2.4 · Integrate MCP servers</a><small>.mcp.json scoping, env vars, resources</small></div><span class="rm-domain">Task 2.4</span></li>
+      <li><div class="rm-body"><a href="#s2-5">2.5 · Apply built-in tools effectively</a><small>Grep, Glob, Read/Write/Edit patterns</small></div><span class="rm-domain">Task 2.5</span></li>
+    </ol>
+  </div>
+
+  <div class="prereqs">
+    <h3>How to use this module</h3>
+    <p>Same fixed shape as Module 1: <strong>what &amp; why</strong>, <strong>knowledge points</strong>, <strong>in practice</strong>, <strong>anti-patterns</strong>, an <strong>exam lens</strong>, and a <strong>check</strong>, with a capstone link where a lab exercises the idea. The domain builds on Module 1 &mdash; the Task tool and hooks you met there are the machinery; here you design the tools that machinery invokes.</p>
+    <div class="note">
+      A recurring theme runs through this whole domain: <strong>the model chooses tools from their
+      descriptions, and recovers from failures using the structure of the error</strong>. Vague
+      descriptions and generic errors are the root cause behind most of the anti-patterns &mdash; keep
+      that lens as you read.
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- ============ 2.1 ============ -->
+  <section class="stage" id="s2-1">
+    <div class="stage-head">
+      <span class="stage-num">Section 2.1</span>
+      <h2>Design effective tool interfaces with clear descriptions and boundaries</h2>
+      <span class="domain-tag">Task Statement 2.1</span>
+    </div>
+    <p class="lede">A tool&rsquo;s description isn&rsquo;t documentation for you &mdash; it&rsquo;s the primary signal the model uses to decide whether to call that tool. Two tools with near-identical descriptions are two tools the model will confuse. Most tool-selection bugs are description bugs.</p>
+
+    <h3>What &amp; why</h3>
+    <p>The LLM selects tools by reading their descriptions, so a minimal or vague description leads to unreliable selection &mdash; especially among similar tools. A good description states the tool&rsquo;s purpose, expected inputs and outputs, example queries, edge cases, and crucially <em>when to use it versus a similar alternative</em>. Overlapping descriptions (<code>analyze_content</code> vs <code>analyze_document</code> with near-identical text) cause misrouting. And it&rsquo;s not just the tool descriptions: keyword-sensitive wording in the <em>system prompt</em> can create unintended tool associations that override even a well-written description.</p>
+
+    <div class="kpoints">
+      <span class="lbl">Knowledge points</span>
+      <ul>
+        <li>Tool descriptions are the <strong>primary mechanism for tool selection</strong>; minimal descriptions cause unreliable choices among similar tools.</li>
+        <li>Good descriptions include <strong>input formats, example queries, edge cases, and boundary explanations</strong>.</li>
+        <li><strong>Ambiguous or overlapping descriptions cause misrouting</strong> (the <code>analyze_content</code> vs <code>analyze_document</code> problem).</li>
+        <li><strong>System-prompt wording affects selection</strong> &mdash; keyword-sensitive instructions can create unintended tool associations.</li>
+      </ul>
+    </div>
+
+    <div class="in-practice">
+      <span class="lbl">In practice</span>
+      <ul>
+        <li>Write descriptions that <strong>differentiate purpose, inputs, outputs, and when-to-use vs alternatives</strong>.</li>
+        <li><strong>Rename and re-describe to eliminate overlap</strong> &mdash; e.g., rename <code>analyze_content</code> to <code>extract_web_results</code> with a web-specific description.</li>
+        <li><strong>Split generic tools into purpose-specific ones</strong> with defined I/O contracts &mdash; a generic <code>analyze_document</code> becomes <code>extract_data_points</code>, <code>summarize_content</code>, and <code>verify_claim_against_source</code>.</li>
+        <li><strong>Review system prompts for keyword-sensitive instructions</strong> that might override good tool descriptions.</li>
+      </ul>
+    </div>
+
+    <div class="antipattern">
+      <span class="lbl">Anti-patterns the exam tests</span>
+      <ul>
+        <li><strong>Minimal descriptions</strong> (&ldquo;analyzes documents&rdquo;) that give the model nothing to discriminate on.</li>
+        <li><strong>Two tools with overlapping descriptions</strong> &mdash; the model picks unpredictably between them; the fix is renaming/splitting, not prompt-nudging.</li>
+        <li>Blaming <strong>the model for misrouting</strong> when the real cause is a system-prompt keyword steering it, or descriptions that don&rsquo;t say when-to-use-which.</li>
+        <li>One <strong>generic mega-tool</strong> doing several jobs, when purpose-specific tools with clear contracts would select more reliably.</li>
+      </ul>
+    </div>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      A scenario shows the model calling the wrong one of two similar tools. The tempting answer is
+      &ldquo;add examples to the prompt&rdquo; or &ldquo;tell the model which to use.&rdquo; The stronger answer fixes
+      the <strong>tool interfaces</strong>: rename to remove overlap, sharpen the descriptions to say
+      when each applies, or split a generic tool into purpose-specific ones. Also check the system
+      prompt for a keyword quietly biasing selection.
+    </div>
+
+    <div class="capstone">
+      <span class="icn">&#9873;</span>
+      <div>
+        <span class="lbl">Build it in a capstone</span>
+        The <strong>Customer Support Resolution Agent</strong> lab designs distinct, well-described tools
+        (<code>get_customer</code>, <code>lookup_order</code>, <code>process_refund</code>,
+        <code>escalate_to_human</code>) &mdash; each with a boundary the model can select on.
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Check your understanding</span>
+      <ul>
+        <li>Why does the model confuse two tools with similar descriptions, and what&rsquo;s the fix?</li>
+        <li>What belongs in a tool description beyond a one-line purpose?</li>
+        <li>How can a system prompt undermine a well-written tool description?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 2.2 ============ -->
+  <section class="stage" id="s2-2">
+    <div class="stage-head">
+      <span class="stage-num">Section 2.2</span>
+      <h2>Implement structured error responses for MCP tools</h2>
+      <span class="domain-tag">Task Statement 2.2</span>
+    </div>
+    <p class="lede">When a tool fails, the agent&rsquo;s next move depends entirely on <em>how</em> it failed. A generic &ldquo;Operation failed&rdquo; tells the agent nothing, so it can&rsquo;t recover intelligently. Structured errors &mdash; category, retryable, a human-readable reason &mdash; are what let the agent make the right recovery decision.</p>
+
+    <h3>What &amp; why</h3>
+    <p>MCP communicates tool failures back with the <code>isError</code> flag, but the flag alone isn&rsquo;t enough &mdash; the agent needs to know <em>what kind</em> of failure it was. There are four categories: <strong>transient</strong> (timeouts, service unavailable), <strong>validation</strong> (invalid input), <strong>business</strong> (policy violation), and <strong>permission</strong> errors. Uniform &ldquo;Operation failed&rdquo; responses prevent appropriate recovery &mdash; the agent can&rsquo;t tell a retryable timeout from a permanent policy block, so it either wastes retries or gives up when it shouldn&rsquo;t. Returning structured metadata (category, an <code>isRetryable</code> boolean, a readable description) is what enables the right decision.</p>
+
+    <div class="kpoints">
+      <span class="lbl">Knowledge points</span>
+      <ul>
+        <li>The MCP <strong><code>isError</code> flag pattern</strong> for communicating failures back to the agent.</li>
+        <li>The four error types: <strong>transient</strong> (timeouts, unavailability), <strong>validation</strong> (bad input), <strong>business</strong> (policy), <strong>permission</strong>.</li>
+        <li>Why <strong>uniform &ldquo;Operation failed&rdquo; responses prevent appropriate recovery</strong>.</li>
+        <li>The <strong>retryable vs non-retryable</strong> distinction, and how structured metadata prevents wasted retry attempts.</li>
+      </ul>
+    </div>
+
+    <div class="in-practice">
+      <span class="lbl">In practice</span>
+      <ul>
+        <li>Return <strong>structured error metadata</strong>: <code>errorCategory</code> (transient/validation/permission), an <code>isRetryable</code> boolean, and human-readable descriptions.</li>
+        <li>Include <strong><code>retriable: false</code> and a customer-friendly explanation</strong> for business-rule violations, so the agent can communicate appropriately rather than retry.</li>
+        <li>Implement <strong>local recovery within subagents for transient failures</strong>, propagating to the coordinator only what can&rsquo;t be resolved locally &mdash; along with partial results and what was attempted.</li>
+        <li>Distinguish <strong>access failures (needing retry decisions) from valid empty results</strong> (a successful query that simply found no matches).</li>
+      </ul>
+    </div>
+
+    <div class="antipattern">
+      <span class="lbl">Anti-patterns the exam tests</span>
+      <ul>
+        <li>Returning a <strong>generic &ldquo;Operation failed&rdquo;</strong> &mdash; the agent can&rsquo;t choose a recovery path.</li>
+        <li>Making a <strong>business-rule violation look retryable</strong> &mdash; the agent burns retries on something that will never succeed.</li>
+        <li>Treating a <strong>valid empty result as an error</strong> (or an error as an empty result) &mdash; conflates &ldquo;couldn&rsquo;t look&rdquo; with &ldquo;looked and found nothing.&rdquo;</li>
+        <li><strong>Propagating every transient blip to the coordinator</strong> instead of recovering locally first.</li>
+      </ul>
+    </div>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      A scenario shows an agent retrying a refund that&rsquo;s blocked by policy, or giving up on a
+      transient timeout. The fix is <strong>structured error responses</strong>: mark the policy block
+      <code>retriable: false</code> with a clear reason, mark the timeout transient/retryable.
+      Watch for the empty-result trap &mdash; &ldquo;no orders found&rdquo; is a <em>successful</em> query, not a
+      failure, and answers that treat it as an error are wrong.
+    </div>
+
+    <div class="capstone">
+      <span class="icn">&#9873;</span>
+      <div>
+        <span class="lbl">Build it in a capstone</span>
+        The <strong>Customer Support Resolution Agent</strong> lab&rsquo;s mock MCP tools return structured
+        outcomes &mdash; the guarded <code>process_refund</code> distinguishes a policy block from a
+        transient failure, exactly this section&rsquo;s pattern.
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Check your understanding</span>
+      <ul>
+        <li>Name the four error categories and which are typically retryable.</li>
+        <li>Why is &ldquo;no matches found&rdquo; not an error?</li>
+        <li>What should a subagent do with a transient failure before involving the coordinator?</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="rule">
+  <!-- ============ 2.3 ============ -->
+  <section class="stage" id="s2-3">
+    <div class="stage-head">
+      <span class="stage-num">Section 2.3</span>
+      <h2>Distribute tools appropriately across agents and configure tool choice</h2>
+      <span class="domain-tag">Task Statement 2.3</span>
+    </div>
+    <p class="lede">More tools does not mean more capable. Every extra tool an agent can see adds to the decision it has to make each turn, and past a handful, selection reliability drops. Scope each agent to the tools its role actually needs &mdash; and use <code>tool_choice</code> to control when a tool must be called.</p>
+
+    <h3>What &amp; why</h3>
+    <p>Giving an agent too many tools (18 instead of 4&ndash;5) degrades selection reliability by increasing decision complexity &mdash; more options, more chances to pick wrong. Agents also tend to <em>misuse</em> tools outside their specialization (a synthesis agent attempting web searches it shouldn&rsquo;t). The fix is scoped access: each agent gets only the tools its role needs, with limited cross-role tools for specific high-frequency needs. Separately, <code>tool_choice</code> controls the calling behavior: <code>"auto"</code> (model may return text instead of a tool), <code>"any"</code> (must call a tool, its choice), or forced (<code>{"type":"tool","name":"..."}</code>, must call a specific one).</p>
+
+    <div class="kpoints">
+      <span class="lbl">Knowledge points</span>
+      <ul>
+        <li><strong>Too many tools degrades selection</strong> &mdash; 18 vs 4&ndash;5 increases decision complexity and error rate.</li>
+        <li>Agents <strong>misuse tools outside their specialization</strong> (a synthesis agent doing web searches).</li>
+        <li><strong>Scoped tool access</strong>: only the tools a role needs, with limited cross-role tools for high-frequency needs.</li>
+        <li><strong><code>tool_choice</code> options</strong>: <code>"auto"</code>, <code>"any"</code>, and forced <code>{"type":"tool","name":"..."}</code>.</li>
+      </ul>
+    </div>
+
+    <div class="in-practice">
+      <span class="lbl">In practice</span>
+      <ul>
+        <li><strong>Restrict each subagent&rsquo;s tool set to its role</strong> to prevent cross-specialization misuse.</li>
+        <li><strong>Replace generic tools with constrained alternatives</strong> &mdash; swap <code>fetch_url</code> for <code>load_document</code> that validates document URLs.</li>
+        <li>Provide <strong>scoped cross-role tools for high-frequency needs</strong> (a <code>verify_fact</code> tool for the synthesis agent) while routing complex cases through the coordinator.</li>
+        <li>Use <strong>forced tool_choice to run a specific tool first</strong> (force <code>extract_metadata</code> before enrichment), then continue in follow-up turns.</li>
+        <li>Set <strong><code>tool_choice: "any"</code> to guarantee a tool call</strong> rather than conversational text.</li>
+      </ul>
+    </div>
+
+    <div class="antipattern">
+      <span class="lbl">Anti-patterns the exam tests</span>
+      <ul>
+        <li><strong>Giving every agent every tool</strong> &ldquo;for flexibility&rdquo; &mdash; degrades selection for all of them.</li>
+        <li>Letting a specialist keep <strong>tools outside its role</strong> &mdash; it will eventually misuse them.</li>
+        <li>Using a <strong>broad generic tool</strong> (<code>fetch_url</code>) where a validated, constrained one (<code>load_document</code>) would be safer and clearer.</li>
+        <li>Relying on the prompt to force a first tool when <strong>forced <code>tool_choice</code></strong> guarantees it.</li>
+      </ul>
+    </div>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      A scenario shows an agent with a large toolset picking wrong, or a synthesis agent wandering
+      into search. The answer is <strong>scope the tools to the role</strong> (4&ndash;5, not 18), not
+      &ldquo;improve the descriptions&rdquo; alone. When the ask is &ldquo;guarantee a tool runs&rdquo; or &ldquo;run this
+      one first,&rdquo; the answer is <strong><code>tool_choice</code></strong> &mdash; <code>"any"</code> to force
+      some tool, forced-name to pin a specific one.
+    </div>
+
+    <div class="capstone">
+      <span class="icn">&#9873;</span>
+      <div>
+        <span class="lbl">Build it in a capstone</span>
+        The <strong>Multi-Agent Research System</strong> lab scopes each subagent&rsquo;s tools to its role
+        (searcher has web tools, synthesizer has none), and the <strong>Developer Productivity</strong>
+        lab widens tools deliberately rather than granting all at once.
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Check your understanding</span>
+      <ul>
+        <li>Why does an 18-tool agent select less reliably than a 4-tool one?</li>
+        <li>When would you force a specific tool vs set <code>tool_choice: "any"</code>?</li>
+        <li>What&rsquo;s the argument for <code>load_document</code> over a generic <code>fetch_url</code>?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 2.4 ============ -->
+  <section class="stage" id="s2-4">
+    <div class="stage-head">
+      <span class="stage-num">Section 2.4</span>
+      <h2>Integrate MCP servers into Claude Code and agent workflows</h2>
+      <span class="domain-tag">Task Statement 2.4</span>
+    </div>
+    <p class="lede">MCP is how agents reach beyond built-in tools into your systems &mdash; issue trackers, databases, internal APIs. Getting integration right is about <em>scoping</em> (who shares a server), <em>credentials</em> (without committing secrets), and <em>discoverability</em> (helping the agent find and prefer the right tools).</p>
+
+    <h3>What &amp; why</h3>
+    <p>MCP servers are scoped two ways: <strong>project-level</strong> (<code>.mcp.json</code>, committed, for shared team tooling) and <strong>user-level</strong> (<code>~/.claude.json</code>, for personal or experimental servers). Credentials go in via <strong>environment-variable expansion</strong> (<code>${GITHUB_TOKEN}</code>) so secrets aren&rsquo;t committed. Tools from all configured servers are discovered at connection time and available simultaneously. And <strong>MCP resources</strong> expose content catalogs (issue summaries, doc hierarchies, database schemas) so the agent can see what data exists without spending exploratory tool calls to find out.</p>
+
+    <div class="kpoints">
+      <span class="lbl">Knowledge points</span>
+      <ul>
+        <li><strong>Scoping</strong>: project-level <code>.mcp.json</code> (shared team tooling) vs user-level <code>~/.claude.json</code> (personal/experimental).</li>
+        <li><strong>Environment-variable expansion</strong> in <code>.mcp.json</code> (<code>${GITHUB_TOKEN}</code>) for credentials without committing secrets.</li>
+        <li>Tools from <strong>all configured servers are discovered at connection time</strong> and available simultaneously.</li>
+        <li><strong>MCP resources</strong> expose content catalogs to reduce exploratory tool calls.</li>
+      </ul>
+    </div>
+
+    <div class="in-practice">
+      <span class="lbl">In practice</span>
+      <ul>
+        <li>Configure <strong>shared servers in project-scoped <code>.mcp.json</code></strong> with env-var expansion for auth tokens.</li>
+        <li>Configure <strong>personal/experimental servers in user-scoped <code>~/.claude.json</code></strong>.</li>
+        <li><strong>Enhance MCP tool descriptions</strong> to explain capabilities and outputs in detail &mdash; otherwise the agent may prefer a built-in like <code>Grep</code> over a more capable MCP tool.</li>
+        <li><strong>Prefer existing community MCP servers</strong> (e.g., Jira) over custom builds for standard integrations; reserve custom servers for team-specific workflows.</li>
+        <li><strong>Expose content catalogs as MCP resources</strong> so agents see available data without exploratory calls.</li>
+      </ul>
+    </div>
+
+    <div class="antipattern">
+      <span class="lbl">Anti-patterns the exam tests</span>
+      <ul>
+        <li>Putting a <strong>shared team server in user-level config</strong> (or a personal one in the committed project config) &mdash; wrong scope, teammates don&rsquo;t get it (or get it unwanted).</li>
+        <li><strong>Committing secrets</strong> instead of using <code>${ENV_VAR}</code> expansion.</li>
+        <li><strong>Thin MCP tool descriptions</strong> that lose out to built-in tools the agent already knows.</li>
+        <li><strong>Building a custom server</strong> for a standard integration a community server already covers.</li>
+        <li>Forcing the agent to <strong>explore for data that a resource catalog could expose directly</strong>.</li>
+      </ul>
+    </div>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      A scenario asks where a team&rsquo;s shared Jira server belongs, or why the agent keeps using
+      <code>Grep</code> instead of a better MCP tool. Scope answers: shared &rarr; <strong>project
+      <code>.mcp.json</code></strong>; personal &rarr; <strong><code>~/.claude.json</code></strong>. The
+      &ldquo;prefers Grep&rdquo; problem is a <strong>weak tool description</strong>, not a model flaw. Secrets in
+      config is always the wrong answer &mdash; <code>${ENV_VAR}</code> is the right one.
+    </div>
+
+    <div class="capstone">
+      <span class="icn">&#9873;</span>
+      <div>
+        <span class="lbl">Build it in a capstone</span>
+        The <strong>Developer Productivity</strong> lab integrates an MCP server (external via
+        command/URL vs in-process), scopes its tools, and writes descriptions strong enough that the
+        agent reaches for it &mdash; this section in practice.
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Check your understanding</span>
+      <ul>
+        <li>Which config file is shared via version control, and which is personal?</li>
+        <li>How do credentials get into <code>.mcp.json</code> without committing secrets?</li>
+        <li>Why might an agent prefer <code>Grep</code> over a more capable MCP tool, and how do you fix it?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 2.5 ============ -->
+  <section class="stage" id="s2-5">
+    <div class="stage-head">
+      <span class="stage-num">Section 2.5</span>
+      <h2>Select and apply built-in tools effectively</h2>
+      <span class="domain-tag">Task Statement 2.5</span>
+    </div>
+    <p class="lede">The built-in tools &mdash; Read, Write, Edit, Bash, Grep, Glob &mdash; are the agent&rsquo;s hands in a codebase. Using them well is knowing which fits which job: Grep for content, Glob for paths, Edit for targeted changes, and the Read+Write fallback when Edit can&rsquo;t find a unique anchor.</p>
+
+    <h3>What &amp; why</h3>
+    <p>Each built-in has a job. <strong>Grep</strong> searches file <em>contents</em> for patterns &mdash; function names, error messages, import statements. <strong>Glob</strong> matches file <em>paths</em> by name or extension pattern. <strong>Read/Write</strong> do full-file operations; <strong>Edit</strong> makes targeted modifications by matching unique text &mdash; and when that text isn&rsquo;t unique, Edit fails, so you fall back to Read + Write for a reliable change. The larger skill is <em>incremental</em> exploration: start with Grep to find entry points, then Read to follow imports and trace flows, rather than reading everything up front.</p>
+
+    <div class="kpoints">
+      <span class="lbl">Knowledge points</span>
+      <ul>
+        <li><strong>Grep</strong> for content search (patterns like function names, error messages, imports).</li>
+        <li><strong>Glob</strong> for file-path pattern matching (files by name or extension).</li>
+        <li><strong>Read/Write</strong> for full-file operations; <strong>Edit</strong> for targeted changes via unique text matching.</li>
+        <li>When <strong>Edit fails on non-unique matches</strong>, use <strong>Read + Write as the fallback</strong>.</li>
+      </ul>
+    </div>
+
+    <div class="in-practice">
+      <span class="lbl">In practice</span>
+      <ul>
+        <li><strong>Grep to search code content</strong> across a codebase (all callers of a function, a specific error message).</li>
+        <li><strong>Glob to find files by naming pattern</strong> (<code>**/*.test.tsx</code>).</li>
+        <li><strong>Read then Write</strong> when Edit can&rsquo;t find unique anchor text.</li>
+        <li><strong>Build understanding incrementally</strong>: Grep for entry points, then Read to follow imports and trace flows &mdash; not reading all files upfront.</li>
+        <li><strong>Trace usage across wrapper modules</strong>: identify all exported names, then search each across the codebase.</li>
+      </ul>
+    </div>
+
+    <div class="antipattern">
+      <span class="lbl">Anti-patterns the exam tests</span>
+      <ul>
+        <li>Using <strong>Glob when you mean Grep</strong> (or vice versa) &mdash; path pattern vs content search are different jobs.</li>
+        <li><strong>Reading every file upfront</strong> to &ldquo;understand the codebase&rdquo; instead of Grep-then-Read incrementally &mdash; floods context (ties to Module 5).</li>
+        <li>Retrying <strong>Edit repeatedly on non-unique text</strong> instead of falling back to Read + Write.</li>
+      </ul>
+    </div>
+
+    <div class="exam-lens">
+      <span class="lbl">Exam lens</span>
+      A scenario asks which tool for a task: &ldquo;find every caller of <code>processPayment</code>&rdquo; &rarr;
+      <strong>Grep</strong>; &ldquo;list all <code>.test.tsx</code> files&rdquo; &rarr; <strong>Glob</strong>; &ldquo;Edit
+      keeps failing because the text appears three times&rdquo; &rarr; <strong>Read + Write</strong>. The
+      &ldquo;read the whole repo first&rdquo; option is the context-flooding distractor &mdash; incremental
+      Grep-then-Read is the expected approach.
+    </div>
+
+    <div class="capstone">
+      <span class="icn">&#9873;</span>
+      <div>
+        <span class="lbl">Build it in a capstone</span>
+        The <strong>Developer Productivity</strong> lab is built on exactly these tools &mdash; Glob/Grep/Read
+        for exploring an unfamiliar codebase incrementally, Edit (and its fallback) for changes.
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <span class="lbl">Check your understanding</span>
+      <ul>
+        <li>Grep vs Glob &mdash; which searches contents, which matches paths?</li>
+        <li>What do you do when Edit can&rsquo;t find a unique match?</li>
+        <li>Why explore incrementally with Grep-then-Read instead of reading everything first?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ WRAP-UP ============ -->
+  <section class="stage" id="close">
+    <div class="stage-head">
+      <span class="stage-num">Module 2 · Wrap-up</span>
+      <h2>What this domain comes down to</h2>
+    </div>
+    <p>Tool Design &amp; MCP Integration is about the surface between the agent and everything it can do: descriptions the model selects on (2.1), errors structured so the agent can recover (2.2), tools scoped to each role with <code>tool_choice</code> controlling when they fire (2.3), MCP servers scoped and credentialed correctly with discoverable tools (2.4), and the built-ins used for the jobs they fit (2.5).</p>
+    <p>Two threads run through the anti-patterns. First: <strong>the model acts on what you give it &mdash; descriptions and error structure &mdash; not on what you meant</strong>. Vague descriptions misroute; generic errors block recovery; thin MCP descriptions lose to built-ins. Second: <strong>less is more reliable</strong> &mdash; fewer, role-scoped tools select better than a big generic pile. Fix the interface, scope the access, and most of this domain&rsquo;s scenarios resolve.</p>
+    <div class="capstone" style="margin-top:22px">
+      <span class="icn">&#9873;</span>
+      <div>
+        <span class="lbl">Your capstones for this domain</span>
+        <strong>Developer Productivity</strong> (2.4, 2.5) &middot;
+        <strong>Customer Support Resolution Agent</strong> (2.1, 2.2) &middot;
+        <strong>Multi-Agent Research System</strong> (2.3). Building one makes the tool-design tradeoffs
+        concrete in a way reading can&rsquo;t.
+      </div>
+    </div>
+    <div class="prep-banner" style="margin-top:24px">
+      <span class="icn">&#9873;</span>
+      <span>
+        <strong>Next in the track.</strong> Module 3 &mdash; Claude Code Configuration &amp; Workflows &mdash;
+        moves from the tools an agent calls to configuring Claude Code itself: CLAUDE.md hierarchy,
+        slash commands and skills, plan mode, and CI/CD. The evaluation comes after all five modules,
+        drawn from the capstone scenarios.
+      </span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>SF Knowledge Hub</strong> &middot; CCA Knowledge Track &middot; Module 2: Tool Design &amp; MCP Integration
+  <p class="disclaimer">
+    Part of the Claude Certified Architect &mdash; Knowledge Track, the structured-knowledge companion
+    to the CCA capstone labs. A recommended preparatory resource &mdash; not affiliated with or endorsed
+    by Anthropic, not a substitute for the official exam or its prerequisites. Tool names, MCP config
+    shapes, and built-in behavior reflect the toolchain as of mid-2026 and carry a real shelf-life;
+    verify against current documentation before relying on specifics.
+  </p>
+</footer>
+
+</body>
+</html>
