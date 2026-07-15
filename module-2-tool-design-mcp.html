@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: 2026071405 -->
+<!-- build: 2026071503 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -269,6 +269,66 @@
 .taskref{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
 .in-practice{margin:16px 0}
 .in-practice .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;font-weight:600}
+
+/* ---- knowledge check MCQ ---- */
+.kcheck{background:#eef3f1;border:1px solid #bcd6cb;border-left:4px solid var(--accent);border-radius:12px;padding:24px 26px;margin:28px 0 0}
+.kcheck > .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 6px;font-weight:600}
+.kcheck .kc-sub{font-size:13.5px;color:var(--ink-soft);margin:0 0 20px;line-height:1.5}
+.kq{margin:0 0 20px;padding:0 0 20px;border-bottom:1px dashed #c5d8d0}
+.kcheck .kq:last-of-type{border-bottom:none;padding-bottom:6px;margin-bottom:10px}
+.kq .qtext{display:block;font-weight:600;font-size:15.5px;margin:0 0 14px;color:var(--ink);line-height:1.5}
+.kq .qnum{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--accent);background:#dfeae5;border-radius:4px;padding:2px 6px;margin-right:9px;vertical-align:2px}
+.kq .opt{display:flex!important;width:100%;box-sizing:border-box;gap:11px;align-items:flex-start;padding:11px 14px;margin:0 0 8px;background:var(--card);border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:14.5px;line-height:1.55;transition:border-color .12s,background .12s}
+.kq .opt:hover{border-color:var(--accent);background:#fbfaf7}
+.kq .opt input{margin:3px 0 0;flex:0 0 auto;cursor:pointer;accent-color:var(--accent)}
+.kq .opt > span{flex:1 1 auto}
+.kq .opt.correct{background:#e5efe9;border-color:var(--accent)}
+.kq .opt.wrong{background:#fbeeee;border-color:#c98374}
+.kq .opt.disabled{cursor:default}
+.kq .opt.disabled:hover{border-color:var(--line);background:var(--card)}
+.kq .opt.correct.disabled{border-color:var(--accent);background:#e5efe9}
+.kfb{display:none;margin:12px 0 0;padding:12px 15px;border-radius:8px;font-size:14px;line-height:1.6}
+.kfb.show{display:block}
+.kfb.ok{background:#e5efe9;border:1px solid #bcd6cb;color:#245244}
+.kfb.no{background:#fbeeee;border:1px solid #e3b7b0;color:#8f3a2b}
+.kfb strong{font-weight:600}
+.kc-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:4px}
+.btn-check{font-family:var(--sans);font-size:14px;font-weight:600;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:11px 22px;cursor:pointer;transition:opacity .15s}
+.btn-check:hover:not(:disabled){opacity:.88}
+.btn-check:disabled{background:#bfcbc6;cursor:not-allowed}
+.kc-status{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft)}
+.kc-status.done{color:var(--accent);font-weight:600}
+
+/* section gate — toggle button */
+.sect-gate{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 8px;padding:18px 26px 26px;background:#eef3f1;border:1px solid #bcd6cb;border-left:4px solid var(--accent);border-top:none;border-radius:0 0 12px 12px}
+.btn-next{display:inline-flex;align-items:center;gap:9px;font-family:var(--sans);font-size:15px;font-weight:600;text-decoration:none;border:none;border-radius:8px;padding:12px 24px;transition:background .18s,color .18s,opacity .15s}
+.btn-next .lockicn{font-size:13px;line-height:1}
+.btn-next.locked{background:#d3dbd8;color:#7d8a85;cursor:not-allowed;pointer-events:none}
+.btn-next.unlocked{background:var(--accent);color:#fff;cursor:pointer}
+.btn-next.unlocked:hover{opacity:.88}
+.gate-note{font-size:13.5px;color:var(--ink-soft)}
+.gate-note.unlocked{color:var(--accent);font-weight:600}
+
+.mod-done{background:#e5efe9;border:1px solid #bcd6cb;border-radius:12px;padding:24px 26px;margin:28px 0;display:none}
+.mod-done.show{display:block}
+.mod-done h3{margin:0 0 8px;font-size:19px;color:var(--accent)}
+.mod-done p{margin:0;font-size:15px;color:var(--ink-soft);line-height:1.6}
+.reset-link{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);text-decoration:underline;cursor:pointer;background:none;border:none;padding:0}
+.reset-link:hover{color:var(--accent)}
+
+/* ---- section locking ---- */
+.lock-shade{display:flex;align-items:center;gap:16px;background:var(--paper-2);border:1px dashed #c8bfa9;border-radius:12px;padding:20px 24px;margin:20px 0 8px}
+.lock-shade .lock-ic{font-size:22px;line-height:1;opacity:.55;flex-shrink:0}
+.lock-shade strong{display:block;font-size:15px;color:var(--ink);margin-bottom:3px}
+.lock-shade p{margin:0;font-size:14px;color:var(--ink-soft);line-height:1.5}
+.lock-shade > div{flex:1 1 auto}
+.lock-jump{flex-shrink:0;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--accent);text-decoration:none;border:1px solid #bcd6cb;background:#eef3f1;border-radius:7px;padding:9px 15px;transition:background .15s}
+.lock-jump:hover{background:#e0ebe6}
+.lock-shade.hidden{display:none}
+.sect-body{display:none}
+.sect-body.open{display:block}
+.stage.is-locked .stage-head h2{opacity:.5}
+.stage.is-locked .domain-tag{opacity:.5}
 </style>
 </head>
 <body>
@@ -384,13 +444,42 @@
       </div>
     </div>
 
-    <div class="checkpoint">
+    <div class="kcheck" data-section="sec-2-1">
       <span class="lbl">Check your understanding</span>
-      <ul>
-        <li>Why does the model confuse two tools with similar descriptions, and what&rsquo;s the fix?</li>
-        <li>What belongs in a tool description beyond a one-line purpose?</li>
-        <li>How can a system prompt undermine a well-written tool description?</li>
-      </ul>
+      <p class="kc-sub">Answer all 3 correctly to unlock the next section. Wrong answers give feedback — retry until right.</p>
+        <div class="kq" data-answer="b" data-why-ok="Overlapping descriptions cause misrouting. The fix is at the interface: rename and re-describe so each tool&#x27;s purpose and boundary is unmistakable." data-why-no="The root cause is the ambiguous descriptions themselves. Prompt patches and temperature don&#x27;t fix an interface problem — renaming and re-describing to remove the overlap does.">
+          <p class="qtext"><span class="qnum">Q1</span>Your agent keeps calling <code>analyze_content</code> when it should call <code>analyze_document</code>. Both descriptions read almost identically. What's the right fix?</p>
+          <label class="opt"><input type="radio" name="sec-2-1-q1" value="a"><span>Add an instruction to the system prompt telling it which to use when</span></label>
+          <label class="opt"><input type="radio" name="sec-2-1-q1" value="b"><span>Rename and re-describe the tools to eliminate the functional overlap — e.g. <code>extract_web_results</code> with a web-specific description</span></label>
+          <label class="opt"><input type="radio" name="sec-2-1-q1" value="c"><span>Remove one of the tools entirely</span></label>
+          <label class="opt"><input type="radio" name="sec-2-1-q1" value="d"><span>Lower the model temperature so selection is more deterministic</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-answer="c" data-why-ok="Descriptions are the primary selection signal — which is why minimal ones lead to unreliable choices among similar tools." data-why-no="Tool descriptions are the primary selection mechanism. That&#x27;s why a thin description (&quot;analyzes documents&quot;) gives the model nothing to discriminate on.">
+          <p class="qtext"><span class="qnum">Q2</span>What is the primary mechanism the model uses to decide which tool to call?</p>
+          <label class="opt"><input type="radio" name="sec-2-1-q2" value="a"><span>The order tools are listed in the request</span></label>
+          <label class="opt"><input type="radio" name="sec-2-1-q2" value="b"><span>The tool's input schema complexity</span></label>
+          <label class="opt"><input type="radio" name="sec-2-1-q2" value="c"><span>The tool description</span></label>
+          <label class="opt"><input type="radio" name="sec-2-1-q2" value="d"><span>The tool's historical success rate</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-answer="a" data-why-ok="Split it: &lt;code&gt;extract_data_points&lt;/code&gt;, &lt;code&gt;summarize_content&lt;/code&gt;, &lt;code&gt;verify_claim_against_source&lt;/code&gt; — each with a clear contract the model can select on." data-why-no="A generic mega-tool doing several jobs is hard to select correctly. Splitting into purpose-specific tools with defined I/O contracts is the named skill here.">
+          <p class="qtext"><span class="qnum">Q3</span>You have a generic <code>analyze_document</code> tool that summarizes, extracts data points, and verifies claims. Selection is unreliable. What's the recommended approach?</p>
+          <label class="opt"><input type="radio" name="sec-2-1-q3" value="a"><span>Split it into purpose-specific tools with defined input/output contracts</span></label>
+          <label class="opt"><input type="radio" name="sec-2-1-q3" value="b"><span>Add more examples to the single tool's description</span></label>
+          <label class="opt"><input type="radio" name="sec-2-1-q3" value="c"><span>Make the tool's schema stricter</span></label>
+          <label class="opt"><input type="radio" name="sec-2-1-q3" value="d"><span>Force the tool with <code>tool_choice</code> every time</span></label>
+          <div class="kfb"></div>
+        </div>
+      <div class="kc-actions">
+        <button class="btn-check" data-section="sec-2-1">Check answers</button>
+        <span class="kc-status"></span>
+      </div>
+    </div>
+
+    <div class="sect-gate" data-for="sec-2-1">
+      <a class="btn-next locked" href="#s2-2" data-label="Continue to Section 2.2"><span class="lockicn">&#128274;</span><span class="btxt">Continue to Section 2.2</span></a>
+      <span class="gate-note">Answer all questions correctly to unlock.</span>
     </div>
   </section>
 
@@ -401,6 +490,15 @@
       <h2>Implement structured error responses for MCP tools</h2>
       <span class="domain-tag">Task Statement 2.2</span>
     </div>
+    <div class="lock-shade" data-locked-for="sec-2-1">
+      <span class="lock-ic">&#128274;</span>
+      <div>
+        <strong>This section is locked.</strong>
+        <p>Complete the knowledge check in Section 2.1 to unlock it.</p>
+      </div>
+      <a class="lock-jump" href="#s2-1">Go to Section 2.1</a>
+    </div>
+    <div class="sect-body" data-body-for="sec-2-2">
     <p class="lede">When a tool fails, the agent&rsquo;s next move depends entirely on <em>how</em> it failed. A generic &ldquo;Operation failed&rdquo; tells the agent nothing, so it can&rsquo;t recover intelligently. Structured errors &mdash; category, retryable, a human-readable reason &mdash; are what let the agent make the right recovery decision.</p>
 
     <h3>What &amp; why</h3>
@@ -455,13 +553,43 @@
       </div>
     </div>
 
-    <div class="checkpoint">
+    <div class="kcheck" data-section="sec-2-2">
       <span class="lbl">Check your understanding</span>
-      <ul>
-        <li>Name the four error categories and which are typically retryable.</li>
-        <li>Why is &ldquo;no matches found&rdquo; not an error?</li>
-        <li>What should a subagent do with a transient failure before involving the coordinator?</li>
-      </ul>
+      <p class="kc-sub">Answer all 3 correctly to unlock the next section. Wrong answers give feedback — retry until right.</p>
+        <div class="kq" data-answer="b" data-why-ok="A business-rule violation is non-retryable. Structured metadata (&lt;code&gt;retriable: false&lt;/code&gt; + a readable reason) tells the agent to stop retrying and communicate instead." data-why-no="The generic error is the problem: the agent can&#x27;t tell a permanent policy block from a transient failure. Structured metadata with &lt;code&gt;retriable: false&lt;/code&gt; prevents the wasted retries.">
+          <p class="qtext"><span class="qnum">Q1</span>Your MCP tool blocks a refund because it violates policy, and returns <code>isError: true</code> with "Operation failed". The agent retries it four times. What's wrong?</p>
+          <label class="opt"><input type="radio" name="sec-2-2-q1" value="a"><span>The retry limit should be lowered to one</span></label>
+          <label class="opt"><input type="radio" name="sec-2-2-q1" value="b"><span>The error lacks structured metadata — it should carry <code>retriable: false</code> and a customer-friendly explanation</span></label>
+          <label class="opt"><input type="radio" name="sec-2-2-q1" value="c"><span>The agent should never retry any error</span></label>
+          <label class="opt"><input type="radio" name="sec-2-2-q1" value="d"><span>Policy checks belong in the prompt, not the tool</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-answer="c" data-why-ok="A valid empty result is a &lt;em&gt;successful&lt;/em&gt; query. Conflating it with an access failure makes the coordinator retry something that already worked." data-why-no="This is the empty-result trap. &quot;Looked and found nothing&quot; is success; &quot;couldn&#x27;t look&quot; is a failure. Distinguishing them is what lets the coordinator decide correctly.">
+          <p class="qtext"><span class="qnum">Q2</span>A search subagent queries a database successfully and finds zero matching records. How should this be reported?</p>
+          <label class="opt"><input type="radio" name="sec-2-2-q2" value="a"><span>As an error with <code>isError: true</code>, so the coordinator knows nothing was found</span></label>
+          <label class="opt"><input type="radio" name="sec-2-2-q2" value="b"><span>As a transient failure so the coordinator retries</span></label>
+          <label class="opt"><input type="radio" name="sec-2-2-q2" value="c"><span>As a successful result with an empty result set</span></label>
+          <label class="opt"><input type="radio" name="sec-2-2-q2" value="d"><span>The subagent should escalate to the coordinator for a decision</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-answer="c" data-why-ok="Local recovery for transient failures keeps the coordinator focused on what it can&#x27;t resolve — and when propagating, context (attempted query, partial results) enables intelligent recovery." data-why-no="Silently suppressing errors and terminating the whole workflow on one failure are both named anti-patterns. Recover locally for transient issues; propagate with structured context if you can&#x27;t.">
+          <p class="qtext"><span class="qnum">Q3</span>A subagent hits a transient network timeout on one of its searches. What's the best behavior?</p>
+          <label class="opt"><input type="radio" name="sec-2-2-q3" value="a"><span>Immediately propagate the error to the coordinator and stop</span></label>
+          <label class="opt"><input type="radio" name="sec-2-2-q3" value="b"><span>Silently return empty results so the workflow continues</span></label>
+          <label class="opt"><input type="radio" name="sec-2-2-q3" value="c"><span>Attempt local recovery first; propagate only if unresolved, including what was attempted and any partial results</span></label>
+          <label class="opt"><input type="radio" name="sec-2-2-q3" value="d"><span>Terminate the entire workflow to avoid partial data</span></label>
+          <div class="kfb"></div>
+        </div>
+      <div class="kc-actions">
+        <button class="btn-check" data-section="sec-2-2">Check answers</button>
+        <span class="kc-status"></span>
+      </div>
+    </div>
+
+    <div class="sect-gate" data-for="sec-2-2">
+      <a class="btn-next locked" href="#s2-3" data-label="Continue to Section 2.3"><span class="lockicn">&#128274;</span><span class="btxt">Continue to Section 2.3</span></a>
+      <span class="gate-note">Answer all questions correctly to unlock.</span>
+    </div>
     </div>
   </section>
 
@@ -473,6 +601,15 @@
       <h2>Distribute tools appropriately across agents and configure tool choice</h2>
       <span class="domain-tag">Task Statement 2.3</span>
     </div>
+    <div class="lock-shade" data-locked-for="sec-2-2">
+      <span class="lock-ic">&#128274;</span>
+      <div>
+        <strong>This section is locked.</strong>
+        <p>Complete the knowledge check in Section 2.2 to unlock it.</p>
+      </div>
+      <a class="lock-jump" href="#s2-2">Go to Section 2.2</a>
+    </div>
+    <div class="sect-body" data-body-for="sec-2-3">
     <p class="lede">More tools does not mean more capable. Every extra tool an agent can see adds to the decision it has to make each turn, and past a handful, selection reliability drops. Scope each agent to the tools its role actually needs &mdash; and use <code>tool_choice</code> to control when a tool must be called.</p>
 
     <h3>What &amp; why</h3>
@@ -528,13 +665,43 @@
       </div>
     </div>
 
-    <div class="checkpoint">
+    <div class="kcheck" data-section="sec-2-3">
       <span class="lbl">Check your understanding</span>
-      <ul>
-        <li>Why does an 18-tool agent select less reliably than a 4-tool one?</li>
-        <li>When would you force a specific tool vs set <code>tool_choice: "any"</code>?</li>
-        <li>What&rsquo;s the argument for <code>load_document</code> over a generic <code>fetch_url</code>?</li>
-      </ul>
+      <p class="kc-sub">Answer all 3 correctly to unlock the next section. Wrong answers give feedback — retry until right.</p>
+        <div class="kq" data-answer="b" data-why-ok="Too many tools increases decision complexity and degrades selection. Scoping to the role&#x27;s actual needs is the structural fix." data-why-no="Giving an agent too many tools (18 vs 4–5) degrades selection reliability by increasing decision complexity. Better descriptions help, but scoping the set is the named fix.">
+          <p class="qtext"><span class="qnum">Q1</span>An agent with access to 18 tools is selecting the wrong tool frequently. What's the most effective fix?</p>
+          <label class="opt"><input type="radio" name="sec-2-3-q1" value="a"><span>Improve each of the 18 tool descriptions</span></label>
+          <label class="opt"><input type="radio" name="sec-2-3-q1" value="b"><span>Restrict the agent's tool set to the 4-5 tools its role actually needs</span></label>
+          <label class="opt"><input type="radio" name="sec-2-3-q1" value="c"><span>Use a larger model with better reasoning</span></label>
+          <label class="opt"><input type="radio" name="sec-2-3-q1" value="d"><span>Set <code>tool_choice: "any"</code> to force a tool call</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-answer="c" data-why-ok="Forced tool selection guarantees a specific tool is called. Subsequent steps then proceed in follow-up turns." data-why-no="Only forced selection (&lt;code&gt;{&quot;type&quot;:&quot;tool&quot;,&quot;name&quot;:&quot;...&quot;}&lt;/code&gt;) guarantees a &lt;em&gt;specific&lt;/em&gt; tool runs. &lt;code&gt;&quot;any&quot;&lt;/code&gt; guarantees &lt;em&gt;some&lt;/em&gt; tool; &quot;auto&quot; guarantees nothing; array order isn&#x27;t a control.">
+          <p class="qtext"><span class="qnum">Q2</span>You need <code>extract_metadata</code> to run before any enrichment tools. How do you guarantee it?</p>
+          <label class="opt"><input type="radio" name="sec-2-3-q2" value="a"><span>Set <code>tool_choice: "auto"</code> and describe the order in the prompt</span></label>
+          <label class="opt"><input type="radio" name="sec-2-3-q2" value="b"><span>List <code>extract_metadata</code> first in the tools array</span></label>
+          <label class="opt"><input type="radio" name="sec-2-3-q2" value="c"><span>Force it with <code>tool_choice: {"type": "tool", "name": "extract_metadata"}</code>, then process later steps in follow-up turns</span></label>
+          <label class="opt"><input type="radio" name="sec-2-3-q2" value="d"><span>Set <code>tool_choice: "any"</code></span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-answer="b" data-why-ok="Agents with tools outside their specialization tend to misuse them. Scoped access prevents cross-specialization misuse structurally." data-why-no="This is the named failure: an agent with tools outside its role will eventually misuse them. Restricting the tool set to the role is the fix — not a prompt warning.">
+          <p class="qtext"><span class="qnum">Q3</span>Your synthesis agent occasionally attempts web searches instead of synthesizing. Why, and what's the fix?</p>
+          <label class="opt"><input type="radio" name="sec-2-3-q3" value="a"><span>The model is confused — add a warning to the system prompt</span></label>
+          <label class="opt"><input type="radio" name="sec-2-3-q3" value="b"><span>It has tools outside its specialization; restrict its tool set to its role</span></label>
+          <label class="opt"><input type="radio" name="sec-2-3-q3" value="c"><span>Synthesis requires web access, so this is expected</span></label>
+          <label class="opt"><input type="radio" name="sec-2-3-q3" value="d"><span>Increase max_turns so it finishes synthesizing first</span></label>
+          <div class="kfb"></div>
+        </div>
+      <div class="kc-actions">
+        <button class="btn-check" data-section="sec-2-3">Check answers</button>
+        <span class="kc-status"></span>
+      </div>
+    </div>
+
+    <div class="sect-gate" data-for="sec-2-3">
+      <a class="btn-next locked" href="#s2-4" data-label="Continue to Section 2.4"><span class="lockicn">&#128274;</span><span class="btxt">Continue to Section 2.4</span></a>
+      <span class="gate-note">Answer all questions correctly to unlock.</span>
+    </div>
     </div>
   </section>
 
@@ -545,6 +712,15 @@
       <h2>Integrate MCP servers into Claude Code and agent workflows</h2>
       <span class="domain-tag">Task Statement 2.4</span>
     </div>
+    <div class="lock-shade" data-locked-for="sec-2-3">
+      <span class="lock-ic">&#128274;</span>
+      <div>
+        <strong>This section is locked.</strong>
+        <p>Complete the knowledge check in Section 2.3 to unlock it.</p>
+      </div>
+      <a class="lock-jump" href="#s2-3">Go to Section 2.3</a>
+    </div>
+    <div class="sect-body" data-body-for="sec-2-4">
     <p class="lede">MCP is how agents reach beyond built-in tools into your systems &mdash; issue trackers, databases, internal APIs. Getting integration right is about <em>scoping</em> (who shares a server), <em>credentials</em> (without committing secrets), and <em>discoverability</em> (helping the agent find and prefer the right tools).</p>
 
     <h3>What &amp; why</h3>
@@ -601,13 +777,43 @@
       </div>
     </div>
 
-    <div class="checkpoint">
+    <div class="kcheck" data-section="sec-2-4">
       <span class="lbl">Check your understanding</span>
-      <ul>
-        <li>Which config file is shared via version control, and which is personal?</li>
-        <li>How do credentials get into <code>.mcp.json</code> without committing secrets?</li>
-        <li>Why might an agent prefer <code>Grep</code> over a more capable MCP tool, and how do you fix it?</li>
-      </ul>
+      <p class="kc-sub">Answer all 3 correctly to unlock the next section. Wrong answers give feedback — retry until right.</p>
+        <div class="kq" data-answer="b" data-why-ok="Project-scoped &lt;code&gt;.mcp.json&lt;/code&gt; is for shared team tooling and travels with the repo. User-scoped config is personal and isn&#x27;t shared." data-why-no="Shared team tooling goes in project-scoped &lt;code&gt;.mcp.json&lt;/code&gt;. &lt;code&gt;~/.claude.json&lt;/code&gt; is user-level — personal/experimental servers that teammates don&#x27;t receive.">
+          <p class="qtext"><span class="qnum">Q1</span>Your team needs a shared Jira MCP server available to everyone on the project. Where does it belong?</p>
+          <label class="opt"><input type="radio" name="sec-2-4-q1" value="a"><span>User-scoped <code>~/.claude.json</code></span></label>
+          <label class="opt"><input type="radio" name="sec-2-4-q1" value="b"><span>Project-scoped <code>.mcp.json</code>, committed to the repo</span></label>
+          <label class="opt"><input type="radio" name="sec-2-4-q1" value="c"><span>Each developer's shell profile</span></label>
+          <label class="opt"><input type="radio" name="sec-2-4-q1" value="d"><span>Inline in the agent's code</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-answer="c" data-why-ok="Environment-variable expansion in &lt;code&gt;.mcp.json&lt;/code&gt; keeps credentials out of version control while still configuring the server." data-why-no="&lt;code&gt;.mcp.json&lt;/code&gt; supports environment-variable expansion (&lt;code&gt;${GITHUB_TOKEN}&lt;/code&gt;) precisely so credentials aren&#x27;t committed.">
+          <p class="qtext"><span class="qnum">Q2</span>How do you supply a GitHub token to an MCP server in <code>.mcp.json</code> without committing the secret?</p>
+          <label class="opt"><input type="radio" name="sec-2-4-q2" value="a"><span>Store it in a separate gitignored JSON file</span></label>
+          <label class="opt"><input type="radio" name="sec-2-4-q2" value="b"><span>Base64-encode it in the config</span></label>
+          <label class="opt"><input type="radio" name="sec-2-4-q2" value="c"><span>Use environment variable expansion, e.g. <code>${GITHUB_TOKEN}</code></span></label>
+          <label class="opt"><input type="radio" name="sec-2-4-q2" value="d"><span>Pass it as a command-line argument in the args array</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-answer="b" data-why-ok="Thin MCP descriptions lose to built-ins the model already understands. Enhancing the description to explain capabilities and outputs fixes the preference." data-why-no="There&#x27;s no built-in priority rule. The agent prefers what it understands — a weak MCP tool description loses to a familiar built-in. Enhance the description.">
+          <p class="qtext"><span class="qnum">Q3</span>Your agent keeps using the built-in <code>Grep</code> tool instead of a more capable MCP search tool you've connected. Why?</p>
+          <label class="opt"><input type="radio" name="sec-2-4-q3" value="a"><span>Built-in tools always take priority over MCP tools</span></label>
+          <label class="opt"><input type="radio" name="sec-2-4-q3" value="b"><span>The MCP tool's description doesn't explain its capabilities and outputs in enough detail</span></label>
+          <label class="opt"><input type="radio" name="sec-2-4-q3" value="c"><span>MCP tools are only discovered on demand</span></label>
+          <label class="opt"><input type="radio" name="sec-2-4-q3" value="d"><span>Grep is faster, so the model prefers it</span></label>
+          <div class="kfb"></div>
+        </div>
+      <div class="kc-actions">
+        <button class="btn-check" data-section="sec-2-4">Check answers</button>
+        <span class="kc-status"></span>
+      </div>
+    </div>
+
+    <div class="sect-gate" data-for="sec-2-4">
+      <a class="btn-next locked" href="#s2-5" data-label="Continue to Section 2.5"><span class="lockicn">&#128274;</span><span class="btxt">Continue to Section 2.5</span></a>
+      <span class="gate-note">Answer all questions correctly to unlock.</span>
+    </div>
     </div>
   </section>
 
@@ -618,6 +824,15 @@
       <h2>Select and apply built-in tools effectively</h2>
       <span class="domain-tag">Task Statement 2.5</span>
     </div>
+    <div class="lock-shade" data-locked-for="sec-2-4">
+      <span class="lock-ic">&#128274;</span>
+      <div>
+        <strong>This section is locked.</strong>
+        <p>Complete the knowledge check in Section 2.4 to unlock it.</p>
+      </div>
+      <a class="lock-jump" href="#s2-4">Go to Section 2.4</a>
+    </div>
+    <div class="sect-body" data-body-for="sec-2-5">
     <p class="lede">The built-in tools &mdash; Read, Write, Edit, Bash, Grep, Glob &mdash; are the agent&rsquo;s hands in a codebase. Using them well is knowing which fits which job: Grep for content, Glob for paths, Edit for targeted changes, and the Read+Write fallback when Edit can&rsquo;t find a unique anchor.</p>
 
     <h3>What &amp; why</h3>
@@ -671,17 +886,54 @@
       </div>
     </div>
 
-    <div class="checkpoint">
+    <div class="kcheck" data-section="sec-2-5">
       <span class="lbl">Check your understanding</span>
-      <ul>
-        <li>Grep vs Glob &mdash; which searches contents, which matches paths?</li>
-        <li>What do you do when Edit can&rsquo;t find a unique match?</li>
-        <li>Why explore incrementally with Grep-then-Read instead of reading everything first?</li>
-      </ul>
+      <p class="kc-sub">Answer all 3 correctly to unlock the next section. Wrong answers give feedback — retry until right.</p>
+        <div class="kq" data-answer="b" data-why-ok="Grep searches file &lt;em&gt;contents&lt;/em&gt; — function names, error messages, imports. That&#x27;s exactly this job." data-why-no="Grep is for content search; Glob matches file &lt;em&gt;paths&lt;/em&gt; by name pattern. Finding callers means searching contents — Grep.">
+          <p class="qtext"><span class="qnum">Q1</span>You need to find every caller of the function <code>processPayment</code> across a codebase. Which tool?</p>
+          <label class="opt"><input type="radio" name="sec-2-5-q1" value="a"><span>Glob — it matches patterns across files</span></label>
+          <label class="opt"><input type="radio" name="sec-2-5-q1" value="b"><span>Grep — it searches file contents for patterns</span></label>
+          <label class="opt"><input type="radio" name="sec-2-5-q1" value="c"><span>Read — load each file and scan it</span></label>
+          <label class="opt"><input type="radio" name="sec-2-5-q1" value="d"><span>Bash with a custom find command</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-answer="c" data-why-ok="When Edit can&#x27;t find a unique anchor, Read + Write is the named fallback for a reliable modification." data-why-no="Edit relies on unique text matching. When that fails, the documented fallback is Read (load full contents) then Write (save the modification).">
+          <p class="qtext"><span class="qnum">Q2</span>Your Edit call keeps failing because the anchor text appears three times in the file. What's the reliable fallback?</p>
+          <label class="opt"><input type="radio" name="sec-2-5-q2" value="a"><span>Retry Edit with a longer text match until it's unique</span></label>
+          <label class="opt"><input type="radio" name="sec-2-5-q2" value="b"><span>Use Bash with sed to make the change</span></label>
+          <label class="opt"><input type="radio" name="sec-2-5-q2" value="c"><span>Use Read to load the full file, then Write to save the modified version</span></label>
+          <label class="opt"><input type="radio" name="sec-2-5-q2" value="d"><span>Split the file first, then Edit each part</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-answer="b" data-why-ok="Incremental exploration — Grep to locate, Read to follow — builds understanding without flooding context." data-why-no="Reading everything upfront floods the context window. The named skill is incremental: Grep for entry points, then Read to follow imports and trace flows.">
+          <p class="qtext"><span class="qnum">Q3</span>What's the recommended way to build understanding of an unfamiliar codebase?</p>
+          <label class="opt"><input type="radio" name="sec-2-5-q3" value="a"><span>Read every file upfront so the agent has full context</span></label>
+          <label class="opt"><input type="radio" name="sec-2-5-q3" value="b"><span>Start with Grep to find entry points, then Read to follow imports and trace flows</span></label>
+          <label class="opt"><input type="radio" name="sec-2-5-q3" value="c"><span>Use Glob to list all files, then Read them in alphabetical order</span></label>
+          <label class="opt"><input type="radio" name="sec-2-5-q3" value="d"><span>Ask the agent to summarize from the directory names alone</span></label>
+          <div class="kfb"></div>
+        </div>
+      <div class="kc-actions">
+        <button class="btn-check" data-section="sec-2-5">Check answers</button>
+        <span class="kc-status"></span>
+      </div>
+    </div>
+
+    <div class="sect-gate" data-for="sec-2-5">
+      <a class="btn-next locked" href="#close" data-label="Continue to the wrap-up"><span class="lockicn">&#128274;</span><span class="btxt">Continue to the wrap-up</span></a>
+      <span class="gate-note">Answer all questions correctly to unlock.</span>
+    </div>
     </div>
   </section>
 
   <!-- ============ WRAP-UP ============ -->
+  <div class="mod-done" id="mod-done">
+    <h3>&#10003; Module 2 complete</h3>
+    <p>You've cleared every section's knowledge check. Your progress is saved in this browser.
+    Next up: <strong>Module 3 — Claude Code Configuration &amp; Workflows</strong>. The evaluation
+    unlocks once all five modules are done.</p>
+  </div>
+
   <section class="stage" id="close">
     <div class="stage-head">
       <span class="stage-num">Module 2 · Wrap-up</span>
@@ -713,7 +965,8 @@
 </main>
 
 <footer>
-  <strong>SF Knowledge Hub</strong> &middot; CCA Knowledge Track &middot; Module 2: Tool Design &amp; MCP Integration
+  <strong>SF Knowledge Hub</strong> &middot; CCA Knowledge Track &middot; Module 2: Tool Design &amp; MCP Integration<br>
+  <button class="reset-link" id="kt-reset">reset my progress for this module</button>
   <p class="disclaimer">
     Part of the Claude Certified Architect &mdash; Knowledge Track, the structured-knowledge companion
     to the CCA capstone labs. A recommended preparatory resource &mdash; not affiliated with or endorsed
@@ -723,5 +976,223 @@
   </p>
 </footer>
 
+<script>
+  window.KT_MODULE_ID       = 'module-2-tool-design-mcp';
+  window.KT_CONTENT_VERSION = '1';
+  window.KT_TOTAL_SECTIONS  = 5;
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   CCA Knowledge Track — section gate engine
+   ---------------------------------------------------------------------------
+   Section-level progress  →  localStorage (survives refresh, timeout, breaks)
+   Module-level completion →  Firestore courseProgress  [WIRING PASS — see below]
+
+   Storage key: ccaKT_<MODULE_ID>_<uid>_v<CONTENT_VERSION>
+     · keyed by uid so shared browsers don't collide
+     · versioned so changed questions invalidate stale "complete" state
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+
+  var MODULE_ID      = window.KT_MODULE_ID || 'module-x';
+  var CONTENT_VERSION = window.KT_CONTENT_VERSION || '1';
+  var TOTAL_SECTIONS  = window.KT_TOTAL_SECTIONS || 0;
+
+  function uid() {
+    return (window._learnerUid) || (window.sessionStorage && sessionStorage.getItem('_learnerUid')) || 'anon';
+  }
+  var KEY = 'ccaKT_' + MODULE_ID + '_' + uid() + '_v' + CONTENT_VERSION;
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
+    catch (e) { return {}; }
+  }
+  function save(state) {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch (e) { /* storage disabled/full — gate still works in-session */ }
+  }
+
+  var state = load();
+
+  function isSectionComplete(id) { return state[id] === true; }
+
+  /* ── SEAM: module completion ──────────────────────────────────────────────
+     Today: records locally + reveals the module-complete panel.
+     WIRING PASS: add the Firestore courseProgress v2 write here — this is the
+     only function that needs to change. moduleKey = filename minus .html.   */
+  function markModuleComplete() {
+    state.__moduleComplete = true;
+    save(state);
+    var panel = document.getElementById('mod-done');
+    if (panel) panel.classList.add('show');
+    // TODO(wiring): writeCourseProgress(CP_COURSE_ID, MODULE_ID, {complete:true})
+  }
+
+  function completedCount() {
+    return Object.keys(state).filter(function (k) {
+      return k.indexOf('sec-') === 0 && state[k] === true;
+    }).length;
+  }
+
+  function markSectionComplete(id) {
+    state[id] = true;
+    save(state);
+    unlockNext(id);
+    if (TOTAL_SECTIONS && completedCount() >= TOTAL_SECTIONS) markModuleComplete();
+  }
+
+  function unlockNext(id) {
+    var gate = document.querySelector('.sect-gate[data-for="' + id + '"]');
+    if (gate) {
+      var btn  = gate.querySelector('.btn-next');
+      var note = gate.querySelector('.gate-note');
+      if (btn) {
+        btn.classList.remove('locked');
+        btn.classList.add('unlocked');
+        var ic = btn.querySelector('.lockicn');
+        if (ic) ic.innerHTML = '&#10003;';
+      }
+      if (note) { note.textContent = 'Section complete — next section unlocked.'; note.classList.add('unlocked'); }
+    }
+    revealFor(id);
+  }
+
+  /* reveal the section whose prerequisite is `id` */
+  function revealFor(id) {
+    var shade = document.querySelector('.lock-shade[data-locked-for="' + id + '"]');
+    if (!shade) return;
+    shade.classList.add('hidden');
+    var sec = shade.closest('.stage');
+    if (sec) sec.classList.remove('is-locked');
+    var body = sec ? sec.querySelector('.sect-body') : null;
+    if (body) body.classList.add('open');
+  }
+
+  /* ── quiz rendering / grading ─────────────────────────────────────────── */
+  function gradeQuestion(qEl) {
+    var picked = qEl.querySelector('input[type=radio]:checked');
+    if (!picked) return null;
+    return picked.value === qEl.getAttribute('data-answer');
+  }
+
+  function lockQuestion(qEl) {
+    qEl.querySelectorAll('.opt').forEach(function (o) {
+      o.classList.add('disabled');
+      var r = o.querySelector('input'); if (r) r.disabled = true;
+    });
+  }
+
+  function resetQuestionStyles(qEl) {
+    qEl.querySelectorAll('.opt').forEach(function (o) {
+      o.classList.remove('correct', 'wrong');
+    });
+  }
+
+  function checkSection(secId) {
+    var kc = document.querySelector('.kcheck[data-section="' + secId + '"]');
+    if (!kc) return;
+    var qs = Array.prototype.slice.call(kc.querySelectorAll('.kq'));
+    var allAnswered = qs.every(function (q) { return q.querySelector('input:checked'); });
+    if (!allAnswered) return;
+
+    var allRight = true;
+    qs.forEach(function (q) {
+      resetQuestionStyles(q);
+      var ok  = gradeQuestion(q);
+      var fb  = q.querySelector('.kfb');
+      var sel = q.querySelector('input:checked');
+      var selOpt = sel ? sel.closest('.opt') : null;
+
+      if (ok) {
+        if (selOpt) selOpt.classList.add('correct');
+        if (fb) { fb.className = 'kfb ok show'; fb.innerHTML = '<strong>Correct.</strong> ' + (q.getAttribute('data-why-ok') || ''); }
+        lockQuestion(q);
+      } else {
+        allRight = false;
+        if (selOpt) selOpt.classList.add('wrong');
+        if (fb) { fb.className = 'kfb no show'; fb.innerHTML = '<strong>Not quite.</strong> ' + (q.getAttribute('data-why-no') || '') + ' <em>Try again.</em>'; }
+        // wrong answers stay open for retry — clear the selection
+        if (sel) sel.checked = false;
+      }
+    });
+
+    var status = kc.querySelector('.kc-status');
+    if (allRight) {
+      if (status) { status.textContent = '✓ All correct'; status.classList.add('done'); }
+      var btn = kc.querySelector('.btn-check');
+      if (btn) { btn.disabled = true; btn.textContent = 'Section complete'; }
+      markSectionComplete(secId);
+    } else if (status) {
+      status.textContent = 'Some answers need another look';
+      status.classList.remove('done');
+    }
+  }
+
+  /* ── restore prior progress on load ───────────────────────────────────── */
+  function restore() {
+    document.querySelectorAll('.kcheck').forEach(function (kc) {
+      var secId = kc.getAttribute('data-section');
+      if (!isSectionComplete(secId)) return;
+      kc.querySelectorAll('.kq').forEach(function (q) {
+        var ans = q.getAttribute('data-answer');
+        var input = q.querySelector('input[value="' + ans + '"]');
+        if (input) { input.checked = true; var o = input.closest('.opt'); if (o) o.classList.add('correct'); }
+        var fb = q.querySelector('.kfb');
+        if (fb) { fb.className = 'kfb ok show'; fb.innerHTML = '<strong>Correct.</strong> ' + (q.getAttribute('data-why-ok') || ''); }
+        lockQuestion(q);
+      });
+      var btn = kc.querySelector('.btn-check');
+      if (btn) { btn.disabled = true; btn.textContent = 'Section complete'; }
+      var status = kc.querySelector('.kc-status');
+      if (status) { status.textContent = '✓ All correct'; status.classList.add('done'); }
+      unlockNext(secId);
+    });
+    if (state.__moduleComplete) {
+      var panel = document.getElementById('mod-done');
+      if (panel) panel.classList.add('show');
+    }
+    // reveal any section whose prerequisite is already complete; lock the rest
+    document.querySelectorAll('.lock-shade').forEach(function (shade) {
+      var prereq = shade.getAttribute('data-locked-for');
+      var sec = shade.closest('.stage');
+      if (isSectionComplete(prereq)) {
+        revealFor(prereq);
+      } else if (sec) {
+        sec.classList.add('is-locked');
+      }
+    });
+  }
+
+  /* ── wire up ──────────────────────────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.btn-check').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        checkSection(btn.getAttribute('data-section'));
+      });
+    });
+    // enable the check button only once every question in that block has a pick
+    document.querySelectorAll('.kcheck').forEach(function (kc) {
+      var secId = kc.getAttribute('data-section');
+      kc.addEventListener('change', function () {
+        var btn = kc.querySelector('.btn-check');
+        if (!btn || isSectionComplete(secId)) return;   // completed sections stay locked-done
+        var qs = Array.prototype.slice.call(kc.querySelectorAll('.kq'));
+        var all = qs.every(function (q) { return q.querySelector('input:checked'); });
+        btn.disabled = !all;                            // enable once every question answered
+      });
+      var btn0 = kc.querySelector('.btn-check');
+      if (btn0) btn0.disabled = true;
+    });
+    var reset = document.getElementById('kt-reset');
+    if (reset) reset.addEventListener('click', function () {
+      if (confirm('Clear your saved progress for this module?')) {
+        localStorage.removeItem(KEY); location.reload();
+      }
+    });
+    restore();
+  });
+})();
+</script>
 </body>
 </html>
