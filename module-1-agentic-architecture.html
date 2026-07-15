@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: 2026071407 -->
+<!-- build: 2026071501 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -269,6 +269,52 @@
 .taskref{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
 .in-practice{margin:16px 0}
 .in-practice .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;font-weight:600}
+
+/* ---- knowledge check MCQ ---- */
+.kcheck{background:#eef3f1;border:1px solid #bcd6cb;border-left:4px solid var(--accent);border-radius:12px;padding:24px 26px;margin:28px 0 0}
+.kcheck > .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 6px;font-weight:600}
+.kcheck .kc-sub{font-size:13.5px;color:var(--ink-soft);margin:0 0 20px;line-height:1.5}
+.kq{margin:0 0 20px;padding:0 0 20px;border-bottom:1px dashed #c5d8d0}
+.kcheck .kq:last-of-type{border-bottom:none;padding-bottom:6px;margin-bottom:10px}
+.kq .qtext{display:block;font-weight:600;font-size:15.5px;margin:0 0 14px;color:var(--ink);line-height:1.5}
+.kq .qnum{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--accent);background:#dfeae5;border-radius:4px;padding:2px 6px;margin-right:9px;vertical-align:2px}
+.kq .opt{display:flex!important;width:100%;box-sizing:border-box;gap:11px;align-items:flex-start;padding:11px 14px;margin:0 0 8px;background:var(--card);border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:14.5px;line-height:1.55;transition:border-color .12s,background .12s}
+.kq .opt:hover{border-color:var(--accent);background:#fbfaf7}
+.kq .opt input{margin:3px 0 0;flex:0 0 auto;cursor:pointer;accent-color:var(--accent)}
+.kq .opt > span{flex:1 1 auto}
+.kq .opt.correct{background:#e5efe9;border-color:var(--accent)}
+.kq .opt.wrong{background:#fbeeee;border-color:#c98374}
+.kq .opt.disabled{cursor:default}
+.kq .opt.disabled:hover{border-color:var(--line);background:var(--card)}
+.kq .opt.correct.disabled{border-color:var(--accent);background:#e5efe9}
+.kfb{display:none;margin:12px 0 0;padding:12px 15px;border-radius:8px;font-size:14px;line-height:1.6}
+.kfb.show{display:block}
+.kfb.ok{background:#e5efe9;border:1px solid #bcd6cb;color:#245244}
+.kfb.no{background:#fbeeee;border:1px solid #e3b7b0;color:#8f3a2b}
+.kfb strong{font-weight:600}
+.kc-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:4px}
+.btn-check{font-family:var(--sans);font-size:14px;font-weight:600;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:11px 22px;cursor:pointer;transition:opacity .15s}
+.btn-check:hover:not(:disabled){opacity:.88}
+.btn-check:disabled{background:#bfcbc6;cursor:not-allowed}
+.kc-status{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft)}
+.kc-status.done{color:var(--accent);font-weight:600}
+
+/* section gate — toggle button */
+.sect-gate{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 8px;padding:18px 26px 26px;background:#eef3f1;border:1px solid #bcd6cb;border-left:4px solid var(--accent);border-top:none;border-radius:0 0 12px 12px}
+.btn-next{display:inline-flex;align-items:center;gap:9px;font-family:var(--sans);font-size:15px;font-weight:600;text-decoration:none;border:none;border-radius:8px;padding:12px 24px;transition:background .18s,color .18s,opacity .15s}
+.btn-next .lockicn{font-size:13px;line-height:1}
+.btn-next.locked{background:#d3dbd8;color:#7d8a85;cursor:not-allowed;pointer-events:none}
+.btn-next.unlocked{background:var(--accent);color:#fff;cursor:pointer}
+.btn-next.unlocked:hover{opacity:.88}
+.gate-note{font-size:13.5px;color:var(--ink-soft)}
+.gate-note.unlocked{color:var(--accent);font-weight:600}
+
+.mod-done{background:#e5efe9;border:1px solid #bcd6cb;border-radius:12px;padding:24px 26px;margin:28px 0;display:none}
+.mod-done.show{display:block}
+.mod-done h3{margin:0 0 8px;font-size:19px;color:var(--accent)}
+.mod-done p{margin:0;font-size:15px;color:var(--ink-soft);line-height:1.6}
+.reset-link{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);text-decoration:underline;cursor:pointer;background:none;border:none;padding:0}
+.reset-link:hover{color:var(--accent)}
 </style>
 </head>
 <body>
@@ -416,8 +462,8 @@
     </div>
 
     <div class="sect-gate" data-for="sec-1-1">
-      <a class="btn-next locked" href="#s1-2">Continue to Section 1.2</a>
-      <span class="gate-note">Answer the questions above to unlock.</span>
+      <a class="btn-next locked" href="#s1-2" data-label="Continue to Section 1.2"><span class="lockicn">&#128274;</span><span class="btxt">Continue to Section 1.2</span></a>
+      <span class="gate-note">Answer all questions correctly to unlock.</span>
     </div>
   </section>
 
@@ -516,8 +562,8 @@
     </div>
 
     <div class="sect-gate" data-for="sec-1-2">
-      <a class="btn-next locked" href="#s1-3">Continue to Section 1.3</a>
-      <span class="gate-note">Answer the questions above to unlock.</span>
+      <a class="btn-next locked" href="#s1-3" data-label="Continue to Section 1.3"><span class="lockicn">&#128274;</span><span class="btxt">Continue to Section 1.3</span></a>
+      <span class="gate-note">Answer all questions correctly to unlock.</span>
     </div>
   </section>
 
@@ -618,8 +664,8 @@
     </div>
 
     <div class="sect-gate" data-for="sec-1-3">
-      <a class="btn-next locked" href="#s1-4">Continue to Section 1.4</a>
-      <span class="gate-note">Answer the questions above to unlock.</span>
+      <a class="btn-next locked" href="#s1-4" data-label="Continue to Section 1.4"><span class="lockicn">&#128274;</span><span class="btxt">Continue to Section 1.4</span></a>
+      <span class="gate-note">Answer all questions correctly to unlock.</span>
     </div>
   </section>
 
@@ -707,8 +753,8 @@
     </div>
 
     <div class="sect-gate" data-for="sec-1-4">
-      <a class="btn-next locked" href="#s1-5">Continue to Section 1.5</a>
-      <span class="gate-note">Answer the questions above to unlock.</span>
+      <a class="btn-next locked" href="#s1-5" data-label="Continue to Section 1.5"><span class="lockicn">&#128274;</span><span class="btxt">Continue to Section 1.5</span></a>
+      <span class="gate-note">Answer all questions correctly to unlock.</span>
     </div>
   </section>
 
@@ -804,8 +850,8 @@
     </div>
 
     <div class="sect-gate" data-for="sec-1-5">
-      <a class="btn-next locked" href="#s1-6">Continue to Section 1.6</a>
-      <span class="gate-note">Answer the questions above to unlock.</span>
+      <a class="btn-next locked" href="#s1-6" data-label="Continue to Section 1.6"><span class="lockicn">&#128274;</span><span class="btxt">Continue to Section 1.6</span></a>
+      <span class="gate-note">Answer all questions correctly to unlock.</span>
     </div>
   </section>
 
@@ -902,8 +948,8 @@
     </div>
 
     <div class="sect-gate" data-for="sec-1-6">
-      <a class="btn-next locked" href="#s1-7">Continue to Section 1.7</a>
-      <span class="gate-note">Answer the questions above to unlock.</span>
+      <a class="btn-next locked" href="#s1-7" data-label="Continue to Section 1.7"><span class="lockicn">&#128274;</span><span class="btxt">Continue to Section 1.7</span></a>
+      <span class="gate-note">Answer all questions correctly to unlock.</span>
     </div>
   </section>
 
@@ -1001,8 +1047,8 @@
     </div>
 
     <div class="sect-gate" data-for="sec-1-7">
-      <a class="btn-next locked" href="#close">Continue to the wrap-up</a>
-      <span class="gate-note">Answer the questions above to unlock.</span>
+      <a class="btn-next locked" href="#close" data-label="Continue to the wrap-up"><span class="lockicn">&#128274;</span><span class="btxt">Continue to the wrap-up</span></a>
+      <span class="gate-note">Answer all questions correctly to unlock.</span>
     </div>
   </section>
 
@@ -1127,7 +1173,12 @@
     if (!gate) return;
     var btn  = gate.querySelector('.btn-next');
     var note = gate.querySelector('.gate-note');
-    if (btn)  btn.classList.remove('locked');
+    if (btn) {
+      btn.classList.remove('locked');
+      btn.classList.add('unlocked');
+      var ic = btn.querySelector('.lockicn');
+      if (ic) ic.innerHTML = '&#10003;';
+    }
     if (note) { note.textContent = 'Section complete — next section unlocked.'; note.classList.add('unlocked'); }
   }
 
@@ -1227,10 +1278,11 @@
     document.querySelectorAll('.kcheck').forEach(function (kc) {
       var secId = kc.getAttribute('data-section');
       kc.addEventListener('change', function () {
+        var btn = kc.querySelector('.btn-check');
+        if (!btn || isSectionComplete(secId)) return;   // completed sections stay locked-done
         var qs = Array.prototype.slice.call(kc.querySelectorAll('.kq'));
         var all = qs.every(function (q) { return q.querySelector('input:checked'); });
-        var btn = kc.querySelector('.btn-check');
-        if (btn && !btn.disabled) btn.disabled = !all;
+        btn.disabled = !all;                            // enable once every question answered
       });
       var btn0 = kc.querySelector('.btn-check');
       if (btn0) btn0.disabled = true;
