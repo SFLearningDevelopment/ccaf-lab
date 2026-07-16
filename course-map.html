@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: 2026071620 -->
+<!-- build: 2026071640 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -405,7 +405,7 @@
         <div class="meta">
           <span class="tag count">6 sections</span>
           <span class="tag">Tasks 3.1&ndash;3.6</span>
-          <span class="soon">building next</span>
+          <span class="tag">CLAUDE.md · slash commands · plan mode</span>
         </div>
       </a>
 
@@ -416,7 +416,7 @@
         <div class="meta">
           <span class="tag count">6 sections</span>
           <span class="tag">Tasks 4.1&ndash;4.6</span>
-          <span class="soon">building next</span>
+          <span class="tag">JSON schema · validation retry · multi-pass</span>
         </div>
       </a>
 
@@ -427,7 +427,7 @@
         <div class="meta">
           <span class="tag count">6 sections</span>
           <span class="tag">Tasks 5.1&ndash;5.6</span>
-          <span class="soon">building next</span>
+          <span class="tag">escalation · error propagation · provenance</span>
         </div>
       </a>
 
@@ -597,6 +597,23 @@ _ccafAuth.onAuthStateChanged(async function(user) {
         document.getElementById('ccaf-auth-overlay').style.display = 'flex';
     }
 });
+
+/* Build stamp -> console, so the live page can be confirmed as current.
+   Read from the <!-- build: ... --> comment itself rather than a hardcoded
+   copy, so it can never disagree with the file it is printed from. */
+(function () {
+    var BUILD = 'unknown';
+    for (var i = 0; i < document.childNodes.length; i++) {
+        var n = document.childNodes[i];
+        if (n.nodeType === 8) {                       // comment node
+            var m = /build:\s*(\d+)/.exec(n.nodeValue);
+            if (m) { BUILD = m[1]; break; }
+        }
+    }
+    window.CCAF_BUILD = BUILD;
+    console.log('%c CCA-F ', 'background:#1a6eb5;color:#fff;border-radius:3px',
+                'course-map.html \u2014 build ' + BUILD);
+})();
 </script>
 </body>
 </html>
