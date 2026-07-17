@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- build: 2026071650 -->
+<!-- build: 2026071652 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CCA Knowledge Track &middot; Practice Questions</title>
+<title>CCA Knowledge Track &middot; Practice Question Set 1</title>
 <style>
 
   :root{
@@ -359,14 +359,15 @@
 .pq-intro{background:var(--paper-raised);border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin:0 0 30px}
 .pq-intro p{margin:0 0 10px}
 .pq-intro p:last-child{margin:0}
-.srcnote{background:var(--amber-wash);border:1px solid #e0c58f;border-left:4px solid var(--amber);border-radius:10px;padding:16px 18px;margin:22px 0 0;font-size:14px;line-height:1.6}
-.srcnote strong{color:var(--amber)}
-.gapbadge{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--domain);background:var(--domain-wash);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:middle;font-weight:500}
+.dombadge{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--domain);background:var(--domain-wash);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:middle;font-weight:500}
 .multi{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:#8a5a00;background:var(--amber-wash);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:middle;font-weight:500}
 .pq-score{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--line);padding:12px 0;margin:0 0 24px;font-family:var(--mono);font-size:13px;color:var(--ink-soft);display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 .pq-score b{color:var(--accent-deep)}
 .btn-reveal{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--accent-deep);background:none;border:1px solid var(--line-strong);border-radius:8px;padding:8px 16px;cursor:pointer;margin-left:8px}
 .btn-reveal:hover{border-color:var(--accent);background:var(--accent-wash)}
+.dom-head{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:34px 0 0;padding:0 0 6px;border-bottom:1px solid var(--line)}
+.morelink{background:var(--paper-raised);border:1px solid var(--line);border-left:4px solid var(--domain);border-radius:10px;padding:18px 20px;margin:34px 0 0;font-size:14.5px;line-height:1.65}
+.morelink a{color:var(--accent-deep);font-weight:600}
 
 </style>
 </head>
@@ -401,134 +402,261 @@
 <header class="masthead">
   <div class="wrap">
     <p class="eyebrow"><span class="dot"></span> Claude Certified Architect &mdash; Foundations</p>
-    <h1>Practice Questions</h1>
-    <p class="lede">Extra questions covering ground the module checks don&rsquo;t yet test &mdash; weighted toward
-    exact flags, frontmatter keys and command names, which the modules teach in prose but rarely ask you to recall.</p>
+    <h1>Practice Question Set 1</h1>
+    <p class="lede">28 questions weighted toward Domains 1 and 3 &mdash; the two heaviest on the
+    blueprint, and the two richest in exact-flag recall. Each is tagged with its domain so you can
+    score yourself the way the real report does.</p>
   </div>
 </header>
 
 <main class="wrap">
 
   <div class="pq-intro">
-    <p>Each question is tagged with the practice-set item that prompted it and its blueprint domain.
-    Wrong answers give feedback and let you retry &mdash; same behaviour as the module checks.</p>
-    <p>This page tracks no progress and is not part of the certification path. It exists purely as
-    extra drilling, and will grow as more sample material surfaces.</p>
+    <p>These drill what the modules teach in prose but rarely ask you to retrieve: the exact flag, the
+    exact frontmatter key, the exact command name. A wrong answer is a pointer back to the module
+    section it came from.</p>
+    <p>Mix: D1 &times;12 &middot; D2 &times;1 &middot; D3 &times;12 &middot; D4 &times;2 &middot; D5 &times;1. Wrong answers explain why and reopen for a retry &mdash; same behaviour as the
+    module checks. Nothing here is tracked; this page saves no progress.</p>
   </div>
 
   <div class="pq-score">
-    <span>Answered <b id="pq-done">0</b> / 13</span>
-    <span>First-try correct <b id="pq-first">0</b></span>
+    <span>Correct <b id="pq-done">0</b> / 28</span>
+    <span>First-try <b id="pq-first">0</b></span>
     <button class="btn-reveal" onclick="pqReset()">Reset</button>
   </div>
 
   <section class="stage">
     <div class="kcheck" data-section="practice">
       <span class="lbl">Check your understanding</span>
-      <p class="kc-sub">13 questions. Answer each and press Check &mdash; wrong answers explain why and reopen for a retry.</p>
-        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="&lt;code&gt;/compact&lt;/code&gt; is the in-session relief valve: it compacts the accumulated conversation so an extended session can keep going without the degradation that verbose discovery output causes." data-why-no="&lt;code&gt;/memory&lt;/code&gt; shows which memory files a session loaded — a diagnostic, not cleanup. &lt;code&gt;/rules&lt;/code&gt; reloads rule files. Forking is for divergent branches, not compression.">
-          <p class="qtext"><span class="qnum">Q1</span>Mid-way through a long exploration session, context is filling with verbose discovery output and answers are degrading — but you are not ready to end the session. Which built-in command helps immediately?<span class="gapbadge">PDF 2.9 · gap · D5</span></p>
-          <label class="opt"><input type="radio" name="pq1" value="a"><span><code>/memory</code></span></label>
-          <label class="opt"><input type="radio" name="pq1" value="b"><span><code>/compact</code></span></label>
-          <label class="opt"><input type="radio" name="pq1" value="c"><span><code>/fork</code></span></label>
-          <label class="opt"><input type="radio" name="pq1" value="d"><span><code>/rules</code></span></label>
+      <p class="kc-sub">Answer the questions and press Check. Wrong answers explain the reasoning and let you try again.</p>
+      <p class="dom-head">Domain 1 &middot; Agentic Architecture &amp; Orchestration</p>
+        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="&lt;code&gt;stop_reason&lt;/code&gt; is the designed signal. &lt;code&gt;tool_use&lt;/code&gt; means the model has requested tools and expects results back; &lt;code&gt;end_turn&lt;/code&gt; means it has finished. The bug is that a single response can carry both text and &lt;code&gt;tool_use&lt;/code&gt; blocks — so text alone never means &amp;ldquo;done&amp;rdquo;." data-why-no="Parsing prose for a completion phrase is a documented anti-pattern. A fixed cap makes an arbitrary number the stopping rule rather than the model&amp;rsquo;s own signal.">
+          <p class="qtext"><span class="qnum">Q1</span>Your agent loop currently stops as soon as a response contains any text block. Cases fail intermittently — the agent answers mid-investigation, before its tool calls have run. What is the correct termination condition?<span class="dombadge">D1</span></p>
+          <label class="opt"><input type="radio" name="q1" value="a"><span>Keep looping until the text contains a completion phrase such as &ldquo;resolved&rdquo;</span></label>
+          <label class="opt"><input type="radio" name="q1" value="b"><span>Loop while <code>stop_reason</code> is <code>tool_use</code>; present the answer when it is <code>end_turn</code></span></label>
+          <label class="opt"><input type="radio" name="q1" value="c"><span>Cap the loop at a fixed iteration count tuned per case type</span></label>
+          <label class="opt"><input type="radio" name="q1" value="d"><span>Stop on the first response containing a <code>text</code> block</span></label>
           <div class="kfb"></div>
         </div>
-        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="&lt;code&gt;allowed-tools&lt;/code&gt; is the enforcement mechanism: frontmatter-declared tool restrictions bound what the skill may invoke at runtime. That is a configuration guarantee, not an instruction the model might not follow." data-why-no="&lt;code&gt;context: fork&lt;/code&gt; isolates where output accumulates. &lt;code&gt;argument-hint&lt;/code&gt; prompts for parameters. &lt;code&gt;paths&lt;/code&gt; scopes rules to matching files. None of the three restricts which tools can run.">
-          <p class="qtext"><span class="qnum">Q2</span>You are writing a <code>/scaffold-component</code> skill that generates boilerplate files. You want a guarantee it can create files but can <em>never</em> run shell commands — regardless of what its instructions say. Which SKILL.md frontmatter key enforces this?<span class="gapbadge">PDF 2.3 · gap · D3</span></p>
-          <label class="opt"><input type="radio" name="pq2" value="a"><span><code>context: fork</code></span></label>
-          <label class="opt"><input type="radio" name="pq2" value="b"><span><code>argument-hint</code></span></label>
-          <label class="opt"><input type="radio" name="pq2" value="c"><span><code>allowed-tools</code></span></label>
-          <label class="opt"><input type="radio" name="pq2" value="d"><span><code>paths</code></span></label>
+        <div class="kq" data-kind="radio" data-answer="a" data-why-ok="&lt;code&gt;Task&lt;/code&gt; is the mechanism for spawning subagents. Without it in &lt;code&gt;allowedTools&lt;/code&gt; the coordinator has no way to delegate, however clearly its prompt describes the intent — capability configuration beats instruction." data-why-no="Model tier and prompt wording both look for the failure in comprehension, when the tool inventory makes delegation physically impossible. Subagents are spawned on demand, not pre-registered.">
+          <p class="qtext"><span class="qnum">Q2</span>Your coordinator&rsquo;s system prompt instructs it to delegate research to subagents, but at runtime it never spawns any — it does all the work itself. Its <code>allowedTools</code> lists the research-planning tools it needs. What is missing?<span class="dombadge">D1</span></p>
+          <label class="opt"><input type="radio" name="q2" value="a"><span>The <code>Task</code> tool is absent from <code>allowedTools</code></span></label>
+          <label class="opt"><input type="radio" name="q2" value="b"><span>The coordinator model tier is too small to understand delegation</span></label>
+          <label class="opt"><input type="radio" name="q2" value="c"><span>Subagents must be registered at startup before the coordinator runs</span></label>
+          <label class="opt"><input type="radio" name="q2" value="d"><span>The system prompt needs stronger delegation language</span></label>
           <div class="kfb"></div>
         </div>
-        <div class="kq" data-kind="radio" data-answer="a" data-why-ok="&lt;code&gt;argument-hint&lt;/code&gt; is the frontmatter mechanism for exactly this: a skill that needs parameters can prompt for them on bare invocation instead of running underspecified." data-why-no="&lt;code&gt;context: fork&lt;/code&gt; isolates output, not input requirements. &lt;code&gt;allowed-tools&lt;/code&gt; constrains tools. A longer description documents the parameters for whoever reads docs — the bare invocation still runs bare.">
-          <p class="qtext"><span class="qnum">Q3</span>Developers keep invoking your <code>/generate-fixture</code> skill bare, without the entity type and record count it needs, then get confused by the results. Which frontmatter option addresses this?<span class="gapbadge">PDF 4.6 · gap · D3</span></p>
-          <label class="opt"><input type="radio" name="pq3" value="a"><span><code>argument-hint</code></span></label>
-          <label class="opt"><input type="radio" name="pq3" value="b"><span><code>context: fork</code></span></label>
-          <label class="opt"><input type="radio" name="pq3" value="c"><span><code>allowed-tools</code></span></label>
-          <label class="opt"><input type="radio" name="pq3" value="d"><span>A longer <code>description</code> explaining the parameters</span></label>
+        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="&lt;code&gt;--resume &amp;lt;session-name&amp;gt;&lt;/code&gt; restores that conversation&amp;rsquo;s context so the work picks up where it stopped." data-why-no="&lt;code&gt;--continue-all&lt;/code&gt; is not a real flag. &lt;code&gt;-p&lt;/code&gt; starts a fresh non-interactive run with no memory of yesterday. Scrollback is text about the session, not the session&amp;rsquo;s context.">
+          <p class="qtext"><span class="qnum">Q3</span>Yesterday you ran a long investigation in a session you named <code>leak-hunt</code>. Today you want to continue with its context intact. What do you run?<span class="dombadge">D1</span></p>
+          <label class="opt"><input type="radio" name="q3" value="a"><span><code>claude --continue-all</code></span></label>
+          <label class="opt"><input type="radio" name="q3" value="b"><span><code>claude -p "continue the leak investigation"</code></span></label>
+          <label class="opt"><input type="radio" name="q3" value="c"><span><code>claude --resume leak-hunt</code></span></label>
+          <label class="opt"><input type="radio" name="q3" value="d"><span>A new session, pasting yesterday&rsquo;s scrollback as the first message</span></label>
           <div class="kfb"></div>
         </div>
-        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="Command scoping mirrors intent: &lt;code&gt;~/.claude/commands/&lt;/code&gt; holds personal commands visible only to you, outside version control. &lt;code&gt;.claude/commands/&lt;/code&gt; in the repo is shared with everyone who clones it." data-why-no="The repo path publishes a personal tool to the whole team. CLAUDE.md is project context, not a command-definition mechanism. Path-scoped rules condition on edited file paths, not on identity.">
-          <p class="qtext"><span class="qnum">Q4</span>You have a personal <code>/scratch-notes</code> slash command you use constantly, but it reflects your own workflow and should not appear for teammates when they pull the repository. Where does the command file belong?<span class="gapbadge">PDF 2.1 · gap · D3</span></p>
-          <label class="opt"><input type="radio" name="pq4" value="a"><span><code>.claude/commands/</code> in the repository</span></label>
-          <label class="opt"><input type="radio" name="pq4" value="b"><span><code>~/.claude/commands/</code> in your home directory</span></label>
-          <label class="opt"><input type="radio" name="pq4" value="c"><span>The root <code>CLAUDE.md</code> under a <code># Commands</code> heading</span></label>
-          <label class="opt"><input type="radio" name="pq4" value="d"><span><code>.claude/rules/</code> with a <code>paths</code> glob matching your username</span></label>
+        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="&lt;code&gt;fork_session&lt;/code&gt; exists for divergent exploration: both branches inherit the completed analysis, then evolve independently — clean comparison without re-paying for the baseline." data-why-no="Context cannot be selectively forgotten on request. &lt;code&gt;/compact&lt;/code&gt; compresses within a session, it does not branch. Two fresh sessions pay for the expensive analysis twice.">
+          <p class="qtext"><span class="qnum">Q4</span>You have finished an expensive analysis of a module and now want to develop two competing refactoring strategies from that same baseline, without either exploration contaminating the other. Which capability fits?<span class="dombadge">D1</span></p>
+          <label class="opt"><input type="radio" name="q4" value="a"><span>Run both in one session, asking Claude to forget the first before starting the second</span></label>
+          <label class="opt"><input type="radio" name="q4" value="b"><span><code>fork_session</code>, creating independent branches from the shared baseline</span></label>
+          <label class="opt"><input type="radio" name="q4" value="c"><span><code>/compact</code> between the two strategies</span></label>
+          <label class="opt"><input type="radio" name="q4" value="d"><span>Two brand-new sessions, redoing the analysis in each</span></label>
           <div class="kfb"></div>
         </div>
-        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="&lt;code&gt;--resume &amp;lt;session-name&amp;gt;&lt;/code&gt; is the mechanism for continuing specific prior work: it restores that conversation&amp;rsquo;s context so the investigation picks up where it stopped." data-why-no="&lt;code&gt;--continue-all&lt;/code&gt; is not a real flag. &lt;code&gt;-p&lt;/code&gt; starts a fresh non-interactive run with no memory of yesterday. Unstructured scrollback is a poor substitute for the session&amp;rsquo;s actual context.">
-          <p class="qtext"><span class="qnum">Q5</span>Yesterday you ran a long investigation in a session you named <code>leak-hunt</code>. Today you want to continue exactly where it left off, with its context intact. What do you run?<span class="gapbadge">PDF 2.6 · partial · D1</span></p>
-          <label class="opt"><input type="radio" name="pq5" value="a"><span><code>claude --continue-all</code></span></label>
-          <label class="opt"><input type="radio" name="pq5" value="b"><span><code>claude -p "continue the leak investigation"</code></span></label>
-          <label class="opt"><input type="radio" name="pq5" value="c"><span><code>claude --resume leak-hunt</code></span></label>
-          <label class="opt"><input type="radio" name="pq5" value="d"><span>A new session, pasting yesterday&rsquo;s terminal scrollback as the first message</span></label>
+        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="Resume when prior context is mostly valid; start fresh with an injected summary when tool results have gone stale. Heavily changed files are the second case — keep the conclusions, discard the outdated evidence." data-why-no="There is no automatic re-verification; stale results sit in context as if still true. More tokens spend budget on a correctness problem. Never resuming discards a technique that works well when changes are minor.">
+          <p class="qtext"><span class="qnum">Q5</span>You want to resume last week&rsquo;s refactoring session, but the team has since merged substantial changes across the files it analysed — most of its tool results now describe code that no longer exists. What is the reliable approach?<span class="dombadge">D1</span></p>
+          <label class="opt"><input type="radio" name="q5" value="a"><span>Resume as-is; Claude re-reads changed files automatically</span></label>
+          <label class="opt"><input type="radio" name="q5" value="b"><span>Resume and raise <code>max_tokens</code> to absorb the confusion</span></label>
+          <label class="opt"><input type="radio" name="q5" value="c"><span>Start a new session seeded with a structured summary of the prior conclusions</span></label>
+          <label class="opt"><input type="radio" name="q5" value="d"><span>Never resume; always start from zero exploration</span></label>
           <div class="kfb"></div>
         </div>
-        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="MCP &lt;strong&gt;resources&lt;/strong&gt; exist for this: exposing catalogs of available content (document hierarchies, issue summaries, schema listings) so agents start informed. Discovery becomes a lookup instead of a spelunking expedition." data-why-no="Raising the budget pays for the inefficiency rather than removing it. A hard-coded inventory goes stale the moment the data changes. Removing discovery trades wasted calls for ignorance.">
-          <p class="qtext"><span class="qnum">Q6</span>Subagents burn many tool calls just discovering what data exists — listing document collections, probing for issue summaries, checking which schemas are present — before real work begins. Which MCP capability reduces this?<span class="gapbadge">PDF 3.7 · gap · D2</span></p>
-          <label class="opt"><input type="radio" name="pq6" value="a"><span>Increase the tool-call budget so exploration is affordable</span></label>
-          <label class="opt"><input type="radio" name="pq6" value="b"><span>Expose content catalogs as MCP <strong>resources</strong></span></label>
-          <label class="opt"><input type="radio" name="pq6" value="c"><span>Hard-code the current data inventory into every system prompt</span></label>
-          <label class="opt"><input type="radio" name="pq6" value="d"><span>Remove discovery capability so agents work blind</span></label>
+        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="Subagent context isolation is the rule: each subagent sees only what its prompt contains. &amp;ldquo;The research findings&amp;rdquo; refers to material the synthesis agent has never seen." data-why-no="Extended thinking adds reasoning capacity over an empty input. Giving synthesis its own search tools duplicates the search agent&amp;rsquo;s role instead of fixing the handoff. Invoking twice repeats the same empty input.">
+          <p class="qtext"><span class="qnum">Q6</span>Your coordinator invokes the synthesis subagent with the prompt &ldquo;Synthesise the research findings.&rdquo; The search subagent gathered excellent material, but synthesis output is generic and references none of it. What is wrong?<span class="dombadge">D1</span></p>
+          <label class="opt"><input type="radio" name="q6" value="a"><span>The synthesis agent needs extended thinking enabled</span></label>
+          <label class="opt"><input type="radio" name="q6" value="b"><span>Subagents do not inherit the coordinator&rsquo;s history — the findings must be passed in the prompt</span></label>
+          <label class="opt"><input type="radio" name="q6" value="c"><span>The synthesis agent needs its own web search tools</span></label>
+          <label class="opt"><input type="radio" name="q6" value="d"><span>The coordinator should invoke synthesis twice and merge the results</span></label>
           <div class="kfb"></div>
         </div>
-        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="Tool use with a JSON schema is the reliability mechanism: the extraction arrives as schema-conformant tool input, not as prose that happens to contain JSON. Syntax errors are eliminated by construction rather than patched afterwards." data-why-no="A stronger prompt improves the odds within a fundamentally text-shaped channel. Regex repair patches symptoms with fragile fixes. XML relocates the same free-text problem to a different syntax.">
-          <p class="qtext"><span class="qnum">Q7</span>Your pipeline asks Claude to &ldquo;respond with JSON&rdquo; in plain text. Downstream parsing breaks on markdown fences, trailing commentary, and occasional malformed syntax. What is the most reliable <em>structural</em> fix?<span class="gapbadge">PDF 6.1 · partial · D4</span></p>
-          <label class="opt"><input type="radio" name="pq7" value="a"><span>Strengthen the prompt: &ldquo;respond ONLY with valid JSON, no exceptions&rdquo;</span></label>
-          <label class="opt"><input type="radio" name="pq7" value="b"><span>Post-process with regexes that strip fences and repair syntax</span></label>
-          <label class="opt"><input type="radio" name="pq7" value="c"><span>Define the extraction as a tool whose input schema is your JSON schema, and read the data from the <code>tool_use</code> block</span></label>
-          <label class="opt"><input type="radio" name="pq7" value="d"><span>Switch to XML output, which models format more carefully</span></label>
+        <div class="kq" data-kind="radio" data-answer="a" data-why-ok="Parallel spawning is achieved by emitting multiple &lt;code&gt;Task&lt;/code&gt; calls in one response rather than across separate turns. The independent workstreams then execute concurrently." data-why-no="Prompt wording does not change scheduling. Duplicating the system is heavy infrastructure for a one-line orchestration fix. Parallel &lt;code&gt;Task&lt;/code&gt; calls are a documented pattern.">
+          <p class="qtext"><span class="qnum">Q7</span>Your coordinator invokes the web search subagent, waits for it to finish, then invokes document analysis — doubling latency even though the two are independent. How do you run them concurrently?<span class="dombadge">D1</span></p>
+          <label class="opt"><input type="radio" name="q7" value="a"><span>Emit both <code>Task</code> calls in a single coordinator response</span></label>
+          <label class="opt"><input type="radio" name="q7" value="b"><span>Instruct each subagent to work faster in its system prompt</span></label>
+          <label class="opt"><input type="radio" name="q7" value="c"><span>Run two copies of the system and merge the outputs</span></label>
+          <label class="opt"><input type="radio" name="q7" value="d"><span>Parallelism is not possible — subagents run sequentially by design</span></label>
           <div class="kfb"></div>
         </div>
-        <div class="kq" data-kind="radio" data-answer="a" data-why-ok="Consistency comes from operational definitions: severity levels anchored by concrete examples give the classifier something to match against, turning a vibe into a rubric. That is what makes severity gates dependable." data-why-no="Removing severity discards the signal the merge gate needs. Averaging statistically launders an unanchored judgement. Line count measures size, not impact — a one-line auth bypass outranks a fifty-line comment tweak.">
-          <p class="qtext"><span class="qnum">Q8</span>Your CI reviewer labels near-identical issues &ldquo;critical&rdquo; one day and &ldquo;minor&rdquo; the next, so severity-based merge gates are unreliable. How do you get consistent severity classification?<span class="gapbadge">PDF 5.7 · partial · D4</span></p>
-          <label class="opt"><input type="radio" name="pq8" value="a"><span>Define explicit severity criteria with concrete code examples for each level</span></label>
-          <label class="opt"><input type="radio" name="pq8" value="b"><span>Remove severity levels and treat all findings equally</span></label>
-          <label class="opt"><input type="radio" name="pq8" value="c"><span>Let the model choose severity freely but average it over five runs</span></label>
-          <label class="opt"><input type="radio" name="pq8" value="d"><span>Map severity to the line count of the affected code</span></label>
+        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="Multi-concern decomposition is the designed pattern: split the request, investigate each part (in parallel where possible) against shared context, and respond once with a complete resolution — which is what protects first-contact resolution." data-why-no="Answering only the first concern and bouncing the message back both drop work the customer already stated. Escalating hands off work well within capability.">
+          <p class="qtext"><span class="qnum">Q8</span>A customer&rsquo;s single message raises three separate concerns: a damaged-item refund, an address change, and a missing loyalty credit. How should the agent handle it?<span class="dombadge">D1</span></p>
+          <label class="opt"><input type="radio" name="q8" value="a"><span>Handle the refund only, since it came first, and wait for the customer to re-raise the rest</span></label>
+          <label class="opt"><input type="radio" name="q8" value="b"><span>Escalate — multi-issue messages exceed agent capability</span></label>
+          <label class="opt"><input type="radio" name="q8" value="c"><span>Decompose into three items, investigate each against the shared customer context, then answer once covering all three</span></label>
+          <label class="opt"><input type="radio" name="q8" value="d"><span>Ask the customer to resend each concern separately</span></label>
           <div class="kfb"></div>
         </div>
-        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="Duplicate suppression is a context-design problem: give the reviewer its own prior findings plus an explicit instruction to report deltas — new issues and unresolved carryovers — and the noise stops while coverage stays complete." data-why-no="Reviewing the newest diff alone misses issues that emerge from interaction with earlier commits. One review per PR leaves everything after the first push unreviewed. Reformatting disguises the spam developers already muted.">
-          <p class="qtext"><span class="qnum">Q9</span>Reviews re-run after each new commit to a PR, and the bot re-posts the same findings every time. Developers have muted it. How should re-reviews be designed?<span class="gapbadge">PDF 5.3 · gap · D3</span></p>
-          <label class="opt"><input type="radio" name="pq9" value="a"><span>Review only the newest commit&rsquo;s diff in isolation</span></label>
-          <label class="opt"><input type="radio" name="pq9" value="b"><span>Include the prior review&rsquo;s findings in context and instruct Claude to report only new issues, or previously reported ones still unaddressed</span></label>
-          <label class="opt"><input type="radio" name="pq9" value="c"><span>Limit reviews to one per PR regardless of subsequent commits</span></label>
-          <label class="opt"><input type="radio" name="pq9" value="d"><span>Post all findings again but formatted differently so they seem new</span></label>
+        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="Goal-and-criteria prompts preserve adaptability: the coordinator defines what a complete answer looks like, the subagent chooses the path. That adaptability is the reason to use an agent rather than a script." data-why-no="Longer scripts are an arms race against variety that scripts lose. Removing instructions discards the goal along with the script. Escalating to a human defeats an autonomous loop.">
+          <p class="qtext"><span class="qnum">Q9</span>Your coordinator hands subagents rigid scripts (&ldquo;run these exact five queries in this order&rdquo;). They fail whenever a topic does not fit the script. How should coordinator prompts be written instead?<span class="dombadge">D1</span></p>
+          <label class="opt"><input type="radio" name="q9" value="a"><span>Lengthen the scripts to cover more contingencies</span></label>
+          <label class="opt"><input type="radio" name="q9" value="b"><span>State the goal and the quality criteria, and let the subagent adapt its approach</span></label>
+          <label class="opt"><input type="radio" name="q9" value="c"><span>Remove instructions entirely and let subagents infer the task</span></label>
+          <label class="opt"><input type="radio" name="q9" value="d"><span>Have subagents ask a human whenever the script breaks</span></label>
           <div class="kfb"></div>
         </div>
-        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="CI invocations get their project context from &lt;code&gt;CLAUDE.md&lt;/code&gt;. Standards, value criteria, and fixture documentation there raise generation quality directly — the model can only follow conventions it has been shown." data-why-no="More tests scales the reject pile. Temperature reduces variability of output that is uninformed either way. Rewriting institutionalises rework instead of fixing its cause.">
-          <p class="qtext"><span class="qnum">Q10</span>CI-generated tests ignore your team&rsquo;s fixture library, duplicate helper setup, and test trivialities — so developers reject most of them. What is the <em>configuration-level</em> fix?<span class="gapbadge">PDF 5.2 · gap · D3</span></p>
-          <label class="opt"><input type="radio" name="pq10" value="a"><span>Generate three times as many tests so some survive review</span></label>
-          <label class="opt"><input type="radio" name="pq10" value="b"><span>Lower the temperature of the generation call</span></label>
-          <label class="opt"><input type="radio" name="pq10" value="c"><span>Document testing standards, what makes a test valuable, and the available fixtures in <code>CLAUDE.md</code></span></label>
-          <label class="opt"><input type="radio" name="pq10" value="d"><span>Have developers rewrite the generated tests as a standing chore</span></label>
+        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="Iterative refinement closes the quality loop: evaluate coverage, dispatch follow-up research where gaps exist, re-synthesise — repeating until criteria are met rather than hoping one pass suffices." data-why-no="Accepting the first pass ships the known defect. Padding fills gaps with uncited generalities. Running everything twice doubles cost with no gap-detection to aim the second pass.">
+          <p class="qtext"><span class="qnum">Q10</span>Reports come back coherent but thin on some subtopics. You want the system to detect and repair its own coverage gaps before finalising. Which pattern achieves this?<span class="dombadge">D1</span></p>
+          <label class="opt"><input type="radio" name="q10" value="a"><span>Accept the first synthesis to control cost</span></label>
+          <label class="opt"><input type="radio" name="q10" value="b"><span>An iterative refinement loop: evaluate synthesis for gaps, re-delegate targeted research, re-synthesise until coverage is sufficient</span></label>
+          <label class="opt"><input type="radio" name="q10" value="c"><span>Have the report generator pad thin sections from general knowledge</span></label>
+          <label class="opt"><input type="radio" name="q10" value="d"><span>Run every subagent exactly twice regardless of output quality</span></label>
           <div class="kfb"></div>
         </div>
-        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="Multi-concern decomposition is the designed pattern: split the request into distinct items, investigate each (in parallel where possible) against shared context, and respond once with a complete resolution — which is what protects first-contact resolution." data-why-no="Resolving only the first concern and bouncing the message back both silently drop work the customer already stated, harming FCR. Escalating hands off work well within capability.">
-          <p class="qtext"><span class="qnum">Q11</span>A customer writes one message containing three concerns: a refund for a damaged item, a shipping address change, and a missing loyalty credit. How should the agent handle this?<span class="gapbadge">PDF 1.4 · gap · D1</span></p>
-          <label class="opt"><input type="radio" name="pq11" value="a"><span>Resolve only the refund, since it was mentioned first, and wait for the customer to raise the others again</span></label>
-          <label class="opt"><input type="radio" name="pq11" value="b"><span>Escalate immediately — multi-issue messages always exceed agent capability</span></label>
-          <label class="opt"><input type="radio" name="pq11" value="c"><span>Decompose into three distinct items, investigate each against the shared customer context, then synthesise one unified resolution</span></label>
-          <label class="opt"><input type="radio" name="pq11" value="d"><span>Ask the customer to resend each issue as a separate message</span></label>
+        <div class="kq" data-kind="multi" data-answer="b,d" data-why-ok="Subagents are configured individually and are isolated: no inherited history, no memory across invocations, so context passing is always explicit." data-why-no="Inherited history and prompt-only spawning both invert the model — context never flows automatically, and &lt;code&gt;Task&lt;/code&gt; is the spawning mechanism. Tool restrictions are configuration, not suggestion.">
+          <p class="qtext"><span class="qnum">Q11</span>You are writing <code>AgentDefinition</code> configurations for a productivity system&rsquo;s subagents. Which TWO statements are accurate?<span class="multi">SELECT TWO</span><span class="dombadge">D1</span></p>
+          <label class="opt"><input type="checkbox" name="q11" value="a"><span>Subagents automatically inherit the parent&rsquo;s full conversation history</span></label>
+          <label class="opt"><input type="checkbox" name="q11" value="b"><span>Each <code>AgentDefinition</code> carries its own description, system prompt, and tool restrictions</span></label>
+          <label class="opt"><input type="checkbox" name="q11" value="c"><span>Subagents can be spawned without the <code>Task</code> tool if the prompt describes them clearly</span></label>
+          <label class="opt"><input type="checkbox" name="q11" value="d"><span>Subagents do not share memory between invocations — needed context must be passed explicitly in the prompt</span></label>
+          <label class="opt"><input type="checkbox" name="q11" value="e"><span>Subagent tool restrictions are advisory, not enforced at runtime</span></label>
           <div class="kfb"></div>
         </div>
-        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="Goal-and-criteria prompts preserve subagent adaptability: the coordinator defines success, the subagent chooses the path. That adaptability is why an agent is there rather than a fixed script." data-why-no="Longer procedures are an arms race against topic variety that scripts always lose. Removing instructions discards the goal along with the script. Escalating to a human reintroduces one into a loop designed to run autonomously.">
-          <p class="qtext"><span class="qnum">Q12</span>Your coordinator gives subagents rigid step-by-step procedures (&ldquo;run these exact five queries in this order&rdquo;). Subagents fail whenever a topic does not fit the script. How should coordinator prompts be designed instead?<span class="gapbadge">PDF 3.4 · gap · D1</span></p>
-          <label class="opt"><input type="radio" name="pq12" value="a"><span>Make the procedures longer, covering more contingencies explicitly</span></label>
-          <label class="opt"><input type="radio" name="pq12" value="b"><span>Specify research goals and quality criteria — what a complete answer looks like — and let the subagent adapt to what it discovers</span></label>
-          <label class="opt"><input type="radio" name="pq12" value="c"><span>Remove all instructions and let subagents infer their tasks</span></label>
-          <label class="opt"><input type="radio" name="pq12" value="d"><span>Have subagents ask the human operator whenever the script fails</span></label>
+        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="Each workflow gets the structure its uncertainty profile demands: fixed sequential passes for predictable multi-aspect work, adaptive decomposition where intermediate findings determine the next subtask." data-why-no="Dynamic decomposition on a task with no uncertainty pays overhead for nothing. Chaining an investigation forces it to follow steps written before the evidence existed. Option D assigns each strategy to the workflow that defeats it.">
+          <p class="qtext"><span class="qnum">Q12</span>Two workflows need decomposition strategies: a code review that always checks the same five aspects, and an incident investigation whose next step depends on what each finding reveals. Which pairing is right?<span class="dombadge">D1</span></p>
+          <label class="opt"><input type="radio" name="q12" value="a"><span>Dynamic decomposition for both — flexibility always wins</span></label>
+          <label class="opt"><input type="radio" name="q12" value="b"><span>Prompt chaining for both — fixed steps are easier to test</span></label>
+          <label class="opt"><input type="radio" name="q12" value="c"><span>Prompt chaining for the five-aspect review; dynamic decomposition for the investigation</span></label>
+          <label class="opt"><input type="radio" name="q12" value="d"><span>Dynamic for the review; prompt chaining for the investigation</span></label>
           <div class="kfb"></div>
         </div>
-        <div class="kq" data-kind="multi" data-answer="b,d" data-why-ok="Two load-bearing facts: subagents are configured individually (description, system prompt, tool restrictions), and they are isolated — no inherited history, no memory across invocations, so context passing is always explicit." data-why-no="Inheriting history and prompt-only spawning both invert the model: context never flows automatically, and &lt;code&gt;Task&lt;/code&gt; is the spawning mechanism. Tool restrictions are configuration, not suggestion.">
-          <p class="qtext"><span class="qnum">Q13</span>You are writing <code>AgentDefinition</code> configurations for a productivity system&rsquo;s subagents. Which TWO statements about subagents are accurate?<span class="multi">SELECT TWO</span><span class="gapbadge">PDF 4.10 · partial · D1</span></p>
-          <label class="opt"><input type="checkbox" name="pq13" value="a"><span>Subagents automatically inherit the parent agent&rsquo;s full conversation history</span></label>
-          <label class="opt"><input type="checkbox" name="pq13" value="b"><span>Each subagent&rsquo;s <code>AgentDefinition</code> carries its own description, system prompt, and tool restrictions</span></label>
-          <label class="opt"><input type="checkbox" name="pq13" value="c"><span>Subagents can be spawned without the <code>Task</code> tool if the prompt describes them clearly</span></label>
-          <label class="opt"><input type="checkbox" name="pq13" value="d"><span>Subagents do not share memory between invocations — whatever context a subagent needs must be provided explicitly in its prompt</span></label>
-          <label class="opt"><input type="checkbox" name="pq13" value="e"><span>Subagent tool restrictions are advisory and not enforced at runtime</span></label>
+      <p class="dom-head">Domain 3 &middot; Claude Code Configuration &amp; Workflows</p>
+        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="Command scoping mirrors intent: &lt;code&gt;~/.claude/commands/&lt;/code&gt; holds personal commands visible only to you, outside version control. &lt;code&gt;.claude/commands/&lt;/code&gt; in the repo is shared with everyone who clones it." data-why-no="The repo path publishes a personal tool to the team. CLAUDE.md is project context, not a command-definition mechanism. Path-scoped rules condition on edited file paths, not identity.">
+          <p class="qtext"><span class="qnum">Q13</span>You have a personal <code>/scratch-notes</code> slash command reflecting your own workflow. It should not appear for teammates when they clone the repository. Where does the file belong?<span class="dombadge">D3</span></p>
+          <label class="opt"><input type="radio" name="q13" value="a"><span><code>.claude/commands/</code> in the repository</span></label>
+          <label class="opt"><input type="radio" name="q13" value="b"><span><code>~/.claude/commands/</code> in your home directory</span></label>
+          <label class="opt"><input type="radio" name="q13" value="c"><span>The root <code>CLAUDE.md</code> under a <code># Commands</code> heading</span></label>
+          <label class="opt"><input type="radio" name="q13" value="d"><span><code>.claude/rules/</code> with a <code>paths</code> glob matching your username</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="&lt;code&gt;allowed-tools&lt;/code&gt; is the enforcement mechanism: frontmatter-declared restrictions bound what the skill may invoke at runtime. That is a configuration guarantee, not an instruction the model might not follow." data-why-no="&lt;code&gt;context: fork&lt;/code&gt; isolates where output accumulates. &lt;code&gt;argument-hint&lt;/code&gt; prompts for parameters. &lt;code&gt;paths&lt;/code&gt; scopes rules to matching files. None restricts which tools can run.">
+          <p class="qtext"><span class="qnum">Q14</span>You are writing a <code>/scaffold-component</code> skill that generates boilerplate. You want a guarantee it can write files but can <em>never</em> run shell commands, regardless of what its instructions say. Which SKILL.md frontmatter key enforces that?<span class="dombadge">D3</span></p>
+          <label class="opt"><input type="radio" name="q14" value="a"><span><code>context: fork</code></span></label>
+          <label class="opt"><input type="radio" name="q14" value="b"><span><code>argument-hint</code></span></label>
+          <label class="opt"><input type="radio" name="q14" value="c"><span><code>allowed-tools</code></span></label>
+          <label class="opt"><input type="radio" name="q14" value="d"><span><code>paths</code></span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="&lt;code&gt;context: fork&lt;/code&gt; runs the skill in an isolated sub-agent context and returns the distilled result, so the main conversation receives the answer rather than the whole exploration transcript." data-why-no="&lt;code&gt;argument-hint&lt;/code&gt; governs parameter prompting. &lt;code&gt;allowed-tools&lt;/code&gt; governs which tools may run. &lt;code&gt;paths&lt;/code&gt; is rules-file scoping. None controls where output accumulates.">
+          <p class="qtext"><span class="qnum">Q15</span>Your <code>/analyze-architecture</code> skill produces thousands of lines of exploration output that crowd the main conversation. Which SKILL.md frontmatter option fixes this?<span class="dombadge">D3</span></p>
+          <label class="opt"><input type="radio" name="q15" value="a"><span><code>argument-hint</code></span></label>
+          <label class="opt"><input type="radio" name="q15" value="b"><span><code>context: fork</code></span></label>
+          <label class="opt"><input type="radio" name="q15" value="c"><span><code>allowed-tools</code></span></label>
+          <label class="opt"><input type="radio" name="q15" value="d"><span><code>paths</code></span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-kind="radio" data-answer="a" data-why-ok="&lt;code&gt;argument-hint&lt;/code&gt; is the mechanism for exactly this: a skill needing parameters can prompt for them on bare invocation instead of running underspecified." data-why-no="&lt;code&gt;context: fork&lt;/code&gt; isolates output, not input requirements. &lt;code&gt;allowed-tools&lt;/code&gt; constrains tools. A longer description helps whoever reads docs — the bare invocation still runs bare.">
+          <p class="qtext"><span class="qnum">Q16</span>Developers keep invoking your <code>/generate-fixture</code> skill bare, without the entity type and record count it needs, then get confused by the output. Which frontmatter option addresses this?<span class="dombadge">D3</span></p>
+          <label class="opt"><input type="radio" name="q16" value="a"><span><code>argument-hint</code></span></label>
+          <label class="opt"><input type="radio" name="q16" value="b"><span><code>context: fork</code></span></label>
+          <label class="opt"><input type="radio" name="q16" value="c"><span><code>allowed-tools</code></span></label>
+          <label class="opt"><input type="radio" name="q16" value="d"><span>A longer <code>description</code> explaining the parameters</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-kind="radio" data-answer="a" data-why-ok="User-level configuration applies only to that user and never travels via version control. Team standards belong at project level, and &lt;code&gt;/memory&lt;/code&gt; is the diagnostic showing which memory files a session loaded." data-why-no="Emailing config distributes by hand and drifts immediately. Reinstalling software does not fix a file-location problem. Nothing &amp;ldquo;sticks&amp;rdquo; between sessions.">
+          <p class="qtext"><span class="qnum">Q17</span>A new teammate&rsquo;s sessions ignore the team&rsquo;s coding standards. You find the standards live in your own <code>~/.claude/CLAUDE.md</code>. What is the fix, and how do you verify it?<span class="dombadge">D3</span></p>
+          <label class="opt"><input type="radio" name="q17" value="a"><span>Move them to the project-level <code>CLAUDE.md</code> in the repository; verify with <code>/memory</code></span></label>
+          <label class="opt"><input type="radio" name="q17" value="b"><span>Email your <code>~/.claude/CLAUDE.md</code> for them to copy</span></label>
+          <label class="opt"><input type="radio" name="q17" value="c"><span>Have the teammate reinstall Claude Code</span></label>
+          <label class="opt"><input type="radio" name="q17" value="d"><span>Paste the standards at the start of each session until they stick</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="&lt;code&gt;.claude/rules/&lt;/code&gt; is the modular alternative to a monolithic CLAUDE.md: focused topic files, with YAML path scoping so rules load only for matching files — less irrelevant context, easier maintenance." data-why-no="Deleting abandons hard-won conventions. User-level unshares team configuration and guarantees divergence. A manual command makes always-relevant standards opt-in and forgettable.">
+          <p class="qtext"><span class="qnum">Q18</span>Your project <code>CLAUDE.md</code> has grown to 2,000 lines covering testing, API conventions, deployment and styling — and every session loads all of it regardless of task. What is the recommended reorganisation?<span class="dombadge">D3</span></p>
+          <label class="opt"><input type="radio" name="q18" value="a"><span>Delete it and rely on the model&rsquo;s general knowledge</span></label>
+          <label class="opt"><input type="radio" name="q18" value="b"><span>Move it all to each developer&rsquo;s user-level CLAUDE.md</span></label>
+          <label class="opt"><input type="radio" name="q18" value="c"><span>Split into topic files under <code>.claude/rules/</code>, with path-scoped frontmatter where conventions apply only to matching files</span></label>
+          <label class="opt"><input type="radio" name="q18" value="d"><span>Convert it into a slash command developers run manually</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="The dividing line: &lt;code&gt;CLAUDE.md&lt;/code&gt; for universal, always-relevant standards; skills for on-demand, task-specific workflows. Each mechanism carries the load it was designed for." data-why-no="Standards as a skill makes them opt-in and skippable. Both in CLAUDE.md loads a monthly workflow into every session forever. Option D inverts both placements.">
+          <p class="qtext"><span class="qnum">Q19</span>Two things need a home: the team&rsquo;s universal coding standards that should shape every session, and a multi-step release-notes workflow used a few times a month. Where does each go?<span class="dombadge">D3</span></p>
+          <label class="opt"><input type="radio" name="q19" value="a"><span>Both as skills, invoked when developers remember</span></label>
+          <label class="opt"><input type="radio" name="q19" value="b"><span>Standards in <code>CLAUDE.md</code>; the release workflow as a skill in <code>.claude/skills/</code></span></label>
+          <label class="opt"><input type="radio" name="q19" value="c"><span>Both in <code>CLAUDE.md</code> so nothing is missed</span></label>
+          <label class="opt"><input type="radio" name="q19" value="d"><span>Standards as a skill; the release workflow in <code>CLAUDE.md</code></span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="Direct execution for simple, well-scoped changes; plan mode where scale, architectural implications or competing approaches make design-before-commitment valuable — like a 45-file migration." data-why-no="Plan mode on a trivial fix is ceremony. Executing a large migration unplanned invites costly rework. Option D inverts the rule on both tasks.">
+          <p class="qtext"><span class="qnum">Q20</span>Two tasks arrive: an off-by-one bug in one function with a clear stack trace, and migrating the codebase&rsquo;s HTTP library across 45+ files with several viable approaches. How should plan mode and direct execution be assigned?<span class="dombadge">D3</span></p>
+          <label class="opt"><input type="radio" name="q20" value="a"><span>Plan mode for both — planning never hurts</span></label>
+          <label class="opt"><input type="radio" name="q20" value="b"><span>Direct execution for both — plan mode is for greenfield work</span></label>
+          <label class="opt"><input type="radio" name="q20" value="c"><span>Direct execution for the bug fix; plan mode for the migration</span></label>
+          <label class="opt"><input type="radio" name="q20" value="d"><span>Plan mode for the bug fix; direct execution for the migration</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="The CI trio: &lt;code&gt;-p&lt;/code&gt; for non-interactive execution, &lt;code&gt;--output-format json&lt;/code&gt; for machine-readable output, and &lt;code&gt;--json-schema&lt;/code&gt; to enforce the findings structure your pipeline consumes." data-why-no="The first option hangs waiting for interactive input, then scrapes prose. &lt;code&gt;--batch&lt;/code&gt; and &lt;code&gt;--format=structured&lt;/code&gt; are not real flags. The last fixes the hang but still regex-parses unstructured text.">
+          <p class="qtext"><span class="qnum">Q21</span>Your CI job must run Claude Code non-interactively and emit review findings the pipeline can parse into inline PR comments. Which invocation is correct?<span class="dombadge">D3</span></p>
+          <label class="opt"><input type="radio" name="q21" value="a"><span><code>claude "review this PR"</code> piped through <code>grep</code></span></label>
+          <label class="opt"><input type="radio" name="q21" value="b"><span><code>claude -p "review this PR"</code> with <code>--output-format json</code> and <code>--json-schema</code></span></label>
+          <label class="opt"><input type="radio" name="q21" value="c"><span><code>claude --batch "review this PR" --format=structured</code></span></label>
+          <label class="opt"><input type="radio" name="q21" value="d"><span><code>claude -p "review this PR"</code> alone, then regex-parsing the prose</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="CI invocations get their project context from &lt;code&gt;CLAUDE.md&lt;/code&gt;. Standards, value criteria and fixture documentation there raise generation quality directly — the model can only follow conventions it has been shown." data-why-no="More tests scales the reject pile. Temperature reduces variability of output that is uninformed either way. Rewriting institutionalises rework instead of fixing its cause.">
+          <p class="qtext"><span class="qnum">Q22</span>CI-generated tests ignore your fixture library, duplicate helper setup and test trivialities, so developers reject most of them. What is the <em>configuration-level</em> fix?<span class="dombadge">D3</span></p>
+          <label class="opt"><input type="radio" name="q22" value="a"><span>Generate three times as many tests so some survive review</span></label>
+          <label class="opt"><input type="radio" name="q22" value="b"><span>Lower the temperature of the generation call</span></label>
+          <label class="opt"><input type="radio" name="q22" value="c"><span>Document testing standards, what makes a test valuable, and the available fixtures in <code>CLAUDE.md</code></span></label>
+          <label class="opt"><input type="radio" name="q22" value="d"><span>Have developers rewrite the generated tests as a standing chore</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="Duplicate suppression is a context-design problem: give the reviewer its own prior findings plus an instruction to report deltas — new issues and unresolved carryovers — and the noise stops while coverage stays complete." data-why-no="The newest diff alone misses issues emerging from interaction with earlier commits. One review per PR leaves later pushes unreviewed. Reformatting disguises the spam developers already muted.">
+          <p class="qtext"><span class="qnum">Q23</span>Reviews re-run on every new commit to a PR and the bot re-posts identical findings each time. Developers have muted it. How should re-reviews be designed?<span class="dombadge">D3</span></p>
+          <label class="opt"><input type="radio" name="q23" value="a"><span>Review only the newest commit&rsquo;s diff in isolation</span></label>
+          <label class="opt"><input type="radio" name="q23" value="b"><span>Include the prior review&rsquo;s findings in context and report only new issues, or previously reported ones still unaddressed</span></label>
+          <label class="opt"><input type="radio" name="q23" value="c"><span>Limit reviews to one per PR</span></label>
+          <label class="opt"><input type="radio" name="q23" value="d"><span>Re-post everything but reformatted so it seems new</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="Session context isolation matters for review integrity: the generating session carries the rationale behind the code. An independent instance evaluates the code on its own terms." data-why-no="This is a context effect, not a personality setting — and not a capability gap, since the same model reviews well when independent. Calendar separation is superstition about a context problem.">
+          <p class="qtext"><span class="qnum">Q24</span>When the same Claude Code session that generated a change also reviews it, the review is conspicuously gentle — missing issues an independent reviewer catches. Why, and what follows?<span class="dombadge">D3</span></p>
+          <label class="opt"><input type="radio" name="q24" value="a"><span>The model is being polite; instruct it to be harsher</span></label>
+          <label class="opt"><input type="radio" name="q24" value="b"><span>Reviews need a larger model tier</span></label>
+          <label class="opt"><input type="radio" name="q24" value="c"><span>The session retains the reasoning that produced the code, biasing it against questioning its own decisions — so CI reviews should run in an independent instance</span></label>
+          <label class="opt"><input type="radio" name="q24" value="d"><span>Generation and review should run on different days</span></label>
+          <div class="kfb"></div>
+        </div>
+      <p class="dom-head">Domain 5 &middot; Context Management &amp; Reliability</p>
+        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="&lt;code&gt;/compact&lt;/code&gt; is the in-session relief valve: it compacts the accumulated conversation so an extended session can continue without the degradation verbose output causes." data-why-no="&lt;code&gt;/memory&lt;/code&gt; shows which memory files loaded — a diagnostic, not cleanup. &lt;code&gt;/rules&lt;/code&gt; reloads rule files. Forking is for divergent branches, not compression.">
+          <p class="qtext"><span class="qnum">Q25</span>Mid-way through a long exploration session, context is filling with verbose discovery output and answers are degrading — but you are not ready to end the session. Which built-in command helps immediately?<span class="dombadge">D5</span></p>
+          <label class="opt"><input type="radio" name="q25" value="a"><span><code>/memory</code></span></label>
+          <label class="opt"><input type="radio" name="q25" value="b"><span><code>/compact</code></span></label>
+          <label class="opt"><input type="radio" name="q25" value="c"><span><code>/fork</code></span></label>
+          <label class="opt"><input type="radio" name="q25" value="d"><span><code>/rules</code></span></label>
+          <div class="kfb"></div>
+        </div>
+      <p class="dom-head">Domain 2 &middot; Tool Design &amp; MCP Integration</p>
+        <div class="kq" data-kind="radio" data-answer="b" data-why-ok="MCP &lt;strong&gt;resources&lt;/strong&gt; exist for this: exposing catalogs of available content so agents start informed. Discovery becomes a lookup rather than an exploratory expedition." data-why-no="Raising the budget pays for the inefficiency instead of removing it. A hard-coded inventory goes stale the moment data changes. Removing discovery trades wasted calls for ignorance.">
+          <p class="qtext"><span class="qnum">Q26</span>Subagents burn many tool calls just discovering what data exists — listing document collections, probing for issue summaries, checking which schemas are present — before real work begins. Which MCP capability reduces this?<span class="dombadge">D2</span></p>
+          <label class="opt"><input type="radio" name="q26" value="a"><span>Raise the tool-call budget so exploration is affordable</span></label>
+          <label class="opt"><input type="radio" name="q26" value="b"><span>Expose content catalogs as MCP <strong>resources</strong></span></label>
+          <label class="opt"><input type="radio" name="q26" value="c"><span>Hard-code the current data inventory into every system prompt</span></label>
+          <label class="opt"><input type="radio" name="q26" value="d"><span>Remove discovery capability so agents work blind</span></label>
+          <div class="kfb"></div>
+        </div>
+      <p class="dom-head">Domain 4 &middot; Prompt Engineering &amp; Structured Output</p>
+        <div class="kq" data-kind="radio" data-answer="c" data-why-ok="Tool use with a JSON schema is the reliability mechanism: the extraction arrives as schema-conformant tool input, not prose that happens to contain JSON. Syntax errors are eliminated by construction." data-why-no="A stronger prompt improves odds within a text-shaped channel. Regex repair patches symptoms fragilely. XML relocates the same free-text problem to another syntax.">
+          <p class="qtext"><span class="qnum">Q27</span>Your pipeline asks Claude to &ldquo;respond with JSON&rdquo; in plain text. Downstream parsing breaks on markdown fences, trailing commentary and occasional malformed syntax. What is the most reliable <em>structural</em> fix?<span class="dombadge">D4</span></p>
+          <label class="opt"><input type="radio" name="q27" value="a"><span>Strengthen the prompt: &ldquo;respond ONLY with valid JSON&rdquo;</span></label>
+          <label class="opt"><input type="radio" name="q27" value="b"><span>Post-process with regexes that strip fences and repair syntax</span></label>
+          <label class="opt"><input type="radio" name="q27" value="c"><span>Define the extraction as a tool whose input schema is your JSON schema, and read the data from the <code>tool_use</code> block</span></label>
+          <label class="opt"><input type="radio" name="q27" value="d"><span>Switch to XML, which models format more carefully</span></label>
+          <div class="kfb"></div>
+        </div>
+        <div class="kq" data-kind="radio" data-answer="a" data-why-ok="Consistency comes from operational definitions: severity levels anchored by concrete examples give the classifier something to match against, turning a vibe into a rubric." data-why-no="Removing severity discards the signal the gate needs. Averaging launders an unanchored judgement. Line count measures size, not impact — a one-line auth bypass outranks a fifty-line comment tweak.">
+          <p class="qtext"><span class="qnum">Q28</span>Your CI reviewer labels near-identical issues &ldquo;critical&rdquo; one day and &ldquo;minor&rdquo; the next, so severity-based merge gates are unreliable. How do you get consistent classification?<span class="dombadge">D4</span></p>
+          <label class="opt"><input type="radio" name="q28" value="a"><span>Define explicit severity criteria with concrete code examples for each level</span></label>
+          <label class="opt"><input type="radio" name="q28" value="b"><span>Remove severity levels and treat all findings equally</span></label>
+          <label class="opt"><input type="radio" name="q28" value="c"><span>Let the model choose freely but average severity over five runs</span></label>
+          <label class="opt"><input type="radio" name="q28" value="d"><span>Map severity to the line count of the affected code</span></label>
           <div class="kfb"></div>
         </div>
       <div style="margin-top:18px">
@@ -538,17 +666,18 @@
     </div>
   </section>
 
-  <div class="srcnote">
-    <strong>On the source.</strong> These questions were written against an independent practice set by
-    Matthew Purcell, produced from the public CCA-F exam guide &mdash; not from live exam content, as the
-    author states himself. Treat it as evidence about the published blueprint, not about the real item bank.
-    Anthropic&rsquo;s own exam guide and hands-on practice remain the primary preparation.
+  <div class="morelink">
+    <strong>More questions to practice.</strong> Matthew Purcell, who has sat and passed the exam, has
+    published an independent 60-question practice set covering all six published scenarios, with
+    rationales. It is his own work, written against the public exam guide &mdash; worth working through
+    alongside these. Find it via
+    <a href="https://www.linkedin.com/in/purcellmatthew" target="_blank" rel="noopener">linkedin.com/in/purcellmatthew</a>.
   </div>
 
 </main>
 
 <footer class="wrap" style="padding-top:30px;padding-bottom:50px">
-  <p style="font-size:13px;color:var(--ink-soft)">SF Knowledge Hub &middot; CCA-F Knowledge Track &middot; practice set</p>
+  <p style="font-size:13px;color:var(--ink-soft)">SF Knowledge Hub &middot; CCA-F Knowledge Track &middot; practice set 1</p>
 </footer>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -616,12 +745,11 @@ _ccafAuth.onAuthStateChanged(async function(user) {
 
 <script>
 /* ── practice grader ──────────────────────────────────────────────────────
-   Mirrors the module engine's check/feedback/retry behaviour, with one
-   addition: the module engine grades radios only, and the real exam has
-   "select TWO" items — so multi-select grading is added here. */
+   Mirrors the module engine's check/feedback/retry behaviour, plus multi-select
+   grading, which the module engine does not have. */
 (function () {
   'use strict';
-  var firstTry = {};   // qid -> true if right on first attempt
+  var firstTry = {};
 
   function optsOf(q) { return Array.prototype.slice.call(q.querySelectorAll('.opt')); }
 
@@ -637,9 +765,7 @@ _ccafAuth.onAuthStateChanged(async function(user) {
     return want.join(',') === got.join(',');
   }
 
-  function clearStyles(q) {
-    optsOf(q).forEach(function (o) { o.classList.remove('correct', 'wrong'); });
-  }
+  function clearStyles(q) { optsOf(q).forEach(function (o) { o.classList.remove('correct', 'wrong'); }); }
 
   function lock(q) {
     optsOf(q).forEach(function (o) {
@@ -715,7 +841,6 @@ _ccafAuth.onAuthStateChanged(async function(user) {
     var s = document.querySelector('.kc-status'); s.textContent = ''; s.classList.remove('done');
   };
 
-  /* give each .kq a stable id for first-try scoring */
   document.querySelectorAll('.kq').forEach(function (q, i) { if (!q.id) q.id = 'kq' + i; });
 })();
 </script>
