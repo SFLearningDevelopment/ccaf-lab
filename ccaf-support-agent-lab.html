@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: 2026072030 -->
+<!-- build: 2026072040 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -106,6 +106,14 @@
     background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);
     padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
     line-height:1.6;margin:16px 0;border:1px solid #2c322a;
+  }
+  .code.py{position:relative;padding-top:30px}
+  .code.py::before{
+    content:"Python \00b7 4-space indent";
+    position:absolute;top:0;left:0;right:0;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
+    color:var(--code-dim);background:#181c16;border-bottom:1px solid #2c322a;
+    padding:5px 20px;border-radius:var(--radius) var(--radius) 0 0;
   }
   .code .k{color:var(--code-key)}
   .code .s{color:var(--code-str)}
@@ -584,7 +592,7 @@
     </div>
 
     <span class="code-label">The loop, with a support system prompt (Python)</span>
-    <div class="code"><span class="k">import</span> asyncio
+    <div class="code py"><span class="k">import</span> asyncio
 <span class="k">from</span> claude_agent_sdk <span class="k">import</span> query, ClaudeAgentOptions
 
 SYSTEM = <span class="s">"""You are a customer support resolution agent.</span>
@@ -662,17 +670,80 @@ returns policy, I can either issue the refund or escalate it to a specialist.</d
 
     <h3>1b &middot; Cap the run and handle failure</h3>
     <p>The SDK ships no default turn limit, budget cap, or retry logic. For a customer-facing agent, <code>max_turns</code> is your circuit breaker and a budget cap is your cost ceiling. Wrap the loop and branch on the result&rsquo;s error subtype (<code>rate_limit</code>, <code>overloaded</code>, <code>authentication_failed</code>, <code>server_error</code>) rather than treating every failure alike.</p>
-    <div class="code">options=ClaudeAgentOptions(
+    <div class="code py">options=ClaudeAgentOptions(
     system_prompt=SYSTEM,
     max_turns=<span class="s">10</span>,
     <span class="c"># set a per-session budget cap in production — support traffic is high-volume</span>
 )</div>
 
+    <p>In practice you wrap the loop so one bad run can&rsquo;t hang the session or bill forever, and so each failure type gets the right response &mdash; retry a transient blip, stop on a bad key:</p>
+    <div class="code py"><span class="k">import</span> asyncio
+<span class="k">from</span> claude_agent_sdk <span class="k">import</span> query, ClaudeAgentOptions
+
+<span class="k">async def</span> run_support(prompt):
+    <span class="k">async for</span> message <span class="k">in</span> query(
+        prompt=prompt,
+        options=ClaudeAgentOptions(
+            system_prompt=SYSTEM,
+            max_turns=<span class="s">10</span>,          <span class="c"># circuit breaker — never loop forever</span>
+        ),
+    ):
+        <span class="k">if</span> hasattr(message, <span class="s">"result"</span>):
+            <span class="k">return</span> message          <span class="c"># final message carries result or error</span>
+    <span class="k">return</span> <span class="k">None</span>
+
+<span class="k">async def</span> main():
+    result = <span class="k">await</span> run_support(<span class="s">"Refund for order 4471, arrived cracked."</span>)
+
+    <span class="k">if</span> result <span class="k">is</span> <span class="k">None</span>:
+        <span class="c"># hit max_turns without finishing — treat as needs-escalation, don't retry blindly</span>
+        print(<span class="s">"No resolution within turn limit — routing to a human."</span>)
+    <span class="k">elif</span> getattr(result, <span class="s">"subtype"</span>, <span class="k">None</span>) <span class="k">in</span> (<span class="s">"rate_limit"</span>, <span class="s">"overloaded"</span>, <span class="s">"server_error"</span>):
+        <span class="c"># transient — safe to back off and retry</span>
+        print(<span class="s">f"Temporary error ({result.subtype}); retry after a short wait."</span>)
+    <span class="k">elif</span> getattr(result, <span class="s">"subtype"</span>, <span class="k">None</span>) == <span class="s">"authentication_failed"</span>:
+        <span class="c"># not transient — retrying will never help; fix the key</span>
+        print(<span class="s">"Auth failed — check ANTHROPIC_API_KEY. Not retrying."</span>)
+    <span class="k">else</span>:
+        print(result.result)                <span class="c"># normal success</span>
+
+asyncio.run(main())</div>
+    <p>The shape that matters for the exam: <code>max_turns</code> bounds the loop, a <code>None</code> return means it hit that bound (escalate, don&rsquo;t silently retry), and the <code>subtype</code> decides retry-versus-stop &mdash; transient errors back off and retry, an auth failure never does.</p>
+
     <h3>1c &middot; Hold the conversation (sessions)</h3>
     <p>Support is multi-turn: the customer replies, corrects, adds a second order. Each <code>query()</code> starts fresh, so capture the <code>session_id</code> from the init message and <code>resume</code> it on the next turn &mdash; that&rsquo;s how the agent remembers it already looked up this customer.</p>
-    <div class="code"><span class="c"># Turn 1: grab session_id from the init message.</span>
+    <div class="code py"><span class="c"># Turn 1: grab session_id from the init message.</span>
 <span class="c"># Turn 2 ("actually, also order 4472"): resume it.</span>
 options=ClaudeAgentOptions(system_prompt=SYSTEM, resume=session_id)</div>
+
+    <p>End to end, that&rsquo;s two <code>query()</code> calls: the first captures the <code>session_id</code> the SDK reports in its init message, the second passes it back as <code>resume</code> so the agent carries everything from turn one into turn two:</p>
+    <div class="code py"><span class="k">import</span> asyncio
+<span class="k">from</span> claude_agent_sdk <span class="k">import</span> query, ClaudeAgentOptions
+
+<span class="k">async def</span> main():
+    session_id = <span class="k">None</span>
+
+    <span class="c"># ---- Turn 1: customer's first message ----</span>
+    <span class="k">async for</span> message <span class="k">in</span> query(
+        prompt=<span class="s">"Refund for order 4471, arrived cracked."</span>,
+        options=ClaudeAgentOptions(system_prompt=SYSTEM),
+    ):
+        <span class="c"># the init message reports the session id — capture it once</span>
+        <span class="k">if</span> getattr(message, <span class="s">"session_id"</span>, <span class="k">None</span>):
+            session_id = message.session_id
+        <span class="k">if</span> hasattr(message, <span class="s">"result"</span>):
+            print(<span class="s">"Turn 1:"</span>, message.result)
+
+    <span class="c"># ---- Turn 2: customer adds a second order, same conversation ----</span>
+    <span class="k">async for</span> message <span class="k">in</span> query(
+        prompt=<span class="s">"Actually, also order 4472 — same problem."</span>,
+        options=ClaudeAgentOptions(system_prompt=SYSTEM, resume=session_id),
+    ):
+        <span class="k">if</span> hasattr(message, <span class="s">"result"</span>):
+            print(<span class="s">"Turn 2:"</span>, message.result)
+
+asyncio.run(main())</div>
+    <p>Because turn two resumes the same session, the agent already knows who the customer is and that it looked up order 4471 &mdash; it doesn&rsquo;t re-verify identity from scratch. Without <code>resume</code>, the second <code>query()</code> would start cold and treat the customer as a stranger.</p>
     <div class="note">
       For a continuous conversation, <code>ClaudeSDKClient</code> keeps one session open across
       many <code>query()</code> calls &mdash; often cleaner for chat than resuming by ID each turn.
@@ -715,7 +786,7 @@ options=ClaudeAgentOptions(system_prompt=SYSTEM, resume=session_id)</div>
 
     <h3>2a &middot; A fake backend to call</h3>
     <p>Two dictionaries stand in for your real systems. Everything the tools return comes from here.</p>
-    <div class="code">CUSTOMERS = {
+    <div class="code py">CUSTOMERS = {
     <span class="s">"cust_88"</span>: {<span class="k">"id"</span>: <span class="s">"cust_88"</span>, <span class="k">"name"</span>: <span class="s">"Rae Ortiz"</span>, <span class="k">"tier"</span>: <span class="s">"standard"</span>,
                  <span class="k">"email"</span>: <span class="s">"rae@example.com"</span>},
 }
@@ -727,7 +798,7 @@ REFUNDS_DONE = {}   <span class="c"># idempotency ledger — Stage 4 uses this</
 
     <h3>2b &middot; Define the tools as an in-process MCP server</h3>
     <p>Each tool is four parts: a <strong>name</strong> the model calls, a <strong>description</strong> that tells it when to use it, an <strong>input schema</strong>, and a <strong>handler</strong>. Wrap them with <code>create_sdk_mcp_server</code> &mdash; it runs inside your process, no subprocess.</p>
-    <div class="code"><span class="k">import</span> json
+    <div class="code py"><span class="k">import</span> json
 <span class="k">from</span> claude_agent_sdk <span class="k">import</span> tool, create_sdk_mcp_server
 
 <span class="k">@tool</span>(<span class="s">"get_customer"</span>, <span class="s">"Fetch a customer record by customer_id."</span>, {<span class="s">"customer_id"</span>: str})
@@ -774,7 +845,7 @@ support = create_sdk_mcp_server(name=<span class="s">"support"</span>, version=<
 
     <h3>2c &middot; Give the agent the tools</h3>
     <p>Pass the server in <code>mcp_servers</code>. Tool names follow the pattern <code>mcp__{server}__{tool}</code>. Listing them in <code>allowed_tools</code> pre-approves the safe ones so they run without a prompt &mdash; note we deliberately <em>leave <code>process_refund</code> out</em> so it falls through to the guard you build in Stage 4.</p>
-    <div class="code">options = ClaudeAgentOptions(
+    <div class="code py">options = ClaudeAgentOptions(
     system_prompt=SYSTEM,
     mcp_servers={<span class="s">"support"</span>: support},
     allowed_tools=[
@@ -829,7 +900,7 @@ support = create_sdk_mcp_server(name=<span class="s">"support"</span>, version=<
 
     <h3>3a &middot; Descriptions that draw a boundary</h3>
     <p>In a support flow, the confusable pair is <code>get_customer</code> vs. <code>lookup_order</code> &mdash; both &ldquo;look something up.&rdquo; State what each is <em>for</em> and, crucially, when <em>not</em> to reach for it.</p>
-    <div class="code"><span class="c"># get_customer</span>
+    <div class="code py"><span class="c"># get_customer</span>
 <span class="s">"Fetch a CUSTOMER record (name, tier, email) by customer_id. "</span>
 <span class="s">"Use to identify who you're helping. Do NOT use to look up an order — "</span>
 <span class="s">"it has no order data; use lookup_order for that."</span>
@@ -887,7 +958,7 @@ support = create_sdk_mcp_server(name=<span class="s">"support"</span>, version=<
 
     <h3>4a &middot; Gate the call with canUseTool</h3>
     <p>The SDK evaluates every tool call through a fixed order: <strong>PreToolUse hook &rarr; deny rules &rarr; allow rules &rarr; permission mode &rarr; <code>can_use_tool</code> callback &rarr; PostToolUse hook</strong>. Because you left <code>process_refund</code> out of <code>allowed_tools</code>, its calls fall through to your <code>can_use_tool</code> callback &mdash; your runtime decision point. Approve only what passes policy; deny the rest with a message the model reads and adapts to.</p>
-    <div class="code"><span class="k">from</span> claude_agent_sdk.types <span class="k">import</span> PermissionResultAllow, PermissionResultDeny
+    <div class="code py"><span class="k">from</span> claude_agent_sdk.types <span class="k">import</span> PermissionResultAllow, PermissionResultDeny
 
 REFUND_CAP = <span class="s">200.00</span>          <span class="c"># auto-approve ceiling; above this, a human decides</span>
 
@@ -965,7 +1036,7 @@ options = ClaudeAgentOptions(
 
     <h3>5b &middot; Escalate <em>with</em> context, not a cold handoff</h3>
     <p>A good escalation isn&rsquo;t &ldquo;I can&rsquo;t help&rdquo; &mdash; it&rsquo;s a handoff a human can act on in seconds. Your <code>escalate_to_human</code> tool already takes a <code>reason</code> and a <code>summary</code>; require the summary to carry what the agent gathered: customer, order, what was attempted, why it stopped.</p>
-    <div class="code">escalate_to_human(
+    <div class="code py">escalate_to_human(
     reason=<span class="s">"refund_past_window"</span>,
     summary=<span class="s">"Rae Ortiz (cust_88), order 4471 ($42, delivered 40 days ago). "</span>
            <span class="s">"Requests refund for damage. Past 30-day window — needs human judgment."</span>
@@ -1003,7 +1074,7 @@ options = ClaudeAgentOptions(
 
     <h3>6a &middot; Extract facts from verbose tool output</h3>
     <p>A full customer record or order history can be a wall of fields the agent mostly doesn&rsquo;t need. Carry the distilled facts forward, not the raw dump.</p>
-    <div class="code"><span class="c"># Instead of the whole customer + order JSON, carry what the decision needs:</span>
+    <div class="code py"><span class="c"># Instead of the whole customer + order JSON, carry what the decision needs:</span>
 { <span class="k">"customer"</span>: <span class="s">"cust_88 (standard)"</span>, <span class="k">"order"</span>: <span class="s">"4471 $42 delivered refundable"</span> }</div>
 
     <h3>6b &middot; A scratchpad for the case</h3>
@@ -1049,7 +1120,7 @@ options = ClaudeAgentOptions(
 
     <h3>7b &middot; A test set with a known right answer</h3>
     <p>Write tickets that span the real distribution &mdash; clear resolvables and genuine escalations &mdash; each labeled with what should happen.</p>
-    <div class="code">TEST_TICKETS = [
+    <div class="code py">TEST_TICKETS = [
   {<span class="k">"msg"</span>: <span class="s">"Refund order 4471, arrived cracked."</span>,       <span class="k">"expect"</span>: <span class="s">"refund"</span>},
   {<span class="k">"msg"</span>: <span class="s">"What's the status of order 4471?"</span>,           <span class="k">"expect"</span>: <span class="s">"answer"</span>},
   {<span class="k">"msg"</span>: <span class="s">"Refund my order from 6 months ago."</span>,          <span class="k">"expect"</span>: <span class="s">"escalate"</span>},  <span class="c"># past window</span>
