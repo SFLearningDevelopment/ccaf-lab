@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: 2026072081 -->
+<!-- build: 2026072090 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -106,10 +106,11 @@
     background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);
     padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
     line-height:1.6;margin:16px 0;border:1px solid #2c322a;
+    white-space:pre;tab-size:4;
   }
   .code.py{position:relative;padding-top:30px}
   .code.py::before{
-    content:"Python \00b7 4-space indent";
+    content:"Python";
     position:absolute;top:0;left:0;right:0;
     font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
     color:var(--code-dim);background:#181c16;border-bottom:1px solid #2c322a;
@@ -712,6 +713,61 @@ asyncio.run(main())</div>
       },
     },
 )</div>
+
+    <p><strong>Where this goes:</strong> it replaces the <code>options</code> block in the <code>agent.py</code> you wrote in 1a &mdash; same file, same run command. The four-role dict is long enough that it reads better assigned to a variable than inlined in the <code>query()</code> call. Keep your <code>max_turns</code> from 1a: orchestrating four subagents needs the headroom, and it is still your circuit breaker.</p>
+
+    <span class="code-label">agent.py &mdash; stages 1a and 2a combined</span>
+    <div class="code py"><span class="k">import</span> asyncio
+<span class="k">from</span> claude_agent_sdk <span class="k">import</span> query, ClaudeAgentOptions
+
+COORDINATOR = <span class="s">"""You are a research coordinator. You do NOT research directly.
+Delegate to your specialist subagents in order: use the searcher for web
+sources, the analyzer for local documents, the synthesizer to combine
+findings, and the reporter to write the final cited report. Pass each
+subagent exactly what it needs. Assemble their summaries; never redo their work."""</span>
+
+AGENTS = {
+    <span class="s">"searcher"</span>: {
+        <span class="s">"description"</span>: <span class="s">"Searches the web for sources on a topic. Use FIRST, to gather cited web sources."</span>,
+        <span class="s">"prompt"</span>: <span class="s">"You find and return web sources with citations. Return a list of claims, each with its source URL and the cited passage. Do not synthesize."</span>,
+        <span class="s">"tools"</span>: [<span class="s">"WebSearch"</span>, <span class="s">"WebFetch"</span>],
+    },
+    <span class="s">"analyzer"</span>: {
+        <span class="s">"description"</span>: <span class="s">"Analyzes LOCAL documents (PDFs, markdown). Use to extract claims from files, not the web."</span>,
+        <span class="s">"prompt"</span>: <span class="s">"You read local documents and extract relevant claims, each tagged with the file and location it came from."</span>,
+        <span class="s">"tools"</span>: [<span class="s">"Read"</span>, <span class="s">"Grep"</span>],
+    },
+    <span class="s">"synthesizer"</span>: {
+        <span class="s">"description"</span>: <span class="s">"Combines search + document findings into coherent claims. Use AFTER search and analysis."</span>,
+        <span class="s">"prompt"</span>: <span class="s">"You merge findings into a deduplicated claim set. Note agreement and conflict. Preserve every claim's source. Do not write prose."</span>,
+        <span class="s">"tools"</span>: [],                        <span class="c"># reasons over what it's given; needs no tools</span>
+    },
+    <span class="s">"reporter"</span>: {
+        <span class="s">"description"</span>: <span class="s">"Writes the final report from synthesized claims. Use LAST."</span>,
+        <span class="s">"prompt"</span>: <span class="s">"You write a comprehensive report. Every claim MUST carry its citation. Never state a claim you cannot cite."</span>,
+        <span class="s">"tools"</span>: [<span class="s">"Write"</span>],
+    },
+}
+
+options = ClaudeAgentOptions(
+    system_prompt=COORDINATOR,
+    allowed_tools=[<span class="s">"Agent"</span>],              <span class="c"># REQUIRED or delegation is blocked</span>
+    agents=AGENTS,
+    max_turns=<span class="s">20</span>,                       <span class="c"># orchestration takes several turns</span>
+)
+
+<span class="k">async def</span> main():
+    <span class="k">async for</span> message <span class="k">in</span> query(
+        prompt=<span class="s">"Research: the current state of solid-state batteries."</span>,
+        options=options,
+    ):
+        <span class="k">if</span> hasattr(message, <span class="s">"result"</span>):
+            print(message.result)
+
+asyncio.run(main())</div>
+    <p class="note" style="margin-top:14px"><strong>A reference construction.</strong> This is one way to write it for this lab&rsquo;s four-subagent design &mdash; not the only way, and not verified against your setup. Treat it as a starting point: change the topic, the roles, the claim fields, and see what breaks. Modifying it as <em>you</em> envision the system is the point of the exercise.</p>
+
+    <p>Run it the same way as before &mdash; <code>python3 agent.py</code>, from the lab folder with the venv active.</p>
 
     <h3>2b &middot; Descriptions are how the coordinator routes</h3>
     <p>The coordinator reads each <code>description</code> exactly the way a model reads a tool description &mdash; to decide when to delegate. So the descriptions must draw sharp boundaries: <em>web</em> vs. <em>local documents</em>, and <em>ordering</em> (searcher first, reporter last). Vague descriptions cause the coordinator to route to the wrong specialist or skip one.</p>
