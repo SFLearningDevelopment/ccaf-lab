@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: 2026071616 -->
+<!-- build: 2026072113 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -106,6 +106,15 @@
     background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);
     padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
     line-height:1.6;margin:16px 0;border:1px solid #2c322a;
+    white-space:pre;tab-size:4;
+  }
+  .code.py{position:relative;padding-top:30px}
+  .code.py::before{
+    content:"Python";
+    position:absolute;top:0;left:0;right:0;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
+    color:var(--code-dim);background:#181c16;border-bottom:1px solid #2c322a;
+    padding:5px 20px;border-radius:var(--radius) var(--radius) 0 0;
   }
   .code .k{color:var(--code-key)}
   .code .s{color:var(--code-str)}
@@ -605,7 +614,7 @@
 
     <h3>2a &middot; JSON outputs: constrain the final response</h3>
     <p>When the whole reply should be one structured record, pass your schema in <code>output_config.format</code>. The API compiles it to a grammar and constrains decoding, so the response is guaranteed to fit the schema.</p>
-    <div class="code"><span class="k">import</span> anthropic
+    <div class="code py"><span class="k">import</span> anthropic
 client = anthropic.Anthropic()
 
 msg = client.messages.create(
@@ -772,7 +781,7 @@ msg = client.messages.create(
 
     <h3>5b &middot; Then validate the rules decoding can&rsquo;t</h3>
     <p>This is the part the schema guarantee never covered: the value-level and cross-field rules. Numeric ranges, string formats, and regex patterns (excluded from the enforced subset), plus business logic like &ldquo;line items sum to total&rdquo; or &ldquo;date is not in the future.&rdquo; Run these as a validation layer after parsing.</p>
-    <div class="code"><span class="k">from</span> jsonschema <span class="k">import</span> validate, ValidationError
+    <div class="code py"><span class="k">from</span> jsonschema <span class="k">import</span> validate, ValidationError
 
 <span class="k">def</span> check(record):
     validate(record, invoice_schema)                 <span class="c"># shape + enforced subset</span>
