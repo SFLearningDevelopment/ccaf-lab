@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: 2026072121 -->
+<!-- build: 2026072130 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -558,6 +558,14 @@ const _CCAF_CONFIG = {
 if (!window._ccafApp) window._ccafApp = firebase.apps.length ? firebase.app() : firebase.initializeApp(_CCAF_CONFIG);
 const _ccafAuth = firebase.auth(window._ccafApp);
 
+// TEST ONLY — remove after testing. Mirrors ALLOWED_EXTRA in the hub's index.html
+// so a non-@sourcefuse.com test learner can work through the track end to end.
+const _CCAF_ALLOWED_EXTRA = ['ravjv2013@gmail.com'];
+function _ccafEmailAllowed(email) {
+    const e = (email || '').trim().toLowerCase();
+    return e.endsWith('@sourcefuse.com') || _CCAF_ALLOWED_EXTRA.includes(e);
+}
+
 const _ccafErr = function(msg) {
     const el = document.getElementById('ccaf-auth-error');
     el.textContent = msg; el.style.display = 'block';
@@ -575,7 +583,7 @@ window.ccafEmailSignIn = function() {
     const pwd   =  document.getElementById('ccaf-ep-password').value || '';
     document.getElementById('ccaf-auth-error').style.display = 'none';
     if (!email || !pwd) { _ccafErr('Please enter your email and password.'); return; }
-    if (!email.endsWith('@sourcefuse.com')) { _ccafErr('Only @sourcefuse.com accounts are allowed.'); return; }
+    if (!_ccafEmailAllowed(email)) { _ccafErr('Only @sourcefuse.com accounts are allowed.'); return; }
     _ccafAuth.signInWithEmailAndPassword(email, pwd).catch(function(e) {
         _ccafErr(
             (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') ? 'Incorrect password.'
@@ -591,7 +599,7 @@ window.ccafSignOut = function() {
 
 _ccafAuth.onAuthStateChanged(async function(user) {
     if (user) {
-        if (!user.email || !user.email.endsWith('@sourcefuse.com')) {
+        if (!user.email || !_ccafEmailAllowed(user.email)) {
             _ccafErr('Only @sourcefuse.com accounts are allowed.');
             await _ccafAuth.signOut(); return;
         }
